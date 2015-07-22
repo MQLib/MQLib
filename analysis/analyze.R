@@ -64,11 +64,11 @@ standard <- read.csv("../data/standard.csv",stringsAsFactors=F)
 # Heuristics list
 # A list of all heuristics implemented for the original paper and their
 # characteristic features.
-initial.heuristics <- read.csv("../data/heuristics.csv",stringsAsFactors=F)
+initial.heuristics <- read.csv("heuristics.csv",stringsAsFactors=F)
 heuristics <- initial.heuristics
 # NEW HEURISTICS: either combine with the existing file, or uncomment and modify
 # the following lines to combine them.
-# new.heuristics <- read.csv("../data/newheuristics.csv",stringsAsFactors=F)
+# new.heuristics <- read.csv("newheuristics.csv",stringsAsFactors=F)
 # heuristics <- rbind(heuristics, new.heuristics)
 #-------------------------------------------------------------------------------
 # Evaluation results
