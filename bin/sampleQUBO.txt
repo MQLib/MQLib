@@ -1,0 +1,14 @@
+# Sample QUBO problem instance
+# Input matrix Q:
+# [ 5 -6  0
+#  -6  3 -1
+#   0 -1  1]
+# First line: number of variables and specified terms from the input matrix
+3 5
+# Terms Q_{ii}x_i^2 encoded as: i i Q_{ii}
+1 1 5
+2 2 3
+3 3 1
+# Terms Q_{ij}x_ix_j with i < j encoded as: i j Q_{ij}
+1 2 -6
+2 3 -1

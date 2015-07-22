@@ -1,0 +1,7 @@
+# Sample Max-Cut problem instance
+# Three-node graph with edges (A, B) of weight 3 and (B, C) of weight -2
+# First line: number of nodes and specified edges
+3 2
+# Edge (a, b) with a < b and weight w_{ab} encoded as: a b w_{ab}
+1 2 3
+2 3 -2
