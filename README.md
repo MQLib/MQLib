@@ -1,6 +1,6 @@
 # MQLib
 
-* An implementation of dozens of heuristics for that **M**ax-cut and **Q**UBO combinatorial optimization problems.
+* An implementation of dozens of heuristics for the **M**ax-cut and **Q**UBO combinatorial optimization problems.
 * A machine learning-based hyper-heuristic that tries to select the best heuristic for a given instance.
 * Scripts to evaluate heuristics on Amazon EC2 and to analyze the results.
 

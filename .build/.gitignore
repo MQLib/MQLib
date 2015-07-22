@@ -1,0 +1,8 @@
+# Ignore everything in this directory
+*
+# Except this file and subdirectories
+!.gitignore
+!heuristics
+!metrics
+!problem
+!util
