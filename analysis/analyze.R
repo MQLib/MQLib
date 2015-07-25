@@ -85,7 +85,7 @@ heuristics <- initial.heuristics
 # be detected and loaded.
 if (file.exists("results_reduced.csv")) {
   print("LOADING CACHED RESULTS (results_reduced.csv)")
-  results.all <- fread("results_reduced.csv",stringsAsFactors=F)
+  results.all <- read.csv("results_reduced.csv", stringsAsFactors=F)
 } else {
   # Load the old results. They are stored in a zip file, so we will dynamically
   # unzip them as we load them. This operation will take a while to run.
@@ -368,7 +368,7 @@ source("storeRF.R")
 # Only runs if no cached results.
 if (file.exists("results_hh.csv")) {
   print("LOADING CACHED HYPERHEURISTIC RESULTS (results_hh.csv)")
-  hh.raw.result <- fread("results_hh.csv",stringsAsFactors=F)
+  hh.raw.result <- read.csv("results_hh.csv",stringsAsFactors=F)
 } else {
   # Iterate over every heuristic
   hh.raw.result.list <- lapply(split(results.for.hh, results.for.hh$heuristic), function(df){
@@ -549,7 +549,7 @@ metrics.removed <-c("log_m","log_n","core_stdev","avg_neighbor_deg_min",
 simpler.metrics <- simple.metrics[,!(names(simple.metrics) %in% metrics.removed)]
 res.sng <- results.diff  %>%
   filter(heuristic == "FESTA2002GPR") %>%
-  left_join(simpler.metrics, by=c("graphname"="filename"))
+  left_join(simpler.metrics, by="graphname")
 t <- rpart(normdev ~ ., data=res.sng[,9:ncol(res.sng)], minbucket=100)
 # Tree R^2
 1 - sum((predict(t) - res.sng$normdev)^2)/sum((mean(res.sng$normdev) - res.sng$normdev)^2)
@@ -570,6 +570,7 @@ p <-
   annotate("text",x=0.8,y=0.05,label="Average (1.2)",color="black",size=2) +
   scale_x_continuous("Max. Indep. Set") +
   scale_y_log10("Density", breaks=c(0.0001,0.001,0.01,0.1,1))
+p
 ggsave(filename="festa2002_plot.pdf", plot=p, width=3, height=3, units="in")
 #-------------------------------------------------------------------------------
 # Figure 8b: PALUBECKIS2006
@@ -577,7 +578,7 @@ metrics.removed <- c("log_n","log_m","avg_deg_conn_stdev")
 simpler.metrics <- simple.metrics[,!(names(simple.metrics) %in% metrics.removed)]
 res.sng <- results.diff %>%
   filter(heuristic == "PALUBECKIS2006") %>%
-  left_join(simpler.metrics, by=c("graphname"="filename"))
+  left_join(simpler.metrics, by="graphname")
 t <- rpart(normdev ~ ., data=res.sng[,9:ncol(res.sng)],minbucket=110)
 # Tree R^2
 1 - sum((predict(t) - res.sng$normdev)^2)/sum((mean(res.sng$normdev) - res.sng$normdev)^2)
@@ -600,6 +601,7 @@ p <-
   annotate("text",x=0.43,y=0.00013,label="Hard (1.6)",color="black",size=2) +
   scale_x_continuous("Max. Indep. Set") +
   scale_y_log10("Density", breaks=c(0.0001,0.001,0.01,0.1,1))
+p
 ggsave(filename="pal2006_plot.pdf", plot=p, width=3, height=3, units="in")
 #-------------------------------------------------------------------------------
 
@@ -613,7 +615,6 @@ ggsave(filename="pal2006_plot.pdf", plot=p, width=3, height=3, units="in")
 # See what labels look like they might make sense
 res.class <- results %>%
   filter(rank2 == 1.0,
-         cutoff == 1.0, 
          graphname %in% int.graphs$graphname) %>%
   left_join(heuristics, by="heuristic")
 # The desireable property is that one feature is not dominant over the others
@@ -690,16 +691,16 @@ res.EVO <- res.class %>%
   select(graphname,Evolutionary) %>%
   mutate(Evolutionary=ifelse(Evolutionary=="No","No","Yes")) %>%
   mutate(Evolutionary=as.factor(Evolutionary)) %>%
-  left_join(simple.metrics, by=c("graphname"="filename")) %>%
+  left_join(simple.metrics, by="graphname") %>%
   filter(weight_mean>=-3.5e-01)
-nnplot(log10(exp(res.MEM$log_n)), log10(exp(res.MEM$log_m)), as.numeric(res.EVO$Evolutionary=="Yes"),
+nnplot(log10(exp(res.EVO$log_n)), log10(exp(res.EVO$log_m)), as.numeric(res.EVO$Evolutionary=="Yes"),
        400, "nn_evo.png", k=20, rad=1, xlab="Number of Nodes", ylab="Number of Edges", title="Evolutionary Algorithm")
 #-------------------------------------------------------------------------------
 # MEMORY (TABU SEARCH)
 res.MEM <- res.class %>%
   select(graphname,Memory) %>%
   mutate(Memory=as.factor(Memory)) %>%
-  left_join(simple.metrics, by=c("graphname"="filename")) %>%
+  left_join(simple.metrics, by="graphname") %>%
   filter(weight_mean>=-3.5e-01)
 nnplot(log10(exp(res.MEM$log_n)), log10(exp(res.MEM$log_m)), as.numeric(res.MEM$Memory=="Yes"),
        400, "nn_mem.png", k=20, rad=1, xlab="Number of Nodes", ylab="Number of Edges", title="Tabu Search")
