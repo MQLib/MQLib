@@ -1,3 +1,5 @@
+![MQLib](mqlib.png)
+
 # MQLib
 
 * An implementation of dozens of heuristics for the **M**ax-cut and **Q**UBO combinatorial optimization problems.
