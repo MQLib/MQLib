@@ -6,6 +6,8 @@
 #include "problem/qubo_heuristic.h"
 #include "problem/qubo_instance.h"
 
+namespace MQLib {
+
 class Merz2002PartialSolution : public QUBOPartialSolution {
  public:
   // Create a "greedy random" solution using procedure RandomizedGreedy
@@ -70,5 +72,7 @@ class Merz2002GreedyKOpt : public Merz2002 {
 		    bool validation, QUBOCallback *qc) :
   Merz2002(qi, runtime_limit, validation, qc, true, KOPT) {}
 };
+
+}
 
 #endif

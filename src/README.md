@@ -8,7 +8,7 @@ The MQLib code base provides scaffolding the should be extended when implementin
 
 ![Heuristic Classes](image_heuristic.png)
 
-A new Max-Cut heuristic should extend the `MaxCutHeuristic` class (available by including [problem/max_cut_heuristic.h](../include/problem/max_cut_heuristic.h)), and a new QUBO heuristic should extend the `QUBOHeuristic` class (available by including [problem/qubo_heuristic.h](../include/problem/qubo_heuristic.h)). Following the naming conventions of our code base, the heuristic name should combine the last name of the heuristic paper's first author, the year, and a brief description if more than one heuristic is presented in the paper. For instance, a paper by Silberholz et al. published in 2015 presenting a new tabu search procedure and a new genetic algorithm might name the two heuristic classes `Silberholz2015TS` and `Silberholz2015GA`.
+Every class should reside in the namespace `MQLib`. A new Max-Cut heuristic should extend the `MaxCutHeuristic` class (available by including [problem/max_cut_heuristic.h](../include/problem/max_cut_heuristic.h)), and a new QUBO heuristic should extend the `QUBOHeuristic` class (available by including [problem/qubo_heuristic.h](../include/problem/qubo_heuristic.h)). Following the naming conventions of our code base, the heuristic name should combine the last name of the heuristic paper's first author, the year, and a brief description if more than one heuristic is presented in the paper. For instance, a paper by Silberholz et al. published in 2015 presenting a new tabu search procedure and a new genetic algorithm might name the two heuristic classes `Silberholz2015TS` and `Silberholz2015GA`.
 
 Heuristics should be implemented to run in the constructor of their class, returning from the constructor only when the termination criterion has been reached (see below). Heuristics should report new best solutions as they are identified using the `Report` function; the entire time series of new best solutions encountered by a heuristic is reported upon termination when running from the command line (see [bin/README.md](../bin/README.md) for details). There is no harm in calling `Report` on a solution that is not a new best solution (though calling the function a huge number of times may slow down code, even though the function is quite light weight). 
 
@@ -22,11 +22,15 @@ Consider now the implementation of a simple "hello world" Max-Cut heuristic that
 
 #include "problem/max_cut_heuristic.h"
 
+namespace MQLib {
+
 class Silberholz2015 : public MaxCutHeuristic {
  public:
   Silberholz2015(const MaxCutInstance &mi, double rt_limit, bool validation,
                  MaxCutCallback *mc);
 };
+
+}
 
 #endif
 ```
@@ -36,6 +40,8 @@ Next we would implement the heuristic in `src/heuristics/maxcut/silberholz2015.c
 ```
 #include "heuristics/maxcut/silberholz2015.h"
 
+namespace MQLib {
+
 Silberholz2015::Silberholz2015(const MaxCutInstance &mi, double rt_limit,
                                bool validation, MaxCutCallback *mc) :
   MaxCutHeuristic(mi, rt_limit, validation, mc) {
@@ -44,6 +50,8 @@ Silberholz2015::Silberholz2015(const MaxCutInstance &mi, double rt_limit,
     sol.AllBest1Swap();
     if (!Report(sol)) return;
   }
+}
+
 }
 ```
 
@@ -131,6 +139,8 @@ In our header file `include/heuristics/qubo/silberholz2015.h`, not only will we 
 
 #include "problem/qubo_heuristic.h"
 
+namespace MQLib {
+
 class Silberholz2015Solution : public QUBOSolution {
  public:
   // Convert from QUBOSolution to Silberholz2015Solution
@@ -147,6 +157,8 @@ class Silberholz2015 : public QUBOHeuristic {
                  QUBOCallback *qc);
 };
 
+}
+
 #endif
 ```
 
@@ -156,6 +168,8 @@ In the source file located at `src/heuristics/qubo/silberholz2015.cpp`, we would
 #include <math.h>
 #include "heuristics/qubo/silberholz2015.h"
 #include "util/random.h"
+
+namespace MQLib {
 
 void Silberholz2015Solution::SA() {
   // Parameters
@@ -186,6 +200,8 @@ Silberholz2015::Silberholz2015(const QUBOInstance &qi, double rt_limit,
     sol.SA();
     if (!Report(sol)) return;
   }
+}
+
 }
 ```
 
@@ -231,6 +247,8 @@ We would use the following header in `include/heuristics/maxcut/silberholz2015.h
 #include "heuristics/maxcut/max_cut_partial_solution.h"
 #include "problem/max_cut_heuristic.h"
 
+namespace MQLib {
+
 class Silberholz2015PS : public MaxCutPartialSolution {
  public:
   Silberholz2015PS(const MaxCutInstance& mi, MaxCutHeuristic* heuristic);
@@ -242,6 +260,8 @@ class Silberholz2015 : public MaxCutHeuristic {
                  MaxCutCallback *mc);
 };
 
+}
+
 #endif
 ```
 
@@ -251,6 +271,8 @@ Next we would implement the heuristic in `src/heuristics/maxcut/silberholz2015.c
 #include <algorithm>
 #include "heuristics/maxcut/silberholz2015.h"
 #include "util/random.h"
+
+namespace MQLib {
 
 Silberholz2015PS::Silberholz2015PS(const MaxCutInstance &mi,
                                    MaxCutHeuristic* heuristic) :
@@ -284,6 +306,8 @@ Silberholz2015::Silberholz2015(const MaxCutInstance &mi, double rt_limit,
     sol.AllBest1Swap();
     if (!Report(sol)) return;
   }
+}
+
 }
 ```
 

@@ -5,6 +5,8 @@
 #include <string>
 #include "problem/instance.h"
 
+namespace MQLib {
+
 // Forward declaration (since MaxCutInstance can be constructed from QUBOInstance
 // and vice versa)
 class MaxCutInstance;
@@ -67,5 +69,7 @@ class QUBOInstance {
   std::vector<std::pair<std::pair<int, int>, double> > all_nonzero_;
   std::vector<double> lin_;
 };
+
+}
 
 #endif

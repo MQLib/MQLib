@@ -7,6 +7,8 @@
 #include "heuristics/maxcut/max_cut_solution.h"
 #include "util/random.h"
 
+namespace MQLib {
+
 // Empty solution
 MaxCutSolution::MaxCutSolution(const MaxCutInstance& mi,
 			       MaxCutHeuristic *heuristic,
@@ -269,4 +271,6 @@ MaxCutSolution::MaxCutSolution(const MaxCutPartialSolution& x) :
       diff_weights_[i] = x.get_gainS()[i];
     }
   }
+}
+
 }

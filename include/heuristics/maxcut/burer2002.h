@@ -5,6 +5,8 @@
 #include "heuristics/maxcut/max_cut_solution.h"
 #include "problem/max_cut_heuristic.h"
 
+namespace MQLib {
+
 class Burer2002Solution : public MaxCutSolution {
  public:
   static Burer2002Solution Rank2Cut(const MaxCutInstance& mi, double w1norm,
@@ -41,5 +43,7 @@ class Burer2002 : public MaxCutHeuristic {
   Burer2002(const MaxCutInstance& mi, double runtime_limit, bool validation,
             MaxCutCallback* mc);
 };
+
+}
 
 #endif

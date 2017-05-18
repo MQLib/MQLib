@@ -4,6 +4,8 @@
 #include "problem/heuristic.h"
 #include "util/random.h"
 
+namespace MQLib {
+
 void deSousa2013::AlgorithmIteration() {
   // Parameters (population size and number of generations set based on
   // email communication with paper authors).
@@ -72,4 +74,6 @@ deSousa2013::deSousa2013(const MaxCutInstance &mi, double runtime_limit,
   while (MaxCutHeuristic::Report()) {
     AlgorithmIteration();
   }
+}
+
 }

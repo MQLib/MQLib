@@ -6,6 +6,8 @@
 #include "problem/qubo_instance.h"
 #include <vector>
 
+namespace MQLib {
+
 class Pardalos2008QUBOSolution : public QUBOSolution {
  public:
   // Convert from QUBOSolution to Pardalos2008QUBOSolution
@@ -104,5 +106,7 @@ class Pardalos2008 : public QUBOHeuristic {
   Pardalos2008(const QUBOInstance& qi, double runtime_limit, bool validation,
                QUBOCallback *qc);
 };
+
+}
 
 #endif

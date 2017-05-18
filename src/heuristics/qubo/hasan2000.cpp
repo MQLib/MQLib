@@ -4,6 +4,8 @@
 #include "heuristics/qubo/hasan2000.h"
 #include "util/random.h"
 
+namespace MQLib {
+
 Hasan2000Solution::Hasan2000Solution(const Hasan2000Solution& x1,
 				     const Hasan2000Solution& x2) :
   QUBOSolution(x1) {
@@ -211,4 +213,6 @@ Hasan2000TS::Hasan2000TS(const QUBOInstance& qi, double runtime_limit,
       break;
     }
   }
+}
+
 }

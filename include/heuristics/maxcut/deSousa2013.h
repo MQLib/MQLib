@@ -3,6 +3,8 @@
 
 #include "problem/max_cut_heuristic.h"
 
+namespace MQLib {
+
 class deSousa2013 : public MaxCutHeuristic {
  public:
   deSousa2013(const MaxCutInstance &mi, double runtime_limit, bool validation,
@@ -12,5 +14,7 @@ class deSousa2013 : public MaxCutHeuristic {
   // Run through the algorithm, stopping when the p vector has converged.
   void AlgorithmIteration();
 };
+
+}
 
 #endif

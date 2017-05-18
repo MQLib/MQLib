@@ -5,6 +5,8 @@
 #include "problem/max_cut_heuristic.h"
 #include "problem/qubo_heuristic.h"
 
+namespace MQLib {
+
 class MaxCutHyperheuristic : public MaxCutHeuristic {
  public:
   MaxCutHyperheuristic(const MaxCutInstance&mi, double runtime_limit,
@@ -66,5 +68,7 @@ class HyperheuristicQUBOCallback : public QUBOCallback {
   // passed QUBOSimpleSolution objects into MaxCutSimpleSolution objects).
   const MaxCutInstance& mi_;
 };
+
+}
 
 #endif

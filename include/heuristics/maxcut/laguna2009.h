@@ -5,6 +5,8 @@
 #include "heuristics/maxcut/max_cut_solution.h"
 #include "problem/max_cut_heuristic.h"
 
+namespace MQLib {
+
 class Laguna2009CE : public MaxCutHeuristic {
  public:
   Laguna2009CE(const MaxCutInstance& mi, double runtime_limit, bool validation,
@@ -20,5 +22,7 @@ class Laguna2009HCE : public MaxCutHeuristic {
   // Run the algorithm in Fig. 2 on the population X
   void LocallyOptimize(std::vector<FirstFixedMaxCutSolution>* X);
 };
+
+}
 
 #endif

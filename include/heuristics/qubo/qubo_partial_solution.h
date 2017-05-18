@@ -4,6 +4,8 @@
 #include <vector>
 #include "problem/qubo_heuristic.h"
 
+namespace MQLib {
+
 // Some constructive procedures for QUBO assign fractional values to variables
 // and maintain the gains associated with a switch to either value 0 or value 1.
 // QUBOPartialSolution supports such procedures, handling variable updates. The
@@ -48,5 +50,7 @@ class QUBOPartialSolution {
   // Objective value
   double weight_;
 };
+
+}
 
 #endif

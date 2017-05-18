@@ -7,6 +7,8 @@
 #include "heuristics/qubo/palubeckis2004b.h"
 #include "util/random.h"
 
+namespace MQLib {
+
 Palubeckis2004bSolution::Palubeckis2004bSolution(const QUBOSolution &x) :
   QUBOSolution(x) {}
 
@@ -747,4 +749,6 @@ Palubeckis2004bSTS::Palubeckis2004bSTS(const QUBOInstance& qi,
       break;
     }
   }
+}
+
 }

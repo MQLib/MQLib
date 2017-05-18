@@ -4,6 +4,8 @@
 #include <vector>
 #include "problem/max_cut_heuristic.h"
 
+namespace MQLib {
+
 // Some constructive procedures for MAXCUT assign edges one at a time
 // and maintain the gains associated with assigning a node either to S
 // (assignment value 1) or NS (assignment value -1). The MaxCutPartialSolution
@@ -49,5 +51,7 @@ class MaxCutPartialSolution {
   // Objective value
   double weight_;
 };
+
+}
 
 #endif

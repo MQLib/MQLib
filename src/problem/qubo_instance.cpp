@@ -3,6 +3,8 @@
 #include "problem/max_cut_instance.h"
 #include "problem/qubo_instance.h"
 
+namespace MQLib {
+
 // Load input matrix from provided file
 QUBOInstance::QUBOInstance(const std::string& filename) {
   Instance::Load(filename, &nonzero_, &all_nonzero_, &lin_, false);
@@ -60,4 +62,6 @@ QUBOInstance& QUBOInstance::operator=(const QUBOInstance& qi) {
   all_nonzero_ = qi.all_nonzero_;
   lin_ = qi.lin_;
   return *this;
+}
+
 }

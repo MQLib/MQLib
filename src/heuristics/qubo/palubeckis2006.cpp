@@ -6,6 +6,8 @@
 #include "heuristics/qubo/palubeckis2006.h"
 #include "util/random.h"
 
+namespace MQLib {
+
 Palubeckis2006Solution::Palubeckis2006Solution(const QUBOSolution &x) :
   Palubeckis2004bSolution(x) {}
 
@@ -125,4 +127,6 @@ Palubeckis2006::Palubeckis2006(const QUBOInstance& qi, double runtime_limit,
       x.GSP(Random::RandInt(d1, rangemax), b);
     }
   }
+}
+
 }

@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+namespace MQLib {
+
 class RandomForest {
  public:
   // Load a random forest from a file; the random forest should have been saved
@@ -36,5 +38,7 @@ class RandomForest {
   // Split value of each node
   std::vector<double> _split;
 };
+
+}
 
 #endif

@@ -5,6 +5,8 @@
 #include "heuristics/qubo/qubo_solution.h"
 #include "util/random.h"
 
+namespace MQLib {
+
 Glover1998aSolution::Glover1998aSolution(const QUBOSolution &x) :
   QUBOSolution(x) {}
 
@@ -208,4 +210,6 @@ Glover1998a::Glover1998a(const QUBOInstance& qi, double runtime_limit,
       }
     }
   }
+}
+
 }

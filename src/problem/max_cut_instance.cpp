@@ -7,6 +7,8 @@
 #include "problem/max_cut_instance.h"
 #include "problem/qubo_instance.h"
 
+namespace MQLib {
+
 // Load instance from file
 MaxCutInstance::MaxCutInstance(const std::string& filename) {
   Instance::Load(filename, &edges_, &all_edges_, NULL, false);
@@ -109,4 +111,6 @@ void MaxCutInstance::PrintInstance() const {
     std::cout << iter->first.first+1 << " " << iter->first.second+1 << " " <<
       iter->second << std::endl;
   }
+}
+
 }

@@ -5,6 +5,8 @@
 #include <utility>
 #include <vector>
 
+namespace MQLib {
+
 class Instance {
  public:
   typedef std::pair<std::pair<int, int>, double> InstanceTuple;
@@ -26,5 +28,7 @@ class Instance {
 		      std::vector<InstanceTuple>* all,
 		      std::vector<double>* selfLinks, bool selfLinkAsError);
 };
+
+}
 
 #endif

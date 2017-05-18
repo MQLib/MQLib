@@ -4,6 +4,8 @@
 #include "heuristics/qubo/alkhamis1998.h"
 #include "util/random.h"
 
+namespace MQLib {
+
 void Alkhamis1998Solution::SA(double T_initial, int iteration) {
   // Parameters
   double SFACTOR = 0.3;
@@ -109,4 +111,6 @@ Alkhamis1998::Alkhamis1998(const QUBOInstance& qi, double runtime_limit,
     // Step 2: Run the simulated annealing procedure
     X.SA(T_initial, iter);
   }
+}
+
 }

@@ -4,6 +4,8 @@
 #include "heuristics/qubo/katayama2001.h"
 #include "util/random.h"
 
+namespace MQLib {
+
 Katayama2001Solution::Katayama2001Solution(const QUBOSolution &x) :
 QUBOSolution(x) {}
 
@@ -88,4 +90,6 @@ Katayama2001::Katayama2001(const QUBOInstance& qi, double runtime_limit,
         return;  // Exit if out of time and not doing validation run
     }
   }
+}
+
 }

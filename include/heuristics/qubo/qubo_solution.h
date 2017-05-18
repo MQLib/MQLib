@@ -6,6 +6,8 @@
 #include "heuristics/qubo/qubo_partial_solution.h"
 #include "problem/qubo_heuristic.h"
 
+namespace MQLib {
+
 class QUBOSolution : public ExtendedSolution {
  public:
   // Copy over a QUBOPartialSolution with no fractional assignments.
@@ -82,5 +84,7 @@ class QUBOSolution : public ExtendedSolution {
   QUBOSolution(const QUBOInstance& qi, const std::vector<double>& p,
 	       QUBOHeuristic *heuristic);
 };
+
+}
 
 #endif

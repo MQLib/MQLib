@@ -5,6 +5,8 @@
 #include "heuristics/maxcut/max_cut_partial_solution.h"
 #include "heuristics/maxcut/max_cut_solution.h"
 
+namespace MQLib {
+
 class Festa2002PartialSolution : public MaxCutPartialSolution {
  public:
   // Initialize using the adaptive greedy function described in Sec. 2.1
@@ -117,5 +119,7 @@ class Festa2002GVNSPR : public Festa2002Heuristic {
   Festa2002GVNSPR(const MaxCutInstance &mi, double runtime_limit,
 		  bool validation, MaxCutCallback *mc);
 };
+
+}
 
 #endif

@@ -3,6 +3,8 @@
 
 #include <vector>
 
+namespace MQLib {
+
 class BaseSolution {
  public:
   // Constructor takes the number of nodes in the graph / vars in the problem
@@ -83,5 +85,7 @@ class BaseSolution {
   // Default constructor disabled
   BaseSolution();
 };
+
+}
 
 #endif

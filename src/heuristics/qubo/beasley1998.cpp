@@ -4,6 +4,8 @@
 #include "heuristics/qubo/beasley1998.h"
 #include "util/random.h"
 
+namespace MQLib {
+
 Beasley1998Solution::Beasley1998Solution(const QUBOSolution &x) :
 QUBOSolution(x) {}
 
@@ -178,4 +180,6 @@ Beasley1998TS::Beasley1998TS(const QUBOInstance& qi, double runtime_limit,
     if (!Report(sol, iter))
       return;  // Exit if termination criterion met
   }
+}
+
 }

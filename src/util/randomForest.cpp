@@ -6,6 +6,8 @@
 
 #include "util/randomForest.h"
 
+namespace MQLib {
+
 RandomForest::RandomForest(const std::string& filename) {
   std::ifstream file(filename.c_str());
   if (!file.is_open()) {
@@ -91,4 +93,6 @@ double RandomForest::Predict(const std::vector<double>& vars) {
 
   // Final prediction is proportion of trees predicting positive
   return ((double)positive) / _ntree;
+}
+
 }

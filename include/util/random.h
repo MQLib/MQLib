@@ -3,6 +3,8 @@
 
 #include <stdlib.h>
 
+namespace MQLib {
+
 class Random {
  public:
   // Return a random double in [0, 1)
@@ -31,5 +33,7 @@ class Random {
 				 std::vector<int>* indices);
 
 };
+
+}
 
 #endif

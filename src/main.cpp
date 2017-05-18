@@ -11,6 +11,8 @@
 #include "problem/qubo_instance.h"
 #include "util/ezOptionParser.h"
 
+using namespace MQLib;
+
 void Usage(ez::ezOptionParser& opt) {
   std::string usage;
   opt.getUsage(usage);

@@ -5,6 +5,8 @@
 #include "heuristics/qubo/qubo_partial_solution.h"
 #include "problem/qubo_instance.h"
 
+namespace MQLib {
+
 QUBOPartialSolution::QUBOPartialSolution(const QUBOInstance& qi,
 					 QUBOHeuristic *heuristic) :
   qi_(qi),
@@ -101,4 +103,6 @@ void QUBOPartialSolution::UpdateCutValues(int update_index, int new_value) {
     diff0_[update_index] -= diff1_[update_index];
     diff1_[update_index] = 0.0;
   }
+}
+
 }

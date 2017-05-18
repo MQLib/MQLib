@@ -6,6 +6,8 @@
 #include "heuristics/maxcut/max_cut_partial_solution.h"
 #include "problem/max_cut_heuristic.h"
 
+namespace MQLib {
+
 class MaxCutSolution : public ExtendedSolution {
  public:
   // Copy over a MaxCutPartialSolution with no unassigned values
@@ -158,5 +160,7 @@ class FirstFixedMaxCutSolution : public MaxCutSolution {
 			   MaxCutHeuristic *heuristic,
 			   int fixedVal);
 };
+
+}
 
 #endif

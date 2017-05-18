@@ -2,6 +2,8 @@
 #include <math.h>
 #include "heuristics/extended_solution.h"
 
+namespace MQLib {
+
 ExtendedSolution::ExtendedSolution(int N, int init_assignment) :
   BaseSolution(N, init_assignment),
   diff_weights_(N, 0.0) {}
@@ -88,3 +90,5 @@ ExtendedSolution& ExtendedSolution::operator=(const ExtendedSolution &rhs) {
 ExtendedSolution::ExtendedSolution(const ExtendedSolution& x) :
   BaseSolution(x),
   diff_weights_(x.diff_weights_) {}
+
+}

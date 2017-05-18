@@ -6,6 +6,8 @@
 #include "problem/qubo_instance.h"
 #include <vector>
 
+namespace MQLib {
+
 // NOTE: In the paper Palubeckis2004b, for a given solution x the authors
 // describe a procedure in which the problem instance is adjusted (via a simple
 // variable substitution) to one for which that solution is all 0s. This enables
@@ -124,5 +126,7 @@ class Palubeckis2004bSTS : public QUBOHeuristic {
   Palubeckis2004bSTS(const QUBOInstance& qi, double runtime_limit,
 		     bool validation, QUBOCallback *qc);
 };
+
+}
 
 #endif

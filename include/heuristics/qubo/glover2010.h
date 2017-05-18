@@ -7,6 +7,8 @@
 #include "problem/qubo_instance.h"
 #include "util/random.h"
 
+namespace MQLib {
+
 class Glover2010QUBOSolution : public QUBOSolution {
  public:
   // Convert from QUBOSolution to Glover2010QUBOSolution
@@ -75,5 +77,7 @@ class Glover2010 : public QUBOHeuristic {
   Glover2010(const QUBOInstance& qi, double runtime_limit, bool validation,
              QUBOCallback *qc);
 };
+
+}
 
 #endif

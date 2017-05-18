@@ -5,6 +5,8 @@
 #include "problem/qubo_heuristic.h"
 #include "problem/qubo_instance.h"
 
+namespace MQLib {
+
 class Katayama2001Solution : public QUBOSolution {
  public:
   // Convert from QUBOSolution to Katayama2001
@@ -21,5 +23,7 @@ class Katayama2001 : public QUBOHeuristic {
                QUBOCallback *qc);
 };
 
+
+}
 
 #endif

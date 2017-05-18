@@ -7,6 +7,8 @@
 #include "heuristics/qubo/qubo_simple_solution.h"
 #include "util/random.h"
 
+namespace MQLib {
+
 // Empty solution
 QUBOSimpleSolution::QUBOSimpleSolution(const QUBOInstance& qi,
                                        QUBOHeuristic *heuristic,
@@ -115,4 +117,6 @@ void QUBOSimpleSolution::PopulateFromAssignments() {
       weight_ += 2.0 * it->second;
     }
   }
+}
+
 }

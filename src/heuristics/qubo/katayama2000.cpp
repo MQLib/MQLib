@@ -3,6 +3,8 @@
 #include "heuristics/qubo/katayama2000.h"
 #include "util/random.h"
 
+namespace MQLib {
+
 Katayama2000QUBOSolution::Katayama2000QUBOSolution(const Katayama2000QUBOSolution &x1,
 						   const Katayama2000QUBOSolution &x2) :
   QUBOSolution(x1) {
@@ -304,4 +306,6 @@ Katayama2000::Katayama2000(const QUBOInstance& qi, double runtime_limit,
       break;
     }
   }
+}
+
 }

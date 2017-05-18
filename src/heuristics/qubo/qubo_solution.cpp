@@ -8,6 +8,8 @@
 #include "problem/qubo_instance.h"
 #include "util/random.h"
 
+namespace MQLib {
+
 // Empty solution
 QUBOSolution::QUBOSolution(const QUBOInstance& qi, QUBOHeuristic *heuristic) :
   ExtendedSolution(qi.get_size(), 0),
@@ -221,4 +223,6 @@ QUBOSolution::QUBOSolution(const QUBOPartialSolution& x) :
       diff_weights_[i] = x.get_diff1()[i];
     }
   }
+}
+
 }

@@ -9,6 +9,8 @@
 #include "problem/heuristic.h"
 #include "util/random.h"
 
+namespace MQLib {
+
 GraphMetrics::GraphMetrics(const MaxCutInstance& mi) :
   mi_(mi) {}
 
@@ -835,4 +837,6 @@ double GraphMetrics::MaximalIndependentSet() {
   }
 
   return ((double)misSize) / n;
+}
+
 }

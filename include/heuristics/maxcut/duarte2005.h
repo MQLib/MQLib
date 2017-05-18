@@ -4,6 +4,8 @@
 #include "problem/max_cut_heuristic.h"
 #include "heuristics/maxcut/max_cut_solution.h"
 
+namespace MQLib {
+
 class Duarte2005Solution : public MaxCutSolution {
  public:
   // Convert from MaxCutSolution to Duarte2005Solution
@@ -36,5 +38,7 @@ class Duarte2005 : public MaxCutHeuristic {
   Duarte2005(const MaxCutInstance& mi, double runtime_limit, bool validation,
              MaxCutCallback *mc);
 };
+
+}
 
 #endif

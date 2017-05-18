@@ -5,6 +5,8 @@
 #include "heuristics/maxcut/max_cut_partial_solution.h"
 #include "problem/max_cut_instance.h"
 
+namespace MQLib {
+
 MaxCutPartialSolution::MaxCutPartialSolution(const MaxCutInstance& mi,
 					     MaxCutHeuristic *heuristic) :
   mi_(mi),
@@ -195,4 +197,6 @@ void MaxCutPartialSolution::UpdateCutValues(int update_index, int new_value) {
     gainNS_[update_index] -= gainS_[update_index];
     gainS_[update_index] = 0.0;
   }
+}
+
 }
