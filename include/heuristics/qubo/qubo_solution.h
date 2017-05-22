@@ -6,7 +6,7 @@
 #include "heuristics/qubo/qubo_partial_solution.h"
 #include "problem/qubo_heuristic.h"
 
-namespace MQLib {
+namespace mqlib {
 
 class QUBOSolution : public ExtendedSolution {
  public:

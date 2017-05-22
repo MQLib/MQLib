@@ -3,7 +3,7 @@
 #include <vector>
 #include "util/random.h"
 
-namespace MQLib {
+namespace mqlib {
 
 int Random::RouletteWheel(const std::vector<double>& scores) {
   double score_sum = 0.0;

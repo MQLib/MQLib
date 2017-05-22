@@ -5,7 +5,7 @@
 #include "problem/qubo_heuristic.h"
 #include "problem/qubo_instance.h"
 
-namespace MQLib {
+namespace mqlib {
 
 class Beasley1998Solution : public QUBOSolution {
  public:

@@ -5,7 +5,7 @@
 #include "problem/max_cut_heuristic.h"
 #include "problem/qubo_heuristic.h"
 
-namespace MQLib {
+namespace mqlib {
 
 class MaxCutHyperheuristic : public MaxCutHeuristic {
  public:

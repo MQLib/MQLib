@@ -4,7 +4,7 @@
 #include "problem/max_cut_heuristic.h"
 #include "heuristics/maxcut/max_cut_solution.h"
 
-namespace MQLib {
+namespace mqlib {
 
 class Duarte2005Solution : public MaxCutSolution {
  public:

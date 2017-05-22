@@ -8,7 +8,7 @@
 #include "problem/heuristic.h"
 #include "util/random.h"
 
-namespace MQLib {
+namespace mqlib {
 
 // Perform all first available 1-swaps. This is nearly identical to
 // ExtendedSolution::AllFirst1Swap, except it has a tolerance.

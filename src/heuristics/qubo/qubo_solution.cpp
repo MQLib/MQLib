@@ -8,7 +8,7 @@
 #include "problem/qubo_instance.h"
 #include "util/random.h"
 
-namespace MQLib {
+namespace mqlib {
 
 // Empty solution
 QUBOSolution::QUBOSolution(const QUBOInstance& qi, QUBOHeuristic *heuristic) :

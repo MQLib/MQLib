@@ -5,7 +5,7 @@
 #include "heuristics/maxcut/max_cut_solution.h"
 #include "problem/max_cut_heuristic.h"
 
-namespace MQLib {
+namespace mqlib {
 
 class Laguna2009CE : public MaxCutHeuristic {
  public:

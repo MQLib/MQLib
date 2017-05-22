@@ -2,7 +2,7 @@
 #include <math.h>
 #include "heuristics/extended_solution.h"
 
-namespace MQLib {
+namespace mqlib {
 
 ExtendedSolution::ExtendedSolution(int N, int init_assignment) :
   BaseSolution(N, init_assignment),

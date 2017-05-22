@@ -3,7 +3,7 @@
 
 #include "problem/max_cut_heuristic.h"
 
-namespace MQLib {
+namespace mqlib {
 
 class deSousa2013 : public MaxCutHeuristic {
  public:

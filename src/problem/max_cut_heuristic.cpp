@@ -6,7 +6,7 @@
 #include "problem/max_cut_instance.h"
 #include "heuristics/maxcut/max_cut_solution.h"
 
-namespace MQLib {
+namespace mqlib {
 
 MaxCutHeuristic::MaxCutHeuristic(const MaxCutInstance& mi,
 				 double runtime_limit, bool validation,

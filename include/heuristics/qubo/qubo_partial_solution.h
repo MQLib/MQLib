@@ -4,7 +4,7 @@
 #include <vector>
 #include "problem/qubo_heuristic.h"
 
-namespace MQLib {
+namespace mqlib {
 
 // Some constructive procedures for QUBO assign fractional values to variables
 // and maintain the gains associated with a switch to either value 0 or value 1.

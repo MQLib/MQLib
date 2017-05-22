@@ -3,7 +3,7 @@
 #include "heuristics/qubo/merz2004.h"
 #include "util/random.h"
 
-namespace MQLib {
+namespace mqlib {
 
 // Crossover -- we'll start with x1 and just flip the variables that change
 Merz2004Solution::Merz2004Solution(const Merz2004Solution& x1,

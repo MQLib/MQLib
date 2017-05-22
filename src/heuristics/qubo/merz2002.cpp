@@ -3,7 +3,7 @@
 #include "heuristics/qubo/merz2002.h"
 #include "util/random.h"
 
-namespace MQLib {
+namespace mqlib {
 
 Merz2002PartialSolution::Merz2002PartialSolution(const QUBOInstance& qi,
 						 QUBOHeuristic *heuristic) :

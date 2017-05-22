@@ -4,7 +4,7 @@
 #include "heuristics/qubo/katayama2001.h"
 #include "util/random.h"
 
-namespace MQLib {
+namespace mqlib {
 
 Katayama2001Solution::Katayama2001Solution(const QUBOSolution &x) :
 QUBOSolution(x) {}

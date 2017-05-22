@@ -2,12 +2,12 @@
 #define PROBLEM_QUBO_HEURISTIC_H_
 
 #include <vector>
-namespace MQLib { class QUBOSimpleSolution; }
+namespace mqlib { class QUBOSimpleSolution; }
 #include "heuristics/qubo/qubo_simple_solution.h"
 #include "problem/heuristic.h"
 #include "problem/qubo_instance.h"
 
-namespace MQLib {
+namespace mqlib {
 
 class QUBOCallback {
  public:

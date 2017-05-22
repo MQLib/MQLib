@@ -4,7 +4,7 @@
 #include "heuristics/qubo/alkhamis1998.h"
 #include "util/random.h"
 
-namespace MQLib {
+namespace mqlib {
 
 void Alkhamis1998Solution::SA(double T_initial, int iteration) {
   // Parameters

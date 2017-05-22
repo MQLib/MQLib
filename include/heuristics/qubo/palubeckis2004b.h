@@ -6,7 +6,7 @@
 #include "problem/qubo_instance.h"
 #include <vector>
 
-namespace MQLib {
+namespace mqlib {
 
 // NOTE: In the paper Palubeckis2004b, for a given solution x the authors
 // describe a procedure in which the problem instance is adjusted (via a simple

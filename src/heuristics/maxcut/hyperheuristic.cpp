@@ -10,7 +10,7 @@
 #include "util/random.h"
 #include "util/randomForest.h"
 
-namespace MQLib {
+namespace mqlib {
 
 bool MaxCutHyperheuristic::FileExists(const std::string& filename) {
   FILE *f = fopen(filename.c_str(), "r");

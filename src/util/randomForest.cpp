@@ -6,7 +6,7 @@
 
 #include "util/randomForest.h"
 
-namespace MQLib {
+namespace mqlib {
 
 RandomForest::RandomForest(const std::string& filename) {
   std::ifstream file(filename.c_str());

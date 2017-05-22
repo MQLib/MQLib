@@ -4,7 +4,7 @@
 #include "heuristics/qubo/beasley1998.h"
 #include "util/random.h"
 
-namespace MQLib {
+namespace mqlib {
 
 Beasley1998Solution::Beasley1998Solution(const QUBOSolution &x) :
 QUBOSolution(x) {}

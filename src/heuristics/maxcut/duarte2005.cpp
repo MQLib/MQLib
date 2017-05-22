@@ -4,7 +4,7 @@
 #include "heuristics/maxcut/duarte2005.h"
 #include "util/random.h"
 
-namespace MQLib {
+namespace mqlib {
 
 ///////////////////////////////////////////////////////////////////////////////
 // SOLUTION

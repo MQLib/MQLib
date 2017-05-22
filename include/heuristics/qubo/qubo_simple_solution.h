@@ -3,13 +3,13 @@
 
 #include <vector>
 #include "heuristics/base_solution.h"
-namespace MQLib { class QUBOHeuristic; }
-namespace MQLib { class QUBOInstance; }
+namespace mqlib { class QUBOHeuristic; }
+namespace mqlib { class QUBOInstance; }
 #include "problem/qubo_heuristic.h"
-namespace MQLib { class MaxCutSimpleSolution; }
+namespace mqlib { class MaxCutSimpleSolution; }
 #include "heuristics/maxcut/max_cut_simple_solution.h"
 
-namespace MQLib {
+namespace mqlib {
 
 class QUBOSimpleSolution : public BaseSolution {
  public:

@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 
-namespace MQLib {
+namespace mqlib {
 
 class Random {
  public:

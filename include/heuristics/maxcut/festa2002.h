@@ -5,7 +5,7 @@
 #include "heuristics/maxcut/max_cut_partial_solution.h"
 #include "heuristics/maxcut/max_cut_solution.h"
 
-namespace MQLib {
+namespace mqlib {
 
 class Festa2002PartialSolution : public MaxCutPartialSolution {
  public:

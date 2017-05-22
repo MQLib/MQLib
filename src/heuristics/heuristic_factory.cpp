@@ -26,7 +26,7 @@
 #include "heuristics/qubo/palubeckis2006.h"
 #include "heuristics/qubo/pardalos2008.h"
 
-namespace MQLib {
+namespace mqlib {
 
 // Get a pointer to a heuristic of a templated type
 template<typename T> MaxCutHeuristic* NewMaxCutHeur(const MaxCutInstance& mi,

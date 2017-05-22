@@ -5,7 +5,7 @@
 #include "heuristics/maxcut/max_cut_partial_solution.h"
 #include "problem/max_cut_instance.h"
 
-namespace MQLib {
+namespace mqlib {
 
 MaxCutPartialSolution::MaxCutPartialSolution(const MaxCutInstance& mi,
 					     MaxCutHeuristic *heuristic) :

@@ -7,7 +7,7 @@
 #include "heuristics/maxcut/max_cut_simple_solution.h"
 #include "util/random.h"
 
-namespace MQLib {
+namespace mqlib {
 
 // Empty solution
 MaxCutSimpleSolution::MaxCutSimpleSolution(const MaxCutInstance& mi,

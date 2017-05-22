@@ -7,7 +7,7 @@
 #include "problem/max_cut_instance.h"
 #include "problem/qubo_instance.h"
 
-namespace MQLib {
+namespace mqlib {
 
 // Load instance from file
 MaxCutInstance::MaxCutInstance(const std::string& filename) {

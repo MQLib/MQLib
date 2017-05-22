@@ -5,7 +5,7 @@
 #include <vector>
 #include "problem/max_cut_instance.h"
 
-namespace MQLib {
+namespace mqlib {
 
 class GraphMetrics {
  public:

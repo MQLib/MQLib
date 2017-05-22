@@ -8,7 +8,7 @@
 #include "problem/heuristic.h"
 #include "util/random.h"
 
-namespace MQLib {
+namespace mqlib {
 
 Festa2002Solution::Festa2002Solution(const MaxCutSolution &x) :
   MaxCutSolution(x) {

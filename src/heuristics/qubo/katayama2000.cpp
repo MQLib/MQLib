@@ -3,7 +3,7 @@
 #include "heuristics/qubo/katayama2000.h"
 #include "util/random.h"
 
-namespace MQLib {
+namespace mqlib {
 
 Katayama2000QUBOSolution::Katayama2000QUBOSolution(const Katayama2000QUBOSolution &x1,
 						   const Katayama2000QUBOSolution &x2) :

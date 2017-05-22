@@ -3,7 +3,7 @@
 #include "problem/max_cut_instance.h"
 #include "problem/qubo_instance.h"
 
-namespace MQLib {
+namespace mqlib {
 
 // Load input matrix from provided file
 QUBOInstance::QUBOInstance(const std::string& filename) {

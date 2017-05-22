@@ -7,7 +7,7 @@
 #include "problem/qubo_instance.h"
 #include "util/random.h"
 
-namespace MQLib {
+namespace mqlib {
 
 class Glover2010QUBOSolution : public QUBOSolution {
  public:

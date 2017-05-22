@@ -4,7 +4,7 @@
 #include <iostream>
 #include "heuristics/base_solution.h"
 
-namespace MQLib {
+namespace mqlib {
 
 BaseSolution::BaseSolution(int N, int init_assignment) :
   assignments_(N, init_assignment),

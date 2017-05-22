@@ -4,7 +4,7 @@
 #include "problem/heuristic.h"
 #include "util/random.h"
 
-namespace MQLib {
+namespace mqlib {
 
 void deSousa2013::AlgorithmIteration() {
   // Parameters (population size and number of generations set based on

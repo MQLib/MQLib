@@ -4,7 +4,7 @@
 #include "heuristics/qubo/hasan2000.h"
 #include "util/random.h"
 
-namespace MQLib {
+namespace mqlib {
 
 Hasan2000Solution::Hasan2000Solution(const Hasan2000Solution& x1,
 				     const Hasan2000Solution& x2) :

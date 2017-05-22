@@ -5,7 +5,7 @@
 #include "heuristics/qubo/qubo_partial_solution.h"
 #include "problem/qubo_instance.h"
 
-namespace MQLib {
+namespace mqlib {
 
 QUBOPartialSolution::QUBOPartialSolution(const QUBOInstance& qi,
 					 QUBOHeuristic *heuristic) :

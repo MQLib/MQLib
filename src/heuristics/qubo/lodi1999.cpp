@@ -5,7 +5,7 @@
 #include "heuristics/qubo/lodi1999.h"
 #include "util/random.h"
 
-namespace MQLib {
+namespace mqlib {
 
 Lodi1999MinRange::Lodi1999MinRange(const QUBOInstance& qi) :
   qi_(qi),

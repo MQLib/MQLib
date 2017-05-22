@@ -7,7 +7,7 @@
 #include <vector>
 #include "problem/instance.h"
 
-namespace MQLib {
+namespace mqlib {
 
 void Instance::AddLink(int n1, int n2, double weight,
 		       std::vector<std::vector<std::pair<int, double> > >* links,

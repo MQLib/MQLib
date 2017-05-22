@@ -90,9 +90,9 @@ To illustrate the basic code needed to run a heuristic and get information about
 #include "heuristics/maxcut/burer2002.h"
 
 int main(int argc, char** argv) {
-  MQLib::MaxCutInstance mi("bin/sampleMaxCut.txt");
-  MQLib::Burer2002 heur(mi, 10.0, false, NULL);
-  const MQLib::MaxCutSimpleSolution& mcSol = heur.get_best_solution();
+  mqlib::MaxCutInstance mi("bin/sampleMaxCut.txt");
+  mqlib::Burer2002 heur(mi, 10.0, false, NULL);
+  const mqlib::MaxCutSimpleSolution& mcSol = heur.get_best_solution();
   std::cout << "Best objective value: " << mcSol.get_weight() << std::endl;
   const std::vector<int>& solution = mcSol.get_assignments();
   for (int i=0; i < solution.size(); ++i) {
@@ -102,9 +102,9 @@ int main(int argc, char** argv) {
 }
 ```
 
-All classes of MQLib reside under the namespace `MQLib`. The constructor to `MQLib::MaxCutInstance` takes a file name as an argument and loads the instance from the file. We construct `heur`, our heuristic, by passing it the instance, the runtime limit, an indicator for whether to run validity checks after the run is completed, and a pointer to an object specifying callbacks (which we pass as `NULL`). The heuristic is run in the constructor, so the run will be complete once this second line of code in `main` is done running.
+All classes of MQLib reside under the namespace `mqlib`. The constructor to `mqlib::MaxCutInstance` takes a file name as an argument and loads the instance from the file. We construct `heur`, our heuristic, by passing it the instance, the runtime limit, an indicator for whether to run validity checks after the run is completed, and a pointer to an object specifying callbacks (which we pass as `NULL`). The heuristic is run in the constructor, so the run will be complete once this second line of code in `main` is done running.
 
-The best solution found during a heuristic run can be accessed with the `get_best_solution` function, which returns a reference to a `MQLib::MaxCutSimpleSolution` object. The `get_weight` and `get_assignments` functions can be used to obtain the objective value and node assignments for this solution.
+The best solution found during a heuristic run can be accessed with the `get_best_solution` function, which returns a reference to a `mqlib::MaxCutSimpleSolution` object. The `get_weight` and `get_assignments` functions can be used to obtain the objective value and node assignments for this solution.
 
 To build this code, we need to provide the `C++` compiler with the header files for the MQLib project, which can be done with the `-I` compiler flag. Further, we need to provide the library `bin/libMQLib.a` to the compiler. Thus the compilation line would be `g++ -Iinclude linked.cpp bin/libMQLib.a`.
 
@@ -121,18 +121,18 @@ Index 2 : 1
 
 A heuristic can be run based on its name using the `HeuristicFactory` class, which is used in the MQLib executable both to dispatch heuristics specified on the command line and also to dispatch heuristics in the hyper-heuristic.
 
-The below code uses a `MQLib::HeuristicFactory` object to run the QUBO heuristic `GLOVER1998a` on the QUBO problem instance [bin/sampleQUBO.txt](sampleQUBO.txt).
+The below code uses a `mqlib::HeuristicFactory` object to run the QUBO heuristic `GLOVER1998a` on the QUBO problem instance [bin/sampleQUBO.txt](sampleQUBO.txt).
 
 ```
 #include <iostream>
 #include "heuristics/heuristic_factory.h"
 
 int main(int argc, char** argv) {
-  MQLib::QUBOInstance qi("bin/sampleQUBO.txt");
-  MQLib::HeuristicFactory factory;
-  MQLib::QUBOHeuristic* heur = factory.RunQUBOHeuristic("GLOVER1998a", qi,
+  mqlib::QUBOInstance qi("bin/sampleQUBO.txt");
+  mqlib::HeuristicFactory factory;
+  mqlib::QUBOHeuristic* heur = factory.RunQUBOHeuristic("GLOVER1998a", qi,
                                                  10.0, false, NULL);
-  const MQLib::QUBOSimpleSolution& sol = heur->get_best_solution();
+  const mqlib::QUBOSimpleSolution& sol = heur->get_best_solution();
   std::cout << "Best objective value: " << sol.get_weight() << std::endl;
   const std::vector<int>& solution = sol.get_assignments();
   for (int i=0; i < solution.size(); ++i) {
@@ -143,7 +143,7 @@ int main(int argc, char** argv) {
 }
 ```
 
-Of note, the `MQLib::HeuristicFactory` returns a pointer to a heuristic that was allocated with the `new` operator, and it is the responsibility of the calling code to free this memory once it is no longer needed using the `delete` operator (otherwise the code will have a memory leak).
+Of note, the `mqlib::HeuristicFactory` returns a pointer to a heuristic that was allocated with the `new` operator, and it is the responsibility of the calling code to free this memory once it is no longer needed using the `delete` operator (otherwise the code will have a memory leak).
 
 The code can be compiled as with the first example, and provides similar output:
 
@@ -156,21 +156,21 @@ Index 2 : 1
 
 ### Running a Heuristic for One Problem on an Instance of the Other
 
-Due to the simple reductions available from Max-Cut to QUBO and from QUBO to Max-Cut, it is simple to obtain solutions for a problem instance for one type of problem using a heuristic for the other problem. For instance, consider using the hyper-heuristic provided in the code base (which is a `MQLib::MaxCutHeuristic`) to solve a QUBO instance. This can be done by reducing the QUBO instance to a Max-Cut instance, solving using the hyper-heuristic, and then converting the resulting solution back to a solution for the original QUBO instance:
+Due to the simple reductions available from Max-Cut to QUBO and from QUBO to Max-Cut, it is simple to obtain solutions for a problem instance for one type of problem using a heuristic for the other problem. For instance, consider using the hyper-heuristic provided in the code base (which is a `mqlib::MaxCutHeuristic`) to solve a QUBO instance. This can be done by reducing the QUBO instance to a Max-Cut instance, solving using the hyper-heuristic, and then converting the resulting solution back to a solution for the original QUBO instance:
 
 ```
 #include <iostream>
 #include "heuristics/maxcut/hyperheuristic.h"
 
 int main(int argc, char** argv) {
-  MQLib::QUBOInstance qi("bin/sampleQUBO.txt");
-  MQLib::MaxCutInstance mi(qi);
+  mqlib::QUBOInstance qi("bin/sampleQUBO.txt");
+  mqlib::MaxCutInstance mi(qi);
   std::string selectedHeuristic;
-  MQLib::MaxCutHyperheuristic heur(mi, 10.0, false, NULL, 144, &selectedHeuristic);
+  mqlib::MaxCutHyperheuristic heur(mi, 10.0, false, NULL, 144, &selectedHeuristic);
   std::cout << "Selected heuristic: " << selectedHeuristic << std::endl;
 
-  const MQLib::MaxCutSimpleSolution& mcSol = heur.get_best_solution();
-  MQLib::QUBOSimpleSolution quboSol(mcSol, qi, NULL);
+  const mqlib::MaxCutSimpleSolution& mcSol = heur.get_best_solution();
+  mqlib::QUBOSimpleSolution quboSol(mcSol, qi, NULL);
   std::cout << "Best objective value: " << quboSol.get_weight() << std::endl;
   const std::vector<int>& solution = quboSol.get_assignments();
   for (int i=0; i < solution.size(); ++i) {
@@ -180,7 +180,7 @@ int main(int argc, char** argv) {
 }
 ```
 
-We construct the `MQLib::MaxCutInstance` named `mi` out of the `MQLib::QUBOInstance` named `qi` by passing `qi` as the sole argument to the `MQLib::MaxCutInstance` constructor (a `MQLib::QUBOInstance` can be obtained from a `MQLib::MaxCutInstance` by flipping this construction). When constructing (and thus running) the hyper-heuristic, we pass two additional arguments that are not passed to other heuristics: a seed and a pointer to a string, which it populates with the name of the heuristic that was selected for the run. After the heuristic is done running, we convert the best solution from a `MQLib::MaxCutSimpleSolution` named `mcSol` to a `MQLib::QUBOSimpleSolution` for the original instance named `quboSol` by constructing a `MQLib::QUBOSimpleSolution` using `mcSol`, the original instance `qi`, and a `NULL` pointer for the associated `MQLib::QUBOHeuristic`.
+We construct the `mqlib::MaxCutInstance` named `mi` out of the `mqlib::QUBOInstance` named `qi` by passing `qi` as the sole argument to the `mqlib::MaxCutInstance` constructor (a `mqlib::QUBOInstance` can be obtained from a `mqlib::MaxCutInstance` by flipping this construction). When constructing (and thus running) the hyper-heuristic, we pass two additional arguments that are not passed to other heuristics: a seed and a pointer to a string, which it populates with the name of the heuristic that was selected for the run. After the heuristic is done running, we convert the best solution from a `mqlib::MaxCutSimpleSolution` named `mcSol` to a `mqlib::QUBOSimpleSolution` for the original instance named `quboSol` by constructing a `mqlib::QUBOSimpleSolution` using `mcSol`, the original instance `qi`, and a `NULL` pointer for the associated `mqlib::QUBOHeuristic`.
 
 Building the code as before, we obtain similar output, indicating the heuristic that was selected by the hyper-heuristic and the best solution to the original QUBO instance:
 
@@ -206,13 +206,13 @@ As an example, consider programmatically creating the QUBO matrix specified in t
 int main(int argc, char** argv) {
   const double m[] = {5.0, 3.0, 1.0};
   std::vector<double> mainDiag(m, m+3);
-  std::vector<MQLib::Instance::InstanceTuple> offDiag;
-  offDiag.push_back(MQLib::Instance::InstanceTuple(std::make_pair(1, 2), -6.0));
-  offDiag.push_back(MQLib::Instance::InstanceTuple(std::make_pair(2, 3), -1.0));
-  MQLib::QUBOInstance qi(offDiag, mainDiag, 3);
-  MQLib::Glover1998a heur(qi, 10.0, false, NULL);
+  std::vector<mqlib::Instance::InstanceTuple> offDiag;
+  offDiag.push_back(mqlib::Instance::InstanceTuple(std::make_pair(1, 2), -6.0));
+  offDiag.push_back(mqlib::Instance::InstanceTuple(std::make_pair(2, 3), -1.0));
+  mqlib::QUBOInstance qi(offDiag, mainDiag, 3);
+  mqlib::Glover1998a heur(qi, 10.0, false, NULL);
 
-  const MQLib::QUBOSimpleSolution& sol = heur.get_best_solution();
+  const mqlib::QUBOSimpleSolution& sol = heur.get_best_solution();
   std::cout << "Best objective value: " << sol.get_weight() << std::endl;
   const std::vector<int>& solution = sol.get_assignments();
   for (int i=0; i < solution.size(); ++i) {
@@ -222,7 +222,7 @@ int main(int argc, char** argv) {
 }
 ```
 
-When constructing the off-diagonal entries of the instance, we create a vector of type `MQLib::Instance::InstanceTuple`, which is a typedef of type `std::pair<std::pair<int, int>, double>`. Variable numbers are 1-indexed when providing this information. The output of this code is the same as the previous example:
+When constructing the off-diagonal entries of the instance, we create a vector of type `mqlib::Instance::InstanceTuple`, which is a typedef of type `std::pair<std::pair<int, int>, double>`. Variable numbers are 1-indexed when providing this information. The output of this code is the same as the previous example:
 
 ```
 Best objective value: 6
@@ -231,13 +231,13 @@ Index 1 : 0
 Index 2 : 1
 ```
 
-A `MQLib::MaxCutInstance` can be constructed similarly, by providing an edge list as a vector of type `MQLib::Instance::InstanceTuple`. Node numbers are 1-indexed in the edge list. For instance, a Max-Cut instance with three nodes and a link of weight 3 between nodes 1 and 2 and a link of weight -2 between nodes 2 and 3 could be constructed with:
+A `mqlib::MaxCutInstance` can be constructed similarly, by providing an edge list as a vector of type `mqlib::Instance::InstanceTuple`. Node numbers are 1-indexed in the edge list. For instance, a Max-Cut instance with three nodes and a link of weight 3 between nodes 1 and 2 and a link of weight -2 between nodes 2 and 3 could be constructed with:
 
 ```
-std::vector<MQLib::Instance::InstanceTuple> edgeList;
-edgeList.push_back(MQLib::Instance::InstanceTuple(std::make_pair(1, 2), 3.0));
-edgeList.push_back(MQLib::Instance::InstanceTuple(std::make_pair(2, 3), -2.0));
-MQLib::MaxCutInstance mi(edgeList, 3);
+std::vector<mqlib::Instance::InstanceTuple> edgeList;
+edgeList.push_back(mqlib::Instance::InstanceTuple(std::make_pair(1, 2), 3.0));
+edgeList.push_back(mqlib::Instance::InstanceTuple(std::make_pair(2, 3), -2.0));
+mqlib::MaxCutInstance mi(edgeList, 3);
 ```
 
 ### Accessing New Best Solutions and Implementing Custom Termination Criteria with Callbacks
@@ -249,7 +249,7 @@ All the examples thus far have provided a runtime limit that was used to determi
 #include <vector>
 #include "heuristics/maxcut/burer2002.h"
 
-using namespace MQLib {
+using namespace mqlib {
 
 class Burer2002Callback : public MaxCutCallback {
  public:
@@ -283,9 +283,9 @@ class Burer2002Callback : public MaxCutCallback {
 }
 
 int main(int argc, char** argv) {
-  MQLib::MaxCutInstance mi("bin/sampleMaxCut.txt");
-  MQLib::Burer2002Callback callback;
-  MQLib::Burer2002 heur(mi, 10.0, false, &callback);
+  mqlib::MaxCutInstance mi("bin/sampleMaxCut.txt");
+  mqlib::Burer2002Callback callback;
+  mqlib::Burer2002 heur(mi, 10.0, false, &callback);
   return 0;
 }
 ```

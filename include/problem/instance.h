@@ -5,7 +5,7 @@
 #include <utility>
 #include <vector>
 
-namespace MQLib {
+namespace mqlib {
 
 class Instance {
  public:

@@ -3,14 +3,14 @@
 
 #include <map>
 #include <string>
-namespace MQLib { class MaxCutHeuristic; }
+namespace mqlib { class MaxCutHeuristic; }
 #include "problem/max_cut_heuristic.h"
 #include "problem/max_cut_instance.h"
-namespace MQLib { class QUBOHeuristic; }
+namespace mqlib { class QUBOHeuristic; }
 #include "problem/qubo_heuristic.h"
 #include "problem/qubo_instance.h"
 
-namespace MQLib {
+namespace mqlib {
 
 class HeuristicFactory {
  public:

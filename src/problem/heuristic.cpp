@@ -5,7 +5,7 @@
 #include <vector>
 #include "problem/heuristic.h"
 
-namespace MQLib {
+namespace mqlib {
 
 Heuristic::Heuristic(double runtime_limit, bool validation) :
   validation_(validation),

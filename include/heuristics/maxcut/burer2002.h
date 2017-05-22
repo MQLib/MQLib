@@ -5,7 +5,7 @@
 #include "heuristics/maxcut/max_cut_solution.h"
 #include "problem/max_cut_heuristic.h"
 
-namespace MQLib {
+namespace mqlib {
 
 class Burer2002Solution : public MaxCutSolution {
  public:

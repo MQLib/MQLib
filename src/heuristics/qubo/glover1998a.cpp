@@ -5,7 +5,7 @@
 #include "heuristics/qubo/qubo_solution.h"
 #include "util/random.h"
 
-namespace MQLib {
+namespace mqlib {
 
 Glover1998aSolution::Glover1998aSolution(const QUBOSolution &x) :
   QUBOSolution(x) {}

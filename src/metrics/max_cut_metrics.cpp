@@ -9,7 +9,7 @@
 #include "problem/heuristic.h"
 #include "util/random.h"
 
-namespace MQLib {
+namespace mqlib {
 
 GraphMetrics::GraphMetrics(const MaxCutInstance& mi) :
   mi_(mi) {}

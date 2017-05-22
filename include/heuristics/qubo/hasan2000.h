@@ -5,7 +5,7 @@
 #include "problem/qubo_heuristic.h"
 #include "problem/qubo_instance.h"
 
-namespace MQLib {
+namespace mqlib {
 
 // hasan2000 has a simulated annealing method that is identical to the use
 // presented in alkhamis1998, except that a few parameter values are different.

@@ -7,7 +7,7 @@
 #include "heuristics/qubo/pardalos2008.h"
 #include "util/random.h"
 
-namespace MQLib {
+namespace mqlib {
 
 Pardalos2008QUBOSolution::Pardalos2008QUBOSolution(const QUBOSolution &x) :
   QUBOSolution(x) {}

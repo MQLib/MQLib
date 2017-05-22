@@ -4,7 +4,7 @@
 #include <vector>
 #include "heuristics/base_solution.h"
 
-namespace MQLib {
+namespace mqlib {
 
 class ExtendedSolution : public BaseSolution {
  public:

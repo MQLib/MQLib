@@ -6,7 +6,7 @@
 #include "heuristics/maxcut/max_cut_partial_solution.h"
 #include "problem/max_cut_heuristic.h"
 
-namespace MQLib {
+namespace mqlib {
 
 class MaxCutSolution : public ExtendedSolution {
  public:

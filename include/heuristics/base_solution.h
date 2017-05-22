@@ -3,7 +3,7 @@
 
 #include <vector>
 
-namespace MQLib {
+namespace mqlib {
 
 class BaseSolution {
  public:

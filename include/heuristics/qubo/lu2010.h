@@ -7,7 +7,7 @@
 #include "problem/qubo_instance.h"
 #include <vector>
 
-namespace MQLib {
+namespace mqlib {
 
 class Lu2010QUBOSolution : public QUBOSolution {
  public:

@@ -6,7 +6,7 @@
 #include "problem/qubo_instance.h"
 #include <vector>
 
-namespace MQLib {
+namespace mqlib {
 
 class Pardalos2008QUBOSolution : public QUBOSolution {
  public:

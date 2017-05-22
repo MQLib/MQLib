@@ -4,7 +4,7 @@
 #include "problem/qubo_instance.h"
 #include "heuristics/qubo/qubo_solution.h"
 
-namespace MQLib {
+namespace mqlib {
 
 QUBOHeuristic::QUBOHeuristic(const QUBOInstance& qi, double runtime_limit,
 			     bool validation, QUBOCallback *qc) :

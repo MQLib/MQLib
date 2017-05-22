@@ -7,7 +7,7 @@
 #include "problem/qubo_heuristic.h"
 #include "problem/qubo_instance.h"
 
-namespace MQLib {
+namespace mqlib {
 
 // NOTE: In the paper Palubeckis2006, for a given solution x the authors
 // describe a procedure in which the problem instance is adjusted (via a simple

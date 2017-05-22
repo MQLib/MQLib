@@ -6,7 +6,7 @@
 #include "problem/qubo_heuristic.h"
 #include "problem/qubo_instance.h"
 
-namespace MQLib {
+namespace mqlib {
 
 // merz2004 borrows many components from previous papers:
 //   - Its randomized greedy procedure is identical to the one from merz2002.

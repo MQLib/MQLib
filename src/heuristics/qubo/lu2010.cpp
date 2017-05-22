@@ -6,7 +6,7 @@
 #include "heuristics/qubo/lu2010.h"
 #include "util/random.h"
 
-namespace MQLib {
+namespace mqlib {
 
 Lu2010QUBOSolution::Lu2010QUBOSolution(const QUBOSolution &x) :
   QUBOSolution(x) {}

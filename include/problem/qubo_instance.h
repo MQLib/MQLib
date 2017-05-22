@@ -5,7 +5,7 @@
 #include <string>
 #include "problem/instance.h"
 
-namespace MQLib {
+namespace mqlib {
 
 // Forward declaration (since MaxCutInstance can be constructed from QUBOInstance
 // and vice versa)

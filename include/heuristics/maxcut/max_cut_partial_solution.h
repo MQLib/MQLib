@@ -4,7 +4,7 @@
 #include <vector>
 #include "problem/max_cut_heuristic.h"
 
-namespace MQLib {
+namespace mqlib {
 
 // Some constructive procedures for MAXCUT assign edges one at a time
 // and maintain the gains associated with assigning a node either to S

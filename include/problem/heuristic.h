@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 
-namespace MQLib {
+namespace mqlib {
 
 class Heuristic {
  public:

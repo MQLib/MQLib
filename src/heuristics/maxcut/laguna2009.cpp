@@ -5,7 +5,7 @@
 #include "heuristics/maxcut/laguna2009.h"
 #include "util/random.h"
 
-namespace MQLib {
+namespace mqlib {
 
 Laguna2009CE::Laguna2009CE(const MaxCutInstance& mi, double runtime_limit,
 			   bool validation, MaxCutCallback *mc) :
