@@ -21,7 +21,7 @@ before_install:
 script:
   - cmake .
   - make
-  - test/test_sample_problems.cpp
+  - test/test_sample_problems
 
 notifications:
    email: false
