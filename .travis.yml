@@ -1,0 +1,28 @@
+# Use new trusty images, should yield newer compilers and packages
+sudo: required
+dist: trusty
+language: generic
+
+matrix:
+  include:
+    - os: linux
+      env: COMPILER_NAME=clang CXX=clang++-3.8 CC=clang-3.8
+      addons:
+        apt:
+          packages:
+            - g++-5
+            - clang-3.8
+          sources: 
+            - llvm-toolchain-precise-3.8
+            - ubuntu-toolchain-r-test
+
+before_install:
+  - sudo apt-get update -qq
+script:
+  - cmake .
+  - make
+  - test/test_sample_problems.cpp
+
+notifications:
+   email: false
+
