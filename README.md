@@ -2,6 +2,8 @@
 
 # MQLib
 
+[![Build Status](https://travis-ci.org/pawelswoboda/MQLib.svg?branch=master)](https://travis-ci.org/pawelswoboda/MQLib)
+
 * An implementation of dozens of heuristics for the **M**ax-cut and **Q**UBO combinatorial optimization problems.
 * A machine learning-based hyper-heuristic that tries to select the best heuristic for a given instance.
 * Scripts to evaluate heuristics on Amazon EC2 and to analyze the results.
