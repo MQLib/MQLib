@@ -16,7 +16,7 @@ This library and the related systematic heuristic evaluation strategy are descri
 }
 ```
 
-This code is licensed under the MIT License - see `/LICENSE` for details. MQLib was created by [Iain Dunning](http://iaindunning.com), [Swati Gupta](http://swatig.scripts.mit.edu/home/), and [John Silberholz](http://johnsilberholz.com).
+This code is licensed under the MIT License - see `/LICENSE` for details. MQLib was created by [Iain Dunning](http://iaindunning.com), [Swati Gupta](https://swatigupta.tech), and [John Silberholz](http://johnsilberholz.com).
 
 ## Obtaining Source Code and Building the MQLib
 
@@ -61,7 +61,7 @@ The MQLib uses fast-to-compute problem instance metrics to predict the best-perf
 
 ### Other use cases
 
-There are other modifications possible for the MQLib that would require more involved changes to the code base or related `mqlibinstances` S3 bucket (which stores the problem instances). We summarize them here and encourage researchers to reach out to the MQLib team before working to implement these sorts of extensions by emailing Iain Dunning (iaindunning@gmail.com), Swati Gupta (swati.gupta002@gmail.com), and John Silberholz (john.silberholz@gmail.com).
+There are other modifications possible for the MQLib that would require more involved changes to the code base or related `mqlibinstances` S3 bucket (which stores the problem instances). We summarize them here and encourage researchers to reach out to the MQLib team before working to implement these sorts of extensions by emailing Iain Dunning (iaindunning@gmail.com), Swati Gupta (swatig@gatech.edu), and John Silberholz (john.silberholz@gmail.com).
 
 * **Extending the set of problem instances used for testing:** The MQLib team is enthusiastic about extending the set of problem instances used in testing Max-Cut and QUBO heuristics, and especially in adding problem instances from real-world applications of the problems. Because the `mqlibinstances` S3 bucket used for sharing instances is not publicly writable, researchers should contact the MQLib team to add new instances.
 * **Testing with a termination criterion based on representative operation counts:** Such a modification would involve tracking operation counts in the `MaxCutHeuristic` and `QUBOHeuristic` base classes, updating the termination criterion handling code in these classes, updating [src/main.cpp](src/main.cpp) to enable command-line specification of the new termination criteria, updating [analysis/runtime.R](analysis/runtime.R) and [Cloud/grabGraphInfo.py](Cloud/grabGraphInfo.py) to calculate instance-specific criteria, updating [Cloud/MQLibDispatcher.py](Cloud/MQLibDispatcher.py) and [Cloud/MQLibRunner.py](Cloud/MQLibRunner.py) to specify the new termination criteria, and testing all heuristics with the new criteria, as described in the [Reproducible Parallel Computation with Amazon Web Services guide](Cloud/README.md).
