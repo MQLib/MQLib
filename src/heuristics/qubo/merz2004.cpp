@@ -3,6 +3,8 @@
 #include "heuristics/qubo/merz2004.h"
 #include "util/random.h"
 
+namespace mqlib {
+
 // Crossover -- we'll start with x1 and just flip the variables that change
 Merz2004Solution::Merz2004Solution(const Merz2004Solution& x1,
 				   const Merz2004Solution& x2) :
@@ -290,4 +292,6 @@ Merz2004::Merz2004(const QUBOInstance& qi, double runtime_limit,
     // Fig 5 Steps 11-13: Perform diversification strategy if needed
     P.Diversify();
   }
+}
+
 }

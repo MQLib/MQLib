@@ -5,6 +5,8 @@
 #include "problem/qubo_heuristic.h"
 #include "problem/qubo_instance.h"
 
+namespace mqlib {
+
 class Katayama2000QUBOSolution : public QUBOSolution {
  public:
   // Convert from QUBOSolution to Katayama2000QUBOSolution
@@ -60,5 +62,7 @@ class Katayama2000 : public QUBOHeuristic {
   Katayama2000(const QUBOInstance& qi, double runtime_limit, bool validation,
                QUBOCallback *qc);
 };
+
+}
 
 #endif

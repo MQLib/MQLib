@@ -4,6 +4,8 @@
 #include "heuristics/maxcut/duarte2005.h"
 #include "util/random.h"
 
+namespace mqlib {
+
 ///////////////////////////////////////////////////////////////////////////////
 // SOLUTION
 Duarte2005Solution::Duarte2005Solution(const MaxCutSolution &x) :
@@ -192,4 +194,6 @@ Duarte2005::Duarte2005(const MaxCutInstance& mi, double runtime_limit,
 	next_population[sol].Mutate(p_m);
     } // PAPER: end for
   }
+}
+
 }

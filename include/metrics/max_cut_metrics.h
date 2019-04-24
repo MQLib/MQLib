@@ -5,6 +5,8 @@
 #include <vector>
 #include "problem/max_cut_instance.h"
 
+namespace mqlib {
+
 class GraphMetrics {
  public:
   GraphMetrics(const MaxCutInstance& mi);
@@ -42,5 +44,7 @@ class GraphMetrics {
                       std::vector<double>* x, std::vector<double>* orthog,
                       int maxIter, double relDiffLim);
 };
+
+}
 
 #endif

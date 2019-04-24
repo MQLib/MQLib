@@ -6,6 +6,8 @@
 #include "problem/qubo_heuristic.h"
 #include "problem/qubo_instance.h"
 
+namespace mqlib {
+
 // merz2004 borrows many components from previous papers:
 //   - Its randomized greedy procedure is identical to the one from merz2002.
 //   - Its mutate procedure is identical to the one from katayama2000, except
@@ -85,5 +87,7 @@ class Merz2004 : public QUBOHeuristic {
   Merz2004(const QUBOInstance& qi, double runtime_limit, bool validation,
            QUBOCallback *qc);
 };
+
+}
 
 #endif

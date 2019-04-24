@@ -8,6 +8,8 @@
 #include "problem/heuristic.h"
 #include "util/random.h"
 
+namespace mqlib {
+
 Festa2002Solution::Festa2002Solution(const MaxCutSolution &x) :
   MaxCutSolution(x) {
   // Fill in S_ and Sbar_ (they will be in sorted order)
@@ -459,4 +461,6 @@ Festa2002Heuristic::Festa2002Heuristic(const MaxCutInstance& mi,
     }
     first = 0;
   }
+}
+
 }

@@ -2,10 +2,12 @@
 #define PROBLEM_MAX_CUT_HEURISTIC_H_
 
 #include <vector>
-class MaxCutSimpleSolution;
+namespace mqlib { class MaxCutSimpleSolution; }
 #include "heuristics/maxcut/max_cut_simple_solution.h"
 #include "problem/heuristic.h"
 #include "problem/max_cut_instance.h"
+
+namespace mqlib {
 
 class MaxCutCallback {
  public:
@@ -59,5 +61,7 @@ class MaxCutHeuristic : public Heuristic {
   // Callback (NULL for no callback)
   MaxCutCallback *mc_;
 };
+
+}
 
 #endif

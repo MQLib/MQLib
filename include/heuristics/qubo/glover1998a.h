@@ -5,6 +5,8 @@
 #include "problem/qubo_heuristic.h"
 #include "problem/qubo_instance.h"
 
+namespace mqlib {
+
 class Glover1998aTabu {
  public:
   // Initialize to an empty tabu list for graph qi and recency list length t
@@ -57,5 +59,7 @@ class Glover1998a : public QUBOHeuristic {
   int num_span_cycle_;  // How many span cycles have been completed?
   int N_;  // Number of variables
 };
+
+}
 
 #endif

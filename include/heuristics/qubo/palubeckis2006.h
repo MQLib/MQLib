@@ -7,6 +7,8 @@
 #include "problem/qubo_heuristic.h"
 #include "problem/qubo_instance.h"
 
+namespace mqlib {
+
 // NOTE: In the paper Palubeckis2006, for a given solution x the authors
 // describe a procedure in which the problem instance is adjusted (via a simple
 // variable substitution) to one for which that solution is all 0s. This enables
@@ -44,5 +46,7 @@ class Palubeckis2006 : public QUBOHeuristic {
   Palubeckis2006(const QUBOInstance& qi, double runtime_limit, bool validation,
                  QUBOCallback *qc);
 };
+
+}
 
 #endif

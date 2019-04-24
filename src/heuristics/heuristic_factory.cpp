@@ -26,6 +26,8 @@
 #include "heuristics/qubo/palubeckis2006.h"
 #include "heuristics/qubo/pardalos2008.h"
 
+namespace mqlib {
+
 // Get a pointer to a heuristic of a templated type
 template<typename T> MaxCutHeuristic* NewMaxCutHeur(const MaxCutInstance& mi,
                                                     double runtime_limit,
@@ -213,4 +215,6 @@ void HeuristicFactory::PrintHeuristicCodes() {
     std::cout << qubo_names[i] << std::endl;
     std::cout << "  " << qubo_map_[qubo_names[i]].second << std::endl;
   }
+}
+
 }

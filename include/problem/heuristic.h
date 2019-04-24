@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 
+namespace mqlib {
+
 class Heuristic {
  public:
   Heuristic(double runtime_limit, bool validation);
@@ -47,5 +49,7 @@ class Heuristic {
   // Disable default constructor
   Heuristic();
 };
+
+}
 
 #endif

@@ -3,11 +3,13 @@
 
 #include <vector>
 #include "heuristics/base_solution.h"
-class MaxCutInstance;
-class MaxCutHeuristic;
+namespace mqlib { class MaxCutInstance; }
+namespace mqlib { class MaxCutHeuristic; }
 #include "problem/max_cut_heuristic.h"
-class QUBOSimpleSolution;
+namespace mqlib { class QUBOSimpleSolution; }
 #include "heuristics/qubo/qubo_simple_solution.h"
+
+namespace mqlib {
 
 class MaxCutSimpleSolution : public BaseSolution {
  public:
@@ -65,5 +67,7 @@ class MaxCutSimpleSolution : public BaseSolution {
   MaxCutSimpleSolution(const MaxCutInstance& mi, const std::vector<double>& p,
                        MaxCutHeuristic *heuristic);
 };
+
+}
 
 #endif

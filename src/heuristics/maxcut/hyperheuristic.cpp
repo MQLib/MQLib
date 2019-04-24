@@ -10,6 +10,8 @@
 #include "util/random.h"
 #include "util/randomForest.h"
 
+namespace mqlib {
+
 bool MaxCutHyperheuristic::FileExists(const std::string& filename) {
   FILE *f = fopen(filename.c_str(), "r");
   if (f) {
@@ -149,4 +151,6 @@ MaxCutHyperheuristic::MaxCutHyperheuristic(const MaxCutInstance&mi,
                                             false, &callback);
     delete h;  // We don't need to keep around the pointer
   }
+}
+
 }

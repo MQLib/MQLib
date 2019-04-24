@@ -4,6 +4,8 @@
 #include <vector>
 #include "heuristics/base_solution.h"
 
+namespace mqlib {
+
 class ExtendedSolution : public BaseSolution {
  public:
   // Constructor takes the number of nodes in the graph / vars in the problem
@@ -75,5 +77,7 @@ class ExtendedSolution : public BaseSolution {
   // Default constructor disabled
   ExtendedSolution();
 };
+
+}
 
 #endif

@@ -5,6 +5,8 @@
 #include "problem/qubo_heuristic.h"
 #include "problem/qubo_instance.h"
 
+namespace mqlib {
+
 // hasan2000 has a simulated annealing method that is identical to the use
 // presented in alkhamis1998, except that a few parameter values are different.
 // As a result, we will only implement the genetic algorithm and tabu search.
@@ -66,5 +68,7 @@ class Hasan2000TS : public QUBOHeuristic {
   Hasan2000TS(const QUBOInstance& qi, double runtime_limit, bool validation,
               QUBOCallback *qc);
 };
+
+}
 
 #endif

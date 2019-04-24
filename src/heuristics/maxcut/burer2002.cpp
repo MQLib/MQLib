@@ -8,6 +8,8 @@
 #include "problem/heuristic.h"
 #include "util/random.h"
 
+namespace mqlib {
+
 // Perform all first available 1-swaps. This is nearly identical to
 // ExtendedSolution::AllFirst1Swap, except it has a tolerance.
 void Burer2002Solution::All1Swap(double tolerance) {
@@ -323,4 +325,6 @@ Burer2002::Burer2002(const MaxCutInstance& mi, double runtime_limit,
       }
     }
   }
+}
+
 }

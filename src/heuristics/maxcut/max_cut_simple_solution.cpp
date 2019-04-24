@@ -7,6 +7,8 @@
 #include "heuristics/maxcut/max_cut_simple_solution.h"
 #include "util/random.h"
 
+namespace mqlib {
+
 // Empty solution
 MaxCutSimpleSolution::MaxCutSimpleSolution(const MaxCutInstance& mi,
                                            MaxCutHeuristic *heuristic,
@@ -102,4 +104,6 @@ void MaxCutSimpleSolution::PopulateFromAssignments() {
       weight_ += it->second;
     }
   }
+}
+
 }

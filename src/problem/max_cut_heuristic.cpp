@@ -6,6 +6,8 @@
 #include "problem/max_cut_instance.h"
 #include "heuristics/maxcut/max_cut_solution.h"
 
+namespace mqlib {
+
 MaxCutHeuristic::MaxCutHeuristic(const MaxCutInstance& mi,
 				 double runtime_limit, bool validation,
                                  MaxCutCallback *mc) :
@@ -105,4 +107,6 @@ bool MaxCutHeuristic::IsHistoryValid() {
     }
   }
   return true;
+}
+
 }

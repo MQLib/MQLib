@@ -6,6 +6,8 @@
 #include "heuristics/qubo/lu2010.h"
 #include "util/random.h"
 
+namespace mqlib {
+
 Lu2010QUBOSolution::Lu2010QUBOSolution(const QUBOSolution &x) :
   QUBOSolution(x) {}
 
@@ -357,4 +359,6 @@ Lu2010::Lu2010(const QUBOInstance& qi, double runtime_limit, bool validation,
       P.UpdatePool(x0);
     }
   }
+}
+
 }

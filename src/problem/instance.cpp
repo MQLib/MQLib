@@ -7,6 +7,8 @@
 #include <vector>
 #include "problem/instance.h"
 
+namespace mqlib {
+
 void Instance::AddLink(int n1, int n2, double weight,
 		       std::vector<std::vector<std::pair<int, double> > >* links,
 		       std::vector<InstanceTuple>* all,
@@ -157,4 +159,6 @@ void Instance::Load(const std::string& filename,
     std::cout << "Not enough data lines in " << filename << std::endl;
     exit(1);
   }
+}
+
 }

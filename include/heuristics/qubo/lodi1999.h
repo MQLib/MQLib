@@ -6,6 +6,8 @@
 #include "problem/qubo_heuristic.h"
 #include "problem/qubo_instance.h"
 
+namespace mqlib {
+
 class Lodi1999MinRange {
  public:
   // Initialize the globally fixed indices (CF_) and associated upper and lower
@@ -77,5 +79,7 @@ class Lodi1999 : public QUBOHeuristic {
   Lodi1999(const QUBOInstance& qi, double runtime_limit, bool validation,
            QUBOCallback *qc);
 };
+
+}
 
 #endif

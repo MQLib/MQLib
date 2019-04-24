@@ -5,6 +5,8 @@
 #include <vector>
 #include "problem/heuristic.h"
 
+namespace mqlib {
+
 Heuristic::Heuristic(double runtime_limit, bool validation) :
   validation_(validation),
   best_(0.0),
@@ -29,4 +31,6 @@ std::string Heuristic::History() {
   }
   out_str << "]";
   return out_str.str();
+}
+
 }

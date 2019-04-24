@@ -2,10 +2,12 @@
 #define PROBLEM_QUBO_HEURISTIC_H_
 
 #include <vector>
-class QUBOSimpleSolution;
+namespace mqlib { class QUBOSimpleSolution; }
 #include "heuristics/qubo/qubo_simple_solution.h"
 #include "problem/heuristic.h"
 #include "problem/qubo_instance.h"
+
+namespace mqlib {
 
 class QUBOCallback {
  public:
@@ -59,5 +61,7 @@ class QUBOHeuristic : public Heuristic {
   // Callback (NULL for no callback)
   QUBOCallback *qc_;
 };
+
+}
 
 #endif

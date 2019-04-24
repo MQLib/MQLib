@@ -5,6 +5,8 @@
 #include "problem/qubo_heuristic.h"
 #include "problem/qubo_instance.h"
 
+namespace mqlib {
+
 class Merz1999Solution : public QUBOSolution {
  public:
   // Convert from QUBOSolution to Merz1999Solution
@@ -72,5 +74,7 @@ class Merz1999Mutation : public Merz1999 {
 		  bool validation, QUBOCallback *qc) :
   Merz1999(qi, runtime_limit, validation, qc, 2) {}
 };
+
+}
 
 #endif

@@ -5,6 +5,8 @@
 #include "problem/qubo_heuristic.h"
 #include "problem/qubo_instance.h"
 
+namespace mqlib {
+
 class Beasley1998Solution : public QUBOSolution {
  public:
   // Convert from QUBOSolution to Beasley1998
@@ -28,5 +30,7 @@ class Beasley1998TS : public QUBOHeuristic {
   Beasley1998TS(const QUBOInstance& qi, double runtime_limit, bool validation,
                 QUBOCallback *qc);
 };
+
+}
 
 #endif

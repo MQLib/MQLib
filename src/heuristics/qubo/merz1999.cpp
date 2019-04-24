@@ -3,6 +3,8 @@
 #include "heuristics/qubo/merz1999.h"
 #include "util/random.h"
 
+namespace mqlib {
+
 Merz1999Solution::Merz1999Solution(const QUBOSolution &x) :
 QUBOSolution(x) {}
 
@@ -217,4 +219,6 @@ Merz1999::Merz1999(const QUBOInstance& qi, double runtime_limit, bool validation
       break;
     }
   }
+}
+
 }

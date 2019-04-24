@@ -5,6 +5,8 @@
 #include "heuristics/qubo/lodi1999.h"
 #include "util/random.h"
 
+namespace mqlib {
+
 Lodi1999MinRange::Lodi1999MinRange(const QUBOInstance& qi) :
   qi_(qi),
   CF_(qi.get_size(), -1),
@@ -365,4 +367,6 @@ Lodi1999::Lodi1999(const QUBOInstance& qi, double runtime_limit,
       global_best = population[0].get_weight();
     }
   }
+}
+
 }

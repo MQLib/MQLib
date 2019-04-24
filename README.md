@@ -2,6 +2,8 @@
 
 # MQLib
 
+[![Build Status](https://travis-ci.org/pawelswoboda/MQLib.svg?branch=master)](https://travis-ci.org/pawelswoboda/MQLib)
+
 * An implementation of dozens of heuristics for the **M**ax-cut and **Q**UBO combinatorial optimization problems.
 * A machine learning-based hyper-heuristic that tries to select the best heuristic for a given instance.
 * Scripts to evaluate heuristics on Amazon EC2 and to analyze the results.
@@ -22,9 +24,9 @@ This code is licensed under the MIT License - see `/LICENSE` for details. MQLib 
 
 The first step to building the MQLib is to download the source code by cloning the GitHub repository. This can be done by running `git clone https://github.com/MQLib/MQLib` from the command line.
 
-After changing directories to the MQLib directory, run the `make` command to build the project. Currently, this requires several GNU compiler tools (the `g++` compiler and the `ar` archive utility) as well as several common unix utilities (`find`, `sed`, `rm`, and `make`). These tools should be readily available on *nix distributions as well as on Mac operating systems with the XCode tools installed. However, they can also be accessed on Windows machines through Cygwin.
+After changing directories to the MQLib directory, run the `cmake-gui` command to specify the build location, compiler and build type (Release or Debug). This requires [CMake](https://cmake.org/) to be installed. Change into the build directory and run `make`.
 
-After this compilation step, an executable should be available at `bin/MQLib` and a linkable library should be available at `bin/MQLib.a`.
+After this compilation step, an executable should be available at `bin/MQLib` and a linkable library should be available at `bin/libMQLib.a`.
 
 ## Use Cases
 

@@ -3,12 +3,14 @@
 
 #include <map>
 #include <string>
-class MaxCutHeuristic;
+namespace mqlib { class MaxCutHeuristic; }
 #include "problem/max_cut_heuristic.h"
 #include "problem/max_cut_instance.h"
-class QUBOHeuristic;
+namespace mqlib { class QUBOHeuristic; }
 #include "problem/qubo_heuristic.h"
 #include "problem/qubo_instance.h"
+
+namespace mqlib {
 
 class HeuristicFactory {
  public:
@@ -69,5 +71,7 @@ class HeuristicFactory {
     std::string> QUBOCreator;
   std::map<std::string, QUBOCreator> qubo_map_;
 };
+
+}
 
 #endif

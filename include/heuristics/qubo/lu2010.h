@@ -7,6 +7,8 @@
 #include "problem/qubo_instance.h"
 #include <vector>
 
+namespace mqlib {
+
 class Lu2010QUBOSolution : public QUBOSolution {
  public:
   // Convert from QUBOSolution to Lu2010QUBOSolution
@@ -97,5 +99,7 @@ class Lu2010 : public QUBOHeuristic {
   Lu2010(const QUBOInstance& qi, double runtime_limit, bool validation,
          QUBOCallback *qc);
 };
+
+}
 
 #endif

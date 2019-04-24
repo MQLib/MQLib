@@ -2155,4 +2155,5 @@ void ezOptionParser::prettyPrint(std::string & out) {
 };
 }
 /* ################################################################### */
+
 #endif /* EZ_OPTION_PARSER_H */

@@ -6,6 +6,8 @@
 #include "heuristics/qubo/glover2010.h"
 #include "util/random.h"
 
+namespace mqlib {
+
 Glover2010QUBOSolution::Glover2010QUBOSolution(const QUBOSolution &x) :
   QUBOSolution(x) {}
 
@@ -250,4 +252,6 @@ Glover2010::Glover2010(const QUBOInstance& qi, double runtime_limit,
       elite.AddSolution(S0);
     }
   }
+}
+
 }

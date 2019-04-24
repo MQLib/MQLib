@@ -4,6 +4,8 @@
 #include <iostream>
 #include "heuristics/base_solution.h"
 
+namespace mqlib {
+
 BaseSolution::BaseSolution(int N, int init_assignment) :
   assignments_(N, init_assignment),
   weight_(0.0),
@@ -87,4 +89,6 @@ void BaseSolution::PrintSolution() const {
     std::cout << assignments_[i];
   }
   std::cout << std::endl;
+}
+
 }

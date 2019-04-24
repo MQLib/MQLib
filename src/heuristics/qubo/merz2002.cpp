@@ -3,6 +3,8 @@
 #include "heuristics/qubo/merz2002.h"
 #include "util/random.h"
 
+namespace mqlib {
+
 Merz2002PartialSolution::Merz2002PartialSolution(const QUBOInstance& qi,
 						 QUBOHeuristic *heuristic) :
   QUBOPartialSolution(qi, heuristic) {
@@ -125,4 +127,6 @@ Merz2002::Merz2002(const QUBOInstance& qi, double runtime_limit, bool validation
       break;
     }
   }
+}
+
 }

@@ -7,6 +7,8 @@
 #include "heuristics/qubo/pardalos2008.h"
 #include "util/random.h"
 
+namespace mqlib {
+
 Pardalos2008QUBOSolution::Pardalos2008QUBOSolution(const QUBOSolution &x) :
   QUBOSolution(x) {}
 
@@ -395,4 +397,6 @@ Pardalos2008::Pardalos2008(const QUBOInstance& qi, double runtime_limit,
       Elite.LimitByBests(bests);
     }
   }
+}
+
 }
