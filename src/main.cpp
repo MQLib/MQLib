@@ -152,7 +152,7 @@ int main(int argc, const char* argv[]) {
 	  0,  // Required?
 	  1,  // Number of args expected
 	  0,  // Delimiter if expecting multiple args
-	  "Runtime limit (seconds)",  // Help description
+	  "Runtime limit (seconds), or iteration count for baseline",  // Help description
 	  "-r",
 	  "--runtime",
 	  vD

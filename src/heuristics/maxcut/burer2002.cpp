@@ -277,7 +277,7 @@ Burer2002::Burer2002(const MaxCutInstance& mi, double runtime_limit,
   double w1norm = 0.0;
   for (auto iter=mi.get_all_edges_begin(); iter != mi.get_all_edges_end();
        ++iter) {
-    w1norm += 2.0 * iter->second;  // Count both directions of edge
+    w1norm += 2.0 * fabs(iter->second);  // Count both directions of edge
   }
 
   for (int iter=0; ; ++iter) {  // Random restart until termination criterion

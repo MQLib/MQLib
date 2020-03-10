@@ -3,6 +3,7 @@ import csv
 import multiprocessing
 import os
 import paramiko
+import random
 import subprocess
 import sys
 import time
@@ -15,11 +16,11 @@ def create_instances(tags,verbose=True):
     in parallel.
     """
 
-    if verbose: print "Launching instances... "
+    if verbose: print("Launching instances... ")
     procs = []
     returnInfo = multiprocessing.Queue()
     for tag in tags:
-        if verbose: print "  Launching %s ..."%tag
+        if verbose: print("  Launching %s ..."%tag)
         proc = multiprocessing.Process(target=CloudSetup.launch_instance,
                                          args=(),
                                        kwargs={"tag":tag,"wait":True,
@@ -39,15 +40,17 @@ def create_instances(tags,verbose=True):
     except:
         pass  # Queue is empty
     if numStarted != len(tags):
-        print "Exiting because", numStarted, "instances started out of", len(tags)
+        print("Exiting because", numStarted, "instances started out of", len(tags))
         exit(0)
 
     if verbose: 
-        print " All instances launched, but not necessarily ready for"
-        print " SSH though - check AWS console to get a better idea."
-        print " Hit [RETURN] to proceed to connection attempt."
-        raw_input()
-
+        print(" All instances launched, but not necessarily ready for")
+        print(" SSH though - check AWS console to get a better idea.")
+        print(" Hit [RETURN] to proceed to connection attempt.")
+        if sys.version_info > (3, 0):
+            input()
+        else:
+            raw_input()
 
 def connect_instances(tags,verbose=True):
     """
@@ -65,11 +68,11 @@ def connect_instances(tags,verbose=True):
         cmds[tag] = None
     all_done = False
     while not all_done:
-        print "Beginning round of connection attempts..."
+        print("Beginning round of connection attempts...")
         all_done = True
         for tag in tags:
             if cmds[tag] == None:
-                if verbose: print "  %s"%tag
+                if verbose: print("  %s"%tag)
                 # Test if connected
                 try:
                     insts[tag], cmds[tag] = CloudSetup.connect_instance(tag=tag)
@@ -79,8 +82,11 @@ def connect_instances(tags,verbose=True):
                     cmds[tag] = None
 
     if verbose: 
-        print " All connections established, hit [RETURN]"
-        raw_input()
+        print(" All connections established, hit [RETURN]")
+        if sys.version_info > (3, 0):
+            input()
+        else:
+            raw_input()
     return insts, cmds
 
 
@@ -91,7 +97,7 @@ def setup_instances(tags,cmds,verbose=True):
     multiprocessing didn't work nicely with this...
     """
 
-    if verbose: print "Copying keys, etc. to all instances, running INSTALL... "
+    if verbose: print("Copying keys, etc. to all instances, running INSTALL... ")
 
     # Locate the .boto file
     if os.path.exists(".boto"):
@@ -99,33 +105,35 @@ def setup_instances(tags,cmds,verbose=True):
     elif os.path.exists(os.path.expanduser("~/.boto")):
         botoloc = os.path.expanduser("~/.boto")
     else:
-        print "Could not locate .boto file"
+        print("Could not locate .boto file")
         exit(1)
 
     for tag in tags:
-        print "    Copying files to %s ..."%(tag)
+        print("    Copying files to %s ..."%(tag))
         f = cmds[tag].open_sftp()
         f.put("INSTALL.sh","INSTALL.sh")  # The install script
         f.put("INSTALL.py", "INSTALL.py")  # Python script that hits INSTALL.sh
         f.put(botoloc, ".boto")  # The AWS key
         f.close()
 
-        print "    Launching INSTALL.py on %s ..."%(tag)
+        print("    Launching INSTALL.py on %s ..."%(tag))
         cmds[tag].run("chmod +x INSTALL.sh")  # Make script executable        
         stdin, stdout, stderr = cmds[tag]._ssh_client.exec_command("python INSTALL.py " + sys.argv[3])  # Not blocking
 
-    print "    Waiting for INSTALL.py to complete on all machines"
+    print("    Waiting for INSTALL.py to complete on all machines")
     while True:
         time.sleep(10)
-        done = [cmds[tag].run("ls MQLib/bin/")[1].find("MQLib") >= 0 for tag in tags]
-        print "      - Installation complete on", sum(done), "/", len(done), "boxes"
+        done = [cmds[tag].run("ls MQLib/bin/")[1].decode("utf-8").find("MQLib") >= 0 for tag in tags]
+        print("      - Installation complete on", sum(done), "/", len(done), "boxes")
         if sum(done) == len(done):
             break
 
     if verbose:
-        print " Hit [RETURN] when ready to proceed."
-        raw_input()
-
+        print(" Hit [RETURN] when ready to proceed.")
+        if sys.version_info > (3, 0):
+            input()
+        else:
+            raw_input()
 
 def split_graphs(tags):
     """
@@ -139,22 +147,19 @@ def split_graphs(tags):
     # load from s3.
     if sys.argv[1] == "FULL":
         try:
-            runtime_file = "../data/runtimes.csv"
-            reader = csv.reader(open(runtime_file, "rU"))
-            header = reader.next()
-            if header != ["graphname", "runtime"]:
-                print "Incorrect header on", runtime_file
-                exit(1)
-            all_graphs = [(float(x[1]), x[0]) for x in reader]
-            all_graphs = sorted(all_graphs, reverse=True)  # Sort decreasing
+            instance_file = "../data/instances.txt"
+            all_graphs = [x.strip() for x in open(instance_file, "r")]
+            # Reproducibly shuffle the graphs to distribute the workload
+            random.seed(144)
+            random.shuffle(all_graphs)
+            print("Loaded", len(all_graphs), "instances from", instance_file)
         except Exception as e:
-            print "You need to create a", runtime_file, "file with one"
-            print "  graph per line for a full run. Please do so and re-run"
-            print "  with the 'nocreate' option."
+            print("You need to create a", instance_file, "file with one")
+            print("  graph per line for a full run.")
             exit(1)
     elif sys.argv[1] == "METRICS" and os.path.exists("metric_files.txt"):
-        all_graphs = sorted([x.strip() for x in open("metric_files.txt", "rU")])
-        print "Loaded", len(all_graphs), "instances from metric_files.txt"
+        all_graphs = sorted([x.strip() for x in open("metric_files.txt", "r")])
+        print("Loaded", len(all_graphs), "instances from metric_files.txt")
     else:
         conn = boto.connect_s3(anon=True)
         b = conn.get_bucket("mqlibinstances", validate=False)
@@ -186,17 +191,13 @@ def dispatch_and_run(tags,cmds,mach_graphs,verbose=True):
     must run and run the MQLibMaster
     """
     # Write out and copy to instances
-    if verbose: print "Copying graphs and heuristics files and starting run... "
+    if verbose: print("Copying graphs and heuristics files and starting run... ")
     for tag in tags:
-        if verbose: print " %s"%tag
+        if verbose: print(" %s"%tag)
 
         with open("/tmp/GRAPH_FILE_%s"%tag,"w") as fp:
-            if sys.argv[1] == "FULL":
-                for (runtime, g) in mach_graphs[tag]:
-                    fp.write(g + " " + str(runtime) + "\n")
-            else:
-                for g in mach_graphs[tag]:
-                    fp.write(g + "\n")
+            for g in mach_graphs[tag]:
+                fp.write(g + "\n")
 
         f = cmds[tag].open_sftp()
         f.put("/tmp/GRAPH_FILE_%s"%tag, "MQLib/Cloud/GRAPH_FILE")
@@ -204,16 +205,19 @@ def dispatch_and_run(tags,cmds,mach_graphs,verbose=True):
             f.put("../data/heuristics.txt", "MQLib/Cloud/HEUR_FILE")
         f.close()
 
-        cmds[tag]._ssh_client.exec_command("cd MQLib/Cloud; nohup python MQLibMaster.py " + sys.argv[1] + " " + tag + " &> screen_output.txt &")
-    if verbose: print "\n  Computation started on all machines"
+        if sys.argv[1] == "FULL":
+            cmds[tag]._ssh_client.exec_command("cd MQLib/Cloud; nohup python MQLibMaster.py FULL " + tag + " " + sys.argv[4] + " " + sys.argv[5] + " " + sys.argv[6] + " " + sys.argv[7] + " &> screen_output.txt &")
+        else:
+            cmds[tag]._ssh_client.exec_command("cd MQLib/Cloud; nohup python MQLibMaster.py " + sys.argv[1] + " " + tag + " &> screen_output.txt &")
+    if verbose: print("\n  Computation started on all machines")
 
 def run_dispatch():
     """
     Setup machines, run jobs, monitor, then tear them down again.
     """
 
-    if len(sys.argv) < 4 or not sys.argv[1] in ["METRICS", "FULL"] or not sys.argv[2].isdigit() or sys.argv[3].find(".git") < 0:
-        print "Usage: python MQLibDispatcher.py METRICS|FULL #NODE http://link/to/git/repo.git [nocreate] [nodispatch] [verbose]"
+    if len(sys.argv) < 4 or not sys.argv[1] in ["METRICS", "FULL"] or not sys.argv[2].isdigit() or sys.argv[3].find(".git") < 0 or (sys.argv[1] == "FULL" and (len(sys.argv) < 8 or not sys.argv[4].isdigit() or not all([x.isdigit() for x in sys.argv[5].split("_")]) or not sys.argv[6].lstrip("-").isdigit() or not sys.argv[7].lstrip("-").isdigit())):
+        print("Usage:\n  python MQLibDispatcher.py METRICS #NODE http://link/to/git/repo.git [nocreate] [nodispatch] [verbose]\n    [[or]]\n  python MQLibDispatcher.py FULL #NODE http://link/to/git/repo.git #ITERFORBASELINE SEEDS_SEPARATED_BY_UNDERSCORES MINSECONDS MAXSECONDS [nocreate] [nodispatch] [verbose]")
         exit(1)
     NUM_MACHINES     = int(sys.argv[2])
     tags = ["mqlibtest%d"%i for i in range(NUM_MACHINES)]
@@ -227,25 +231,28 @@ def run_dispatch():
 
     # Validate that required files exist
     if not os.path.exists(".boto") and not os.path.exists(os.path.expanduser("~/.boto")):
-        print "Please create a .boto file containing your AWS credentials as"
-        print " described in file Cloud/README.md. Store this file either in"
-        print " the Cloud folder or in your home directory."
+        print("Please create a .boto file containing your AWS credentials as")
+        print(" described in file Cloud/README.md. Store this file either in")
+        print(" the Cloud folder or in your home directory.")
         exit(1)
     if not os.path.exists("INSTALL.sh") or not os.path.exists("INSTALL.py"):
-        print "Please run this script from the Cloud directory."
+        print("Please run this script from the Cloud directory.")
         exit(1)
     if sys.argv[1] == "FULL":
-        runtime_file = "../data/runtimes.csv"
-        if not os.path.exists(runtime_file):
-            print "You need to create a", runtime_file, "file with one"
-            print "  graph per line for a full run."
+        instance_file = "../data/instances.txt"
+        if not os.path.exists(instance_file):
+            print("You need to create a", instance_file, "file with one")
+            print("  instance per line for a full run.")
             exit(1)
         heuristic_file = "../data/heuristics.txt"
         if not os.path.exists(heuristic_file):
-            print "You need to create a", heuristic_file, "file with one"
-            print "  heuristic to be tested per line."
+            print("You need to create a", heuristic_file, "file with one")
+            print("  heuristic to be tested per line.")
             exit(1)
 
+    # Split up graphs between the machines.
+    mach_graphs = split_graphs(tags)
+    
     # Setup security group and key pair (these are no-ops if done before)
     CloudSetup.create_security_group()
     CloudSetup.create_keypair()
@@ -264,14 +271,11 @@ def run_dispatch():
     # Set them up (if desired)
     if CREATE_MACH: setup_instances(tags,cmds,VERBOSE)
         
-    # Split up graphs between the machines.
-    mach_graphs = split_graphs(tags)
-
     # Send out jobs and start machines working (if desired)
     if DISPATCH_AND_RUN: dispatch_and_run(tags,cmds,mach_graphs,VERBOSE)
 
-    print ""
-    print "All dispatcher tasks successfully completed."
+    print("")
+    print("All dispatcher tasks successfully completed.")
 
 if __name__ == "__main__":
     run_dispatch()

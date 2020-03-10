@@ -5,8 +5,11 @@
 # 1) Start up your instance and log in
 # 2) Copy benchmark.py to the compute node
 # 3) Install fortran:
-# 
+#
+#      # Linux:
 #      > sudo apt-get install gfortran
+#      # Mac:
+#      > brew install gcc
 # 
 # 4) Download the LINPACK 100 fortran code:
 # 
@@ -41,9 +44,9 @@ all2 = []
 ops = 2.0/3.0*100.0**3 + 2.0*100.0**2
 for rep in range(10000):
     proc = subprocess.Popen(["./a.out"], stdout=subprocess.PIPE)
-    output = proc.stdout.read()
+    output = proc.stdout.read().decode("utf-8")
     all1 += [float(output.split("\n")[x].strip().split()[2]) for x in [20, 21, 22, 23]]
     all2 += [float(output.split("\n")[x].strip().split()[2]) for x in [26, 27, 28, 29]]
 
-print "Flop count 1 (Mflop):", ops * len(all1) / sum(all1) / 1e6
-print "Flop count 2 (Mflop):", ops * len(all2) / sum(all2) / 1e6
+print("Flop count 1 (Mflop):", ops * len(all1) / sum(all1) / 1e6)
+print("Flop count 2 (Mflop):", ops * len(all2) / sum(all2) / 1e6)

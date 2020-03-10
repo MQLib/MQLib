@@ -173,6 +173,7 @@ Duarte2005::Duarte2005(const MaxCutInstance& mi, double runtime_limit,
       population = next_population;
       population_scores = std::vector<double>(population.size());
       int best_score_sol = 0;
+      best_score = 0;
       for (int sol = 0; sol < population.size(); sol++) {
 	const double score_sol = population[sol].get_weight();
 	population_scores[sol] = score_sol;

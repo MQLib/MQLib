@@ -6,24 +6,24 @@ This guide describes how to perform reproducible experimentation using Amazon We
 
 You will need to install several pieces of software on your system to interface with AWS:
 
- * Python version 2.7 should be installed
+ * Python version 2.7 or 3.7 should be installed
  * If you do not already have the Python package manager `pip` installed, install it by following the instructions [on the pip website](https://pip.pypa.io/en/latest/installing.html).
- * Install required python packages with `sudo pip install paramiko` and `sudo pip install boto`. The `paramiko` package dependencies `ecdsa` and `pycrypto` should be automatically installed; if they are not follow the additional [paramiko installation instructions](http://www.paramiko.org/installing.html).
+ * Install required python packages with `sudo pip install paramiko` and `sudo pip install boto` (or, if appropriate for your system, `pip install paramiko` and `pip install boto`).
 
 ## Configuring an Amazon Web Services Account
 
 The first step is to set up an Amazon Web Services account:
 
- * Register for an account at [aws.amazon.com](https://aws.amazon.com) (registration will require credit card information).
+ * Register for an account at [aws.amazon.com](https://aws.amazon.com) (registration will require credit card information, and Amazon will perform a verification charge on your card). We recommend the free "Basic Plan" registration type.
  * Log in to the AWS console at [console.aws.amazon.com](https://console.aws.amazon.com).
- * Navigate to "Identity & Access Management"; click "Users" and "Create New Users", creating one new user with "Generate an access key for each user" checked.
- * Click "Show User Security Credentials", which should show a "Access Key ID" value and a "Secret Access Key" value. Use these values to create a file located at `~/.boto` with the following format (filling in the *'s with the value from the user security credentials).
+ * Navigate to "Identity & Access Management" (All services -> Security, Identity, & Compliance -> IAM); click "Users" and "Add User", creating one new user with "Programmatic access" checked. Do not give the user any permissions or tags, and select "Create user".
+ * You should now be able to see a "Access Key ID" value and a "Secret Access Key" value. Use these values to create a file located at `~/.boto` with the following format (filling in the *'s with the value from the user security credentials).
 ```
 [Credentials]
 aws_access_key_id = **************
 aws_secret_access_key = **************
 ```
- * From the console, navigate to "Identity & Access Management"; click "Users" and select the new user. Under "Inline Policies", click the text "click here" to add a new inline policy (you may need to click the arrow in the "Inline Policies" heading to display this text). Click "Custom Policy" and "Select", entering any policy name desired and the following policy (which grants the user full access to the account):
+ * From the console, navigate to "Identity & Access Management"; click "Users" and select the new user. Under "Permissions" select "Add inline policy". Within the "JSON" editor, enter the following policy (which grants the user full access to the account):
 ```
 {
   "Version": "2012-10-17",
@@ -36,6 +36,7 @@ aws_secret_access_key = **************
   ]
 }
 ```
+Finally, select "Review Policy", give it any name, and select "Create policy".
 
 ## Generating Problem Instance Metrics
 

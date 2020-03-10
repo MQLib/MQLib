@@ -213,7 +213,10 @@ Merz1999::Merz1999(const QUBOInstance& qi, double runtime_limit, bool validation
     }
 
     // PAPER:  until terminate=true;
-    if (!Report(population[0])) {
+    // NOTE: Iterations are very fast with the crossover and mutate versions of the
+    //       algorithm, and the best solution never gets worse through time. As a
+    //       result, we only report the new best solution every 10 iterations.
+    if ((version == 0 || iteration % 10 == 0) && !Report(population[0])) {
       break;
     }
   }

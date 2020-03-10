@@ -4,6 +4,7 @@
 
 #include "heuristics/heuristic_factory.h"
 
+#include "heuristics/maxcut/baseline.h"
 #include "heuristics/maxcut/burer2002.h"
 #include "heuristics/maxcut/deSousa2013.h"
 #include "heuristics/maxcut/duarte2005.h"
@@ -69,6 +70,8 @@ HeuristicFactory::HeuristicFactory() {
   max_cut_map_["DESOUSA2013"] =
     MaxCutCreator(&NewMaxCutHeur<deSousa2013>,
                   "Estimation of distribution algorithm");
+  max_cut_map_["BASELINE"] =
+    MaxCutCreator(&NewMaxCutHeur<Baseline>, "Baseline heuristic");
 
   // Register all QUBO heuristics
   qubo_map_["PALUBECKIS2004bMST1"] =

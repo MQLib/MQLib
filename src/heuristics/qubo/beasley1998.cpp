@@ -11,6 +11,10 @@ void Beasley1998Solution::SA(double T) {
   // PAPER: randomly select a variable k
   int k = Random::RandInt(0, N_ - 1);
   // PAPER: check if new solution better than current solution
+  // NOTES: This captures two cases that were separated in the papers (where it
+  //        improves over the best solution ever and when it doesn't do that but
+  //        does improve over the current solution). We combine those steps here
+  //        and handle updating the best solution ever in the main loop.
   if (ImprovingMove(k)) {
     // NOTES: If it's better, just take it
     UpdateCutValues(k);
@@ -48,10 +52,12 @@ void Beasley1998Solution::LocalSearch(int &t) {
   }
 }
 
-// L is the first iter where it's OK to use each vertex and iter is the current
-// iteration
-int  Beasley1998Solution::TS(std::vector<int> &L, int iter, int &t) {
-  bool took_positive_diff = false;
+// L is the first iter where it's OK to use each vertex, iter is the current
+// iteration, vStar is the best solution found in this run of the algorithm,
+// and t is a reference to the operation count, which is used to terminate the
+// procedure.
+int  Beasley1998Solution::TS(std::vector<int> &L, int iter, double vStar,
+			     int &t) {
   int K = -1;
   
   // PAPER: Initialise best neighbour value
@@ -61,22 +67,22 @@ int  Beasley1998Solution::TS(std::vector<int> &L, int iter, int &t) {
     if (L[k] > iter) continue;
     t++;
 
-    // NOTES: If flipping k is an improvement, take it
-    if (ImprovingMove(k)) {
+    // NOTES: V is what the objective value would be if we swapped k. We never
+    //        explictly form this solution.
+    double V = weight_ + diff_weights_[k];
+
+    // NOTES: If flipping k make this the best solution we have encountered,
+    //        then take the move and local search
+    if (ImprovesOver(V, vStar)) {
       // NOTES: now we actually form the swapped solution
       UpdateCutValues(k);
       // PAPER: apply the local search procedure 
       LocalSearch(t);
-      // NOTES: hacking the goto using a bool and a break
-      took_positive_diff = true;
-      // PAPER: go to done
-      break;
+      // PAPER: go to done (tabu update handled in main loop)
+      return k;
     }
 
-    // NOTES: get here if doesn't improve if we flip k. V is what the
-    //        objective value would be if we swapped k. We never explictly
-    //        form this solution.
-    double V = weight_ + diff_weights_[k];
+    // NOTES: get here if doesn't improve on the best solution ever if we flip k. 
     // PAPER: check for improved neighbouring solution
     if (V > V_starstar) {
       K = k;
@@ -84,7 +90,7 @@ int  Beasley1998Solution::TS(std::vector<int> &L, int iter, int &t) {
     }
   }
 
-  if (!took_positive_diff && K != -1) {
+  if (K != -1) {
     // PAPER: make the move for chosen variable K
     // NOTES: and there is a move to make ()
     UpdateCutValues(K);
@@ -121,7 +127,8 @@ Beasley1998SA::Beasley1998SA(const QUBOInstance& qi, double runtime_limit,
       sol.SA(T);
       // PAPER: reduce temperature
       T = alpha * T;
-      // NOTES: Need to update best ever, which we'll apply local search
+      // NOTES: Need to update best ever, which we'll apply local search on
+      //        at the end of the procedure
       if (sol.ImprovesOver(best_sol)) {
         best_sol = sol;
       }
@@ -154,6 +161,8 @@ Beasley1998TS::Beasley1998TS(const QUBOInstance& qi, double runtime_limit,
     // NOTES: This was changed to random starts so the algorithm can 
     //        run forever
     Beasley1998Solution sol(QUBOSolution::RandomSolution(qi, this));
+    // PAPER: initialise best solution value
+    double vStar = sol.get_weight();
     // PAPER: initialise tabu values (for efficiency, store the first iteration
     //        for which this vertex will be non-tabu)
     std::vector<int> L(qi.get_size(), 0);
@@ -166,7 +175,12 @@ Beasley1998TS::Beasley1998TS(const QUBOInstance& qi, double runtime_limit,
     // PAPER: T* iterations in all (count inner iterations for efficient tabu
     //        search implementation)
     for (int inner_iter = 0; t < T_star; ++inner_iter) {
-      int K = sol.TS(L, inner_iter, t);
+      int K = sol.TS(L, inner_iter, vStar, t);
+
+      // PAPER: record improved solution (moved out of local search step)
+      if (sol.get_weight() > vStar) {
+	vStar = sol.get_weight();
+      }
 
       // PAPER: tabu the chosen variable (L stores next iter where it's OK to use)
       if (K != -1)

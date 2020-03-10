@@ -71,8 +71,12 @@ Laguna2009CE::Laguna2009CE(const MaxCutInstance& mi, double runtime_limit,
       }
       
       // Alg 1 Steps 8-10: Update loop vars
-      if (X[0].ImprovesOver(bestSolution)) {
-	bestSolution = X[0].get_weight();
+      double thisBest = X[0].get_weight();
+      for (int j=1; j < X.size(); ++j) {
+	thisBest = std::max<double>(thisBest, X[j].get_weight());
+      }
+      if (BaseSolution::ImprovesOver(thisBest, bestSolution)) {
+	bestSolution = thisBest;
 	tprime = 0;
       } else {
 	++tprime;

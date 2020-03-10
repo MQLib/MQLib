@@ -12,7 +12,7 @@ class Beasley1998Solution : public QUBOSolution {
 
   void SA(double T);
   void LocalSearch(int &t);
-  int TS(std::vector<int> &L, int iter, int &t);
+  int TS(std::vector<int> &L, int iter, double vStar, int &t);
 };
 
 // Simulated Annealing algorithm

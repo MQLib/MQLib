@@ -48,8 +48,7 @@ class Hasan2000Elite {
   const std::vector<Hasan2000Solution>& get_P() const  {  return P_; }
 
  private:
-  // The population of solutions, maintained as a heap with the worst solution
-  // (smallest objective) at the top.
+  // The population of solutions.
   std::vector<Hasan2000Solution> P_;
 
   int POP_;  // Population size
