@@ -1,4 +1,4 @@
-\1;95;0cimport boto
+import boto
 import datetime
 import os
 import shutil

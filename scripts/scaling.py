@@ -44,6 +44,7 @@ def getRuntimeLimit(graphName):
 
 ##############################
 ##############################
+minERGraphSize = 1000
 maxCompleteGraphSize = 3000
 if len(sys.argv) < 3 or not all([x.isdigit() for x in sys.argv[2:]]):
     print('Usage: python scaling.py heuristics.txt n1 n2 n3 ...')
@@ -61,8 +62,9 @@ for size in [int(x) for x in sys.argv[2:]]:
     if size <= maxCompleteGraphSize:
         createCompleteGraph(size)
         runs.append(('complete.txt', getRuntimeLimit('complete.txt')))
-    createERGraph(size)
-    runs.append(('ER.txt', getRuntimeLimit('ER.txt')))
+    if size >= minERGraphSize:
+        createERGraph(size)
+        runs.append(('ER.txt', getRuntimeLimit('ER.txt')))
 
     for graphName, runtime in runs:
         for heuristic in heuristics:

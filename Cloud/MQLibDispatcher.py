@@ -224,10 +224,6 @@ def run_dispatch():
     CREATE_MACH      = not ("nocreate" in sys.argv)
     DISPATCH_AND_RUN = not ("nodispatch" in sys.argv)
     VERBOSE          = "verbose" in sys.argv
-    if sys.argv[1] == "METRICS":
-        SDB_DOMAIN = "mqlib-metrics"
-    else:
-        SDB_DOMAIN = "mqlib-domain"
 
     # Validate that required files exist
     if not os.path.exists(".boto") and not os.path.exists(os.path.expanduser("~/.boto")):
