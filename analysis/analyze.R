@@ -11,6 +11,7 @@
 #-------------------------------------------------------------------------------
 # The analysis uses multiple R packages to aid in the analysis. They can be
 # installed by running the following lines:
+if (!require("e1071")) {  install.packages("e1071") ; library(e1071)}
 if (!require("dplyr")) {  install.packages("dplyr") ; library(dplyr)}  # Aids in manipulating data
 if (!require("data.table")) {  install.packages("data.table") ; library(data.table)}  # For faster loading of data
 if (!require("ggplot2")) {  install.packages("ggplot2") ; library(ggplot2) }  # Plotting library

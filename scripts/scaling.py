@@ -3,6 +3,7 @@
 # One set of graphs is dense and the other is sparse. It tests all the heuristics
 # on graphs of specified sizes, outputting the memory usage.
 import csv
+import os.path
 import platform
 import random
 import subprocess
@@ -48,6 +49,13 @@ minERGraphSize = 1000
 maxCompleteGraphSize = 3000
 if len(sys.argv) < 3 or not all([x.isdigit() for x in sys.argv[2:]]):
     print('Usage: python scaling.py heuristics.txt n1 n2 n3 ...')
+    exit(0)
+
+if not os.path.exists("../bin"):
+    print("scaling.py must be run from the scripts folder")
+    exit(0)
+if not os.path.exists("../bin/MQLib"):
+    print("You need to run `make` in the main folder before running scaling.py")
     exit(0)
 
 # Load the heuristics to evaluate
