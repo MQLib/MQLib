@@ -6,7 +6,7 @@
 * A machine learning-based hyper-heuristic that tries to select the best heuristic for a given instance.
 * Scripts to evaluate heuristics on Amazon EC2 and to analyze the results.
 
-This library and the related systematic heuristic evaluation strategy are described in [the paper](../paper/SECM_final.pdf). To cite the MQLib, please use:
+This library and the related systematic heuristic evaluation strategy are described in [the paper](paper/SECM_final.pdf). To cite the MQLib, please use:
 ```
 @article{DunningEtAl2018,
   title={What Works Best When? A Systematic Evaluation of Heuristics for Max-Cut and {QUBO}},
