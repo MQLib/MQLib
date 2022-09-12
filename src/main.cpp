@@ -44,7 +44,7 @@ int main(int argc, const char* argv[]) {
 
   opt.overview = "MQLib: Library of Max-Cut and QUBO heuristics";
   opt.syntax = "\n# Run Max-Cut or QUBO heuristic\n./bin/MQlib -h heur_code | -hh -fM maxcut_file [-nv] [-ps] [-q | -r runtime_limit] [-s SEED]\n./bin/MQlib -h heur_code | -hh -fQ qubo_file [-nv] [-ps] [-q | -r runtime_limit] [-s SEED]\n\n# Compute metrics for an input file\n./bin/MQlib -fM maxcut_file [-mh] [-m]\n./bin/MQlib -fQ qubo_file [-mh] [-m]\n\n# List the available heuristics.\n./bin/MQlib -l";
-  opt.example = "./bin/MQlib -h BURER2002 -fM Data/set1/processed_g11.rud -r 10\n";
+  opt.example = "./bin/MQlib -h BURER2002 -fM bin/sampleMaxCut.txt -r 10\n";
 
   opt.add("",  // Default
 	  0,  // Required?
@@ -154,7 +154,7 @@ int main(int argc, const char* argv[]) {
 	  0,  // Required?
 	  1,  // Number of args expected
 	  0,  // Delimiter if expecting multiple args
-	  "Runtime limit (seconds)",  // Help description
+	  "Runtime limit (seconds), or iteration count for baseline",  // Help description
 	  "-r",
 	  "--runtime",
 	  vD

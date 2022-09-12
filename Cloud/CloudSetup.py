@@ -11,7 +11,7 @@ import boto.sdb
 SSH_FOLDER = os.path.expanduser("~/.ssh/")
 INST_TYPE  = "m3.medium"
 AWS_REGION = "us-east-1"  # US East (Virginia)
-AMI_NAME   = "ami-767a391e"    # US East (Virginia) Ubuntu 14.04 LTS (HVM)
+AMI_NAME   = "ami-08531832555a14fe2"    # US East (Virginia) Ubuntu 14.04 LTS (HVM)
 
 def create_keypair(key_name="mqlibtest"):
     """
@@ -23,6 +23,7 @@ def create_keypair(key_name="mqlibtest"):
         return  # Key already created
     ec2 = boto.ec2.connect_to_region(AWS_REGION)
     key = ec2.create_key_pair(key_name)
+    key.material = key.material.encode()  # https://github.com/boto/boto/issues/3782
     key.save(SSH_FOLDER)
 
 def create_security_group(group_name="mqlibtest"):
@@ -38,7 +39,7 @@ def create_security_group(group_name="mqlibtest"):
     group = ec2.create_security_group(
                 group_name, "MQLib SSH access group")
     group.authorize("tcp", 22, 22, "0.0.0.0/0")  # SSH is on port 22, all IPs
-    print "Created new security group"
+    print("Created new security group")
 
 def launch_instance(tag="mqlibtest1",key_name="mqlibtest",group_name="mqlibtest",
                     wait=True, returnInfo=None):
@@ -57,48 +58,49 @@ def launch_instance(tag="mqlibtest1",key_name="mqlibtest",group_name="mqlibtest"
                                             instance_type=INST_TYPE,
                                             user_data=None)
             break
-        except Exception, err:
+        except Exception as err:
             # Failed to get instance; wait 15 seconds and then try again (up to
             # 10 total times)
             errorText = str(err)
             if errorText.find("Not authorized for images") >= 0:
-                print "**************************************"
-                print "* Error from AWS suggests that the AMI code in"
-                print "* CloudSetup.py is deprecated. Please go to"
-                print "* https://aws.amazon.com/marketplace/ and search for"
-                print "* \"Ubuntu server lts hvm\", selecting the most recent"
-                print "* version. Click \"Continue\", \"Manual Launch\","
-                print "* and then copy the AMI ID for the US East region."
-                print "* Copy that to the AMI_NAME value in CloudSetup.py"
-                print "* and re-run."
-                print "***************************************"
-                print "* (Full text of error):"
-                print errorText
-                print "***************************************"
+                print("**************************************")
+                print("* Error from AWS suggests that the AMI code in")
+                print("* CloudSetup.py is deprecated. Please go to")
+                print("* https://aws.amazon.com/marketplace/ and search for")
+                print("* \"Ubuntu server lts hvm\", selecting the most recent")
+                print("* version. Click \"Continue to Subscribe\",")
+                print("* \"Accept Terms\", \"Continue to Configuration\"")
+                print("* and then copy the AMI ID for the US East region.")
+                print("* Copy that to the AMI_NAME value in CloudSetup.py")
+                print("* and re-run.")
+                print("***************************************")
+                print("* (Full text of error):")
+                print(errorText)
+                print("***************************************")
                 return None
             elif errorText.find("accept terms and subscribe") >= 0:
-                print "**************************************"
-                print "* Error from AWS suggests that you have never used this"
-                print "* AMI before and need to accept its terms and"
-                print "* subscribe to it. Please follow the link in the below"
-                print "* error text. Click \"Continue\", \"Manual Launch\","
-                print "* and \"Accept Terms\". After receiving email"
-                print "* confirmation, you can re-run the code."
-                print "**************************************"
-                print "* (Full text of error):"
-                print errorText
-                print "**************************************"
+                print("**************************************")
+                print("* Error from AWS suggests that you have never used this")
+                print("* AMI before and need to accept its terms and")
+                print("* subscribe to it. Please follow the link in the below")
+                print("* error text. Click \"Continue\", \"Manual Launch\",")
+                print("* and \"Accept Terms\". After receiving email")
+                print("* confirmation, you can re-run the code.")
+                print("**************************************")
+                print("* (Full text of error):")
+                print(errorText)
+                print("**************************************")
                 return None
             failures += 1
             if failures == max_failures:
-                print "**************************************"
-                print "* Maximum number of instance launch failures reached."
-                print "* (Full text of error):"
-                print errorText
-                print "**************************************"
+                print("**************************************")
+                print("* Maximum number of instance launch failures reached.")
+                print("* (Full text of error):")
+                print(errorText)
+                print("**************************************")
                 return None
-            print "    ** ec2.run_instances failed for tag", tag, "; waiting 15"
-            print "    ** seconds and then trying again..."
+            print("    ** ec2.run_instances failed for tag", tag, "; waiting 15")
+            print("    ** seconds and then trying again...")
             time.sleep(15)
 
     time.sleep(5)  # Slow things down -- they're never running super fast anyway
@@ -108,18 +110,18 @@ def launch_instance(tag="mqlibtest1",key_name="mqlibtest",group_name="mqlibtest"
     time.sleep(5)  # Slow things down -- they're never running super fast anyway
 
     if wait:
-        print "    Instance requested, waiting for 'running' for tag", tag
+        print("    Instance requested, waiting for 'running' for tag", tag)
         while instance.state != "running":
-            print "    %s ..."%tag
+            print("    %s ..."%tag)
             time.sleep(5)
             try:
                 instance.update()
             except EC2ResponseError as e:
-                print "******************"
-                print "Error caught in instance.update():"
-                print e.strerror
-                print "******************"
-        print "    %s done!"%tag
+                print("******************")
+                print("Error caught in instance.update():")
+                print(e.strerror)
+                print("******************")
+        print("    %s done!"%tag)
     if returnInfo:
         returnInfo.put(tag)
     return instance
@@ -134,9 +136,9 @@ def get_instance(tag="mqlibtest1"):
         for inst in res.instances:
             if "mqlibname" in inst.tags.keys():
                 if inst.tags["mqlibname"] == tag and inst.state == "running":
-                    #print "Found %s"%tag
+                    #print("Found %s"%tag)
                     return inst
-    print "Couldn't find instance"
+    print("Couldn't find instance")
     return None
 
 def connect_instance(tag="mqlibtest1",key_name="mqlibtest"):
@@ -173,7 +175,7 @@ def dump_sdb_domain(domain_name="mqlib-domain"):
     sdb, dom = setup_sdb_domain(domain_name)
     rs = dom.select('select * from `' + domain_name + '`')
     for j in rs:
-        print j
+        print(j)
 
 def get_sdb_domain_size(domain_name="mqlib-domain"):
     sdb, dom = setup_sdb_domain(domain_name)
@@ -181,7 +183,7 @@ def get_sdb_domain_size(domain_name="mqlib-domain"):
     ct = 0
     for res in rs:
         ct += int(res[u'Count'])
-    print "Size of", domain_name, ":", ct
+    print("Size of", domain_name, ":", ct)
 
 def copy_full_run(from_domain, to_domain):
     sdbFrom, domFrom = setup_sdb_domain(from_domain)
@@ -196,23 +198,23 @@ def copy_full_run(from_domain, to_domain):
         if len(values) == 25:
             domTo.batch_put_attributes(values)
             numPut += len(values.keys())
-            print numPut
+            print(numPut)
             values = {}
     if len(values.keys()) > 0:
         domTo.batch_put_attributes(values)
-    print "Done"
+    print("Done")
 
 def remove_graphs_with_names(domain_name, graphs):
     sdb, dom = setup_sdb_domain(domain_name)
     values = {}
     for idx in range(len(graphs)):
         graph = graphs[idx]
-        print "Removing runs from", graph, "(", idx+1, "/", len(graphs), ")"
+        print("Removing runs from", graph, "(", idx+1, "/", len(graphs), ")")
         rs = dom.select('select * from `' + domain_name + '` where graphname="' + graph + '"')
         for x in rs:
             key = x["graphname"] + "-" + x["heuristic"] + "-" + x["run"]
             if key in values:
-                print "OVERLAP!!"
+                print("OVERLAP!!")
             values[key] = None
             if len(values.keys()) == 25:
                 dom.batch_delete_attributes(values)
@@ -224,7 +226,7 @@ def remove_graphs_with_file(domain_name, filename):
     reader = csv.reader(open(filename, "rU"))
     header = reader.next()
     if header != ["graphname", "runtime"]:
-        print "Illegal header in remove_graphs_with_file"
+        print("Illegal header in remove_graphs_with_file")
         exit(0)
     graphs = [x[0] for x in reader]
     remove_graphs_with_names(domain_name, graphs)
@@ -237,7 +239,7 @@ def clean_known_hosts():
     with open(SSH_FOLDER + "known_hosts", "w") as fp:
         for line in filtered:
             fp.write(line)
-    print "Removed", len(lines) - len(filtered), "lines from ~/.ssh/known_hosts"
+    print("Removed", len(lines) - len(filtered), "lines from ~/.ssh/known_hosts")
 
 def get_num_running():
     ec2 = boto.ec2.connect_to_region(AWS_REGION)
@@ -260,18 +262,18 @@ def get_num_running():
 
 def print_num_running():
     nr = get_num_running()
-    print "Number Shutting Down:", nr[0]
-    print "Number Pending or Running:", nr[1]
-    print "Number Stopping or Stopped:", nr[2]
-    print "Number Terminated:", nr[3]
+    print("Number Shutting Down:", nr[0])
+    print("Number Pending or Running:", nr[1])
+    print("Number Stopping or Stopped:", nr[2])
+    print("Number Terminated:", nr[3])
 
 # Wait for all the EC2 nodes that are in shutting-down to go to status 
 def wait_for_shutdown():
     while True:
         n_shut_down, n_pend_run, n_stop, n_terminate = get_num_running()
         if n_shut_down == 0:
-            print "No nodes shutting down"
+            print("No nodes shutting down")
             return
         else:
-            print n_shut_down, "instance(s) still shutting down and", n_pend_run, "pending/running; waiting"
+            print(n_shut_down, "instance(s) still shutting down and", n_pend_run, "pending/running; waiting")
             time.sleep(5.0)

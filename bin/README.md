@@ -10,7 +10,7 @@ After building MQLib (see the [MQLib guide](../README.md) for details on this st
 
 You can run a heuristic by specifying the heuristic to be run and the instance to be run on (either a Max-Cut instance or a QUBO instance). If a Max-Cut heuristic is specified for a QUBO instance, then the instance will be reduced to a Max-Cut instance, the heuristic will be used, and then the solutions will be converted to solutions for the original QUBO instance. Similarly, if a QUBO heuristic is specified for a Max-Cut instance, the instance will be reduced to a QUBO instance, the heuristic will be run, and solutions will be converted back.
 
-As an example, if you wanted to run Max-Cut heuristic `BURER2002` on the sample QUBO instance provided with the repository, [bin/sampleQUBO.txt](sampleQUBO.txt), for 10 seconds, outputting the final solution, you could run `bin/MQLib -fQ bin/sampleQUBO.txt -h BURER2002 -r 10 -ps`. This creates output of the following format:
+As an example, if you wanted to run Max-Cut heuristic `BURER2002` on the sample QUBO instance provided with the repository, [bin/sampleQUBO.txt](sampleQUBO.txt), for 10 seconds, outputting the final solution, you could run `bin/MQLib -fQ bin/sampleQUBO.txt -h BURER2002 -r 10 -ps` from the main MQLib folder. This creates output of the following format:
 
 ```
 10,BURER2002,"bin/sampleQUBO.txt",6,10.00002,[0:0.000418;6:0.000797]
@@ -31,7 +31,7 @@ In order, the elements of the first line are:
 In this case, the heuristic began running after 0.000418 seconds of startup time, found a new best solution with objective value 6 at time 0.000797 seconds, and then continued (unsuccessfully) searching for better solutions for the remaining computational budget.
 
 A number of command-line options are available to customize runs:
-* `-h` / `-hh`: Specifies the heuristic to be run. Flag `-h` specifies the name of a heuristic to run. The list of all available heuristics (along with a brief description of each) is available by running `bin/MQLib -l`. Flag `-hh` specifies that the hyper-heuristic should be run. The hyper-heuristic selects the heuristic to be run on the instance based on the instance's properties.
+* `-h` / `-hh`: Specifies the heuristic to be run. Flag `-h` specifies the name of a heuristic to run. The list of all available heuristics (along with a brief description of each) is available by running `bin/MQLib -l` from the main MQLib folder. Flag `-hh` specifies that the hyper-heuristic should be run. The hyper-heuristic selects the heuristic to be run on the instance based on the instance's properties. The run above could be changed to use the hyperheuristic with `bin/MQLib -fQ bin/sampleQUBO.txt -hh -r 10 -ps`.
 * `-fM` / `-fQ`: Specifies the name of a file describing a Max-Cut (QUBO) instance. See later in this README for a description of file formats.
 * `-nv`: Turns off the validation check that is performed after the heuristic run is complete. This validation check verifies that each new best solution has an accurate objective value based on its variable values.
 * `-ps`: Print the best solution found.
@@ -40,7 +40,7 @@ A number of command-line options are available to customize runs:
 
 ### Compute metrics for a Max-Cut problem instance
 
-You can compute metrics for a Max-Cut problem instance using the `-m` flag. For instance, to compute the metrics associated with the sample Max-Cut instance provided with the repository, [bin/sampleMaxCut.txt](sampleMaxCut.txt), one would run `bin/MQLib -fM bin/sampleMaxCut.txt -m`. The resulting output is the set of all metrics calculated for the problem instance, in csv format. To include a header with the name of each metric, the `-mh` flag can also be provided.
+You can compute metrics for a Max-Cut problem instance using the `-m` flag. For instance, to compute the metrics associated with the sample Max-Cut instance provided with the repository, [bin/sampleMaxCut.txt](sampleMaxCut.txt), one would run `bin/MQLib -fM bin/sampleMaxCut.txt -m` from the main MQLib folder. The resulting output is the set of all metrics calculated for the problem instance, in csv format. To include a header with the name of each metric, the `-mh` flag can also be provided.
 
 If metrics are instead requested for a QUBO instance (indicated by the `-fQ` flag instead of the `-fM` flag), then the instance is reduced to a Max-Cut instance before the metrics are computed.
 
@@ -48,7 +48,7 @@ If metrics are instead requested for a QUBO instance (indicated by the `-fQ` fla
 
 We use a simple file format, in which any line that begins with a `#` is treated as a comment. The first non-comment line is of the form `n m`, where `n` is the number of nodes in the instance (Max-Cut) or the number of variables in the instance (QUBO). The other number is the number of subsequent "data lines" in the file.
 
-Each subsequent line is a "data line" of the form `a b w`. In a Max-Cut instance, this refers to an edge between nodes `a` and `b` of weight `w` (edges should only be added once, so there should be no corresponding `b a w` line). In a QUBO instance, this refers to an entry `w = Q_ab` in the input matrix `Q`. Similarly, if there is a line `a b w` is included then the line `b a w` should not be included. In both cases, `a` and `b` are 1-indexed, meaning they vary from 1 to `n`.
+Each subsequent line is a "data line" of the form `a b w`. In a Max-Cut instance, this refers to an edge between nodes `a` and `b` of weight `w` (edges should only be added once, so there should be no corresponding `b a w` line -- this is important, since we do very limited integrity checking on files). In a QUBO instance, this refers to an entry `w = Q_ab` in the input matrix `Q`. Similarly, if there is a line `a b w` is included then the line `b a w` should not be included. In both cases, `a` and `b` are 1-indexed, meaning they vary from 1 to `n`.
 
 An example Max-Cut instance (the one in [bin/sampleMaxCut.txt](sampleMaxCut.txt)) might have three nodes, with nodes A and B being connected by an edge of weight 3 and nodes B and C being connected by an edge of weight -2. This would be encoded as:
 
@@ -104,11 +104,11 @@ int main(int argc, char** argv) {
 
 All classes of MQLib reside under the namespace `mqlib`. The constructor to `mqlib::MaxCutInstance` takes a file name as an argument and loads the instance from the file. We construct `heur`, our heuristic, by passing it the instance, the runtime limit, an indicator for whether to run validity checks after the run is completed, and a pointer to an object specifying callbacks (which we pass as `NULL`). The heuristic is run in the constructor, so the run will be complete once this second line of code in `main` is done running.
 
-The best solution found during a heuristic run can be accessed with the `get_best_solution` function, which returns a reference to a `mqlib::MaxCutSimpleSolution` object. The `get_weight` and `get_assignments` functions can be used to obtain the objective value and node assignments for this solution.
+The best solution found during a heuristic run can be accessed with the `get_best_solution` function, which returns a reference to a `MaxCutSimpleSolution` object. More detailed information about the history of best solution values found can be obtained via the `History` function, or by directly accessing the `past_solution_values_` and `past_solution_times_` vectors within the heuristic. A more detailed history of the solutions themselves can be accessed by setting `validation=true` when instantiating the heuristic, and then accessing the `past_solutions_` vector within the heuristic. The `get_weight` and `get_assignments` functions can be used to obtain the objective value and node assignments for this solution.
 
-To build this code, we need to provide the `C++` compiler with the header files for the MQLib project, which can be done with the `-I` compiler flag. Further, we need to provide the library `bin/libMQLib.a` to the compiler. Thus the compilation line would be `g++ -Iinclude linked.cpp bin/libMQLib.a`.
+To build this code, we need to provide the `C++` compiler with the header files for the MQLib project, which can be done with the `-I` compiler flag. Further, we need to provide the library `bin/MQLib.a` to the compiler. Thus the compilation line would be `g++ -Iinclude linked.cpp bin/MQLib.a`, run from the main MQLib folder. You could indicate a different output executable name with `g++ -Iinclude -o linked.out linked.cpp bin/MQLib.a`.
 
-Running the resulting executable `a.out` should yield output similar to:
+Running the resulting executable with `./a.out` should yield output similar to:
 
 ```
 Best objective value: 3

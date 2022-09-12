@@ -8,17 +8,19 @@
 * A machine learning-based hyper-heuristic that tries to select the best heuristic for a given instance.
 * Scripts to evaluate heuristics on Amazon EC2 and to analyze the results.
 
-This library and the related systematic heuristic evaluation strategy are described in the (under review) paper:
+This library and the related systematic heuristic evaluation strategy are described in [the paper](paper/SECM_final.pdf). To cite the MQLib, please use:
 ```
-@article{DunningEtAl2015,
-  title={What Works Best When? A Framework for Systematic Heuristic Evaluation},
+@article{DunningEtAl2018,
+  title={What Works Best When? A Systematic Evaluation of Heuristics for Max-Cut and {QUBO}},
   author={Dunning, Iain and Gupta, Swati and Silberholz, John},
-  year={2015},
-  url={http://www.optimization-online.org/DB_FILE/2015/05/4895.pdf}
+  year={2018},
+  journal={{INFORMS} Journal on Computing},
+  volume={30},
+  number={3}
 }
 ```
 
-This code is licensed under the MIT License - see `/LICENSE` for details. MQLib was created by [Iain Dunning](http://iaindunning.com), [Swati Gupta](http://swatig.scripts.mit.edu/home/), and [John Silberholz](http://johnsilberholz.com).
+This code is licensed under the MIT License - see `/LICENSE` for details. MQLib was created by [Iain Dunning](http://iaindunning.com), [Swati Gupta](https://swatigupta.tech), and [John Silberholz](http://johnsilberholz.com).
 
 ## Obtaining Source Code and Building the MQLib
 
@@ -42,15 +44,15 @@ A central goal of the MQLib is to provide open-source implementations of many Ma
 
 1. Create a fork of the MQLib repository, as described in the "Contributing to the MQLib" section of this document.
 2. Implement your new heuristic in C++. Details of how to implement a new heuristic are available in the [developer's guide](src/README.md). The heuristic can be tested using the command-line interface to the MQLib, as detailed in the [Using the MQLib guide](bin/README.md). It may be useful to test the new heuristic on problem instances with a range of properties, which can be identified in [data/metrics.csv](data/metrics.csv) and downloaded with [scripts/downloadGraph.py](scripts/downloadGraph.py).
-3. Commit your new code to your fork of the MQLib repository, as described in the "Contributing to the MQLib" section of this document. If desired, the MQLib team would be glad to review any code at this stage and to provide suggestions before extensive testing on the cloud. Please email Iain Dunning (iaindunning@gmail.com), Swati Gupta (swati.gupta002@gmail.com), and John Silberholz (john.silberholz@gmail.com) with any such requests.
+3. Commit your new code to your fork of the MQLib repository, as described in the "Contributing to the MQLib" section of this document. If desired, the MQLib team would be glad to review any code at this stage and to provide suggestions before extensive testing on the cloud. Please email Iain Dunning (iaindunning@gmail.com), Swati Gupta (swatig@gatech.edu), and John Silberholz (john.silberholz@gmail.com) with any such requests.
 4. Test your new heuristic using Amazon Web Services, as detailed in the [Reproducible Parallel Computation with Amazon Web Services guide](Cloud/README.md). Make sure to specify your forked repository when doing that run and to change the `data/heuristics.txt` file to test your new heuristic only.
-5. You should uncomment the appropriate lines under "Evaluation results" in [analysis/analyze.R](analysis/analyze.R) to combine your new results with the existing results. Adding new results may affect multiple components of the analysis. The largest initial impact is that "interesting" subset will change. Naturally this will also affect Table 3 (summary of results) and Figure 7 (plots of heuristic performance on standard and interesting). Finally, the heuristic itself will change.
+5. You should uncomment the appropriate lines under "Evaluation results" in [analysis/analyze.R](analysis/analyze.R) to combine your new results with the existing results. Adding new results may affect multiple components of the analysis. The largest initial impact is that "interesting" subset will change. Naturally this will also affect Table 3 (summary of results) and Figure 7 (plots of heuristic performance on standard and interesting). Finally, the hyper-heuristic itself will change.
 6. Use `git add` to add to the repository a zipped version of the heuristic results as a new file in the `data` folder and the new hyper-heuristic data file corresponding to your new heuristic in the `hhdata` folder. As described in the "Contributing to the MQLib" section of this document, commit these new files as well as an updated version of the [`data` folder readme file](data/README.md) describing the computational experiments, an updated version of [analysis/analyze.R](analysis/analyze.R) modified to load your new computational results, and the updated hyper-heuristic files in the `hhdata` folder.
 7. As described in the "Contributing to the MQLib" section of this document, submit a pull request with all committed modifications to the MQLib repository.
 
 ### Contributing a New Problem Instance Metric
 
-The MQLib uses fast-to-compute problem instance metrics to predict the best-performing heuristic or set of heuristics for a given problem instance. This prediction task forms the core of the hyper-heuristic shipped with the MQLib. We welcome any new fast-to-compute metrics that can improve the performance of the hyper-heuristic; the keep the hyper-heuristic speedy, new metrics should not be much slower than the slowest metric currently used in the project. To add a new metric or set of metrics to the project, use the following steps:
+The MQLib uses fast-to-compute problem instance metrics to predict the best-performing heuristic or set of heuristics for a given problem instance. This prediction task forms the core of the hyper-heuristic shipped with the MQLib. We welcome any new fast-to-compute metrics that can improve the performance of the hyper-heuristic; to keep the hyper-heuristic speedy, new metrics should not be much slower than the slowest metric currently used in the project. To add a new metric or set of metrics to the project, use the following steps:
 
 1. Create a fork of the MQLib repository, as described in the "Contributing to the MQLib" section of this document.
 2. Implement your new metric (or set of metrics) in C++. Details of how to implement a new metric are available in the [developer's guide](src/README.md). The metric can be tested using the command-line interface to the MQLib, as detailed in the [Using the MQLib guide](bin/README.md). It may be useful to test the metric computation code on problem instances with a range of properties, which can be identified in [data/metrics.csv](data/metrics.csv) and downloaded with [scripts/downloadGraph.py](scripts/downloadGraph.py).
@@ -63,10 +65,9 @@ The MQLib uses fast-to-compute problem instance metrics to predict the best-perf
 
 ### Other use cases
 
-There are other modifications possible for the MQLib that would require more involved changes to the code base or related `mqlibinstances` S3 bucket (which stores the problem instances). We summarize them here and encourage researchers to reach out to the MQLib team before working to implement these sorts of extensions by emailing Iain Dunning (iaindunning@gmail.com), Swati Gupta (swati.gupta002@gmail.com), and John Silberholz (john.silberholz@gmail.com).
+There are other modifications possible for the MQLib that would require more involved changes to the code base or related `mqlibinstances` S3 bucket (which stores the problem instances). We summarize them here and encourage researchers to reach out to the MQLib team before working to implement these sorts of extensions by emailing Iain Dunning (iaindunning@gmail.com), Swati Gupta (swatig@gatech.edu), and John Silberholz (john.silberholz@gmail.com).
 
 * **Extending the set of problem instances used for testing:** The MQLib team is enthusiastic about extending the set of problem instances used in testing Max-Cut and QUBO heuristics, and especially in adding problem instances from real-world applications of the problems. Because the `mqlibinstances` S3 bucket used for sharing instances is not publicly writable, researchers should contact the MQLib team to add new instances.
-* **Testing with a termination criterion based on representative operation counts:** Such a modification would involve tracking operation counts in the `MaxCutHeuristic` and `QUBOHeuristic` base classes, updating the termination criterion handling code in these classes, updating [src/main.cpp](src/main.cpp) to enable command-line specification of the new termination criteria, updating [analysis/runtime.R](analysis/runtime.R) and [Cloud/grabGraphInfo.py](Cloud/grabGraphInfo.py) to calculate instance-specific criteria, updating [Cloud/MQLibDispatcher.py](Cloud/MQLibDispatcher.py) and [Cloud/MQLibRunner.py](Cloud/MQLibRunner.py) to specify the new termination criteria, and testing all heuristics with the new criteria, as described in the [Reproducible Parallel Computation with Amazon Web Services guide](Cloud/README.md).
 * **Testing across heuristic parameter settings:** Such a modification would require significant changes to the constructors of all heuristics to enable parameters to be specified. Further changes would be needed to [src/main.cpp](src/main.cpp) to enable command-line specification of parameters and to [Cloud/MQLibDispatcher.py](Cloud/MQLibDispatcher.py) and [Cloud/MQLibRunner.py](Cloud/MQLibRunner.py) to specify parameters during execution on the cloud.
 
 ## Contributing to the MQLib
