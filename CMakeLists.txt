@@ -8,6 +8,5 @@ set(MQLib_VERSION_MINOR 1)
 add_compile_options(-std=c++11)
 
 include_directories(include)
-file(GLOB_RECURSE headers include/*.h)
 add_subdirectory(src)
 add_subdirectory(test)
