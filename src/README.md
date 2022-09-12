@@ -8,7 +8,7 @@ The MQLib code base provides scaffolding the should be extended when implementin
 
 ![Heuristic Classes](image_heuristic.png)
 
-Every class should reside in the namespace `mqlib`. A new Max-Cut heuristic should extend the `MaxCutHeuristic` class (available by including [problem/max_cut_heuristic.h](../include/problem/max_cut_heuristic.h)), and a new QUBO heuristic should extend the `QUBOHeuristic` class (available by including [problem/qubo_heuristic.h](../include/problem/qubo_heuristic.h)). Following the naming conventions of our code base, the heuristic name should combine the last name of the heuristic paper's first author, the year, and a brief description if more than one heuristic is presented in the paper. For instance, a paper by Silberholz et al. published in 2015 presenting a new tabu search procedure and a new genetic algorithm might name the two heuristic classes `Silberholz2015TS` and `Silberholz2015GA`.
+Every class should reside in the namespace `mqlib`. A new Max-Cut heuristic should extend the `MaxCutHeuristic` class (available by including [problem/max_cut_heuristic.h](../include/mqlib/problem/max_cut_heuristic.h)), and a new QUBO heuristic should extend the `QUBOHeuristic` class (available by including [problem/qubo_heuristic.h](../include/mqlib/problem/qubo_heuristic.h)). Following the naming conventions of our code base, the heuristic name should combine the last name of the heuristic paper's first author, the year, and a brief description if more than one heuristic is presented in the paper. For instance, a paper by Silberholz et al. published in 2015 presenting a new tabu search procedure and a new genetic algorithm might name the two heuristic classes `Silberholz2015TS` and `Silberholz2015GA`.
 
 Heuristics should be implemented to run in the constructor of their class, returning from the constructor only when the termination criterion has been reached (see below). Heuristics should report new best solutions as they are identified using the `Report` function; the entire time series of new best solutions encountered by a heuristic is reported upon termination when running from the command line (see [bin/README.md](../bin/README.md) for details). There is no harm in calling `Report` on a solution that is not a new best solution (though calling the function a huge number of times may slow down code, even though the function is quite light weight). 
 
@@ -20,7 +20,7 @@ Consider now the implementation of a simple "hello world" Max-Cut heuristic that
 #ifndef HEURISTICS_MAXCUT_SILBERHOLZ_2015_
 #define HEURISTICS_MAXCUT_SILBERHOLZ_2015_
 
-#include "problem/max_cut_heuristic.h"
+#include "mqlib/problem/max_cut_heuristic.h"
 
 namespace mqlib {
 
@@ -38,7 +38,7 @@ class Silberholz2015 : public MaxCutHeuristic {
 Next we would implement the heuristic in `src/heuristics/maxcut/silberholz2015.cpp`:
 
 ```
-#include "heuristics/maxcut/silberholz2015.h"
+#include "mqlib/heuristics/maxcut/silberholz2015.h"
 
 namespace mqlib {
 
@@ -60,7 +60,7 @@ Note that the code periodically calls `Report` regardless of whether it has gene
 The final step to implementing our "hello world" heuristic is to enable it to be run from the command line. This can be done by adding the following line near the top of [src/heuristics/heuristic_factory.cpp](heuristics/heuristic_factory.cpp):
 
 ```
-#include "heuristics/maxcut/silberholz2015.h"
+#include "mqlib/heuristics/maxcut/silberholz2015.h"
 ```
 
 Further, the map `max_cut_map_` in [src/heuristics/heuristic_factory.cpp](heuristics/heuristic_factory.cpp) that stores available Max-Cut heuristics should be augmented with information about the new heuristic.
@@ -105,27 +105,27 @@ Some heuristics (notably GRASP heuristics) have more involved construction proce
 
 A number of methods evaluate or manipulate a solution:
 
-* `UpdateCutValues`: A method in [heuristics/extended_solution.h](../include/heuristics/extended_solution.h) that flips the assignment at an indicated index, efficiently updating `assignments_`, `weight_`, and `diff_weights_`. This function is efficient in that it only needs to iterate through the neighbors of the indicated node (Max-Cut) / the list of variables with non-zero interactions with the indicated variable (QUBO).
-* `ImprovingMove`: A method in [heuristics/extended_solution.h](../include/heuristics/extended_solution.h) that indicates if flipping the assignment at an indicated index will improve a solution (taking into account floating point rounding considerations).
-* `NonDetrimentalMove`: A method in [heuristics/extended_solution.h](../include/heuristics/extended_solution.h) that indicates if flipping the assignment at an indicated index will not cause the solution to get worse (taking into account floating point rounding considerations).
-* `PopulateFromAssignments`: A method in [heuristics/maxcut/max_cut_solution.h](../include/heuristics/maxcut/max_cut_solution.h) and [heuristics/qubo/qubo_solution.h](../include/heuristics/qubo/qubo_solution.h) that computes `weight_` and `diff_weights_` based on the current values in `assignments_`. This function should be used sparingly because it involves iterating through the full set of edges in the graph (Max-Cut) / the full list of non-zero interactions in the matrix (QUBO).
-* `AllBest1Swap`: A method in [heuristics/extended_solution.h](../include/heuristics/extended_solution.h) that identifies the index with the highest `diff_weights_` value, flipping the assignment at this index. This procedure is continued until no more improving moves are possible.
-* `AllFirst1Swap`: A method in [heuristics/extended_solution.h](../include/heuristics/extended_solution.h) that identifies the lexicographically first index in `diff_weights_` with a positive value, flipping the assignment at this index. This procedure is continued until no more improving moves are possible.
-* `AllShuffle1Swap`: A method in [heuristics/extended_solution.h](../include/heuristics/extended_solution.h) that randomly shuffles the node/variable indices and steps through this list, flipping the first index with a positive `diff_weights_` value. The procedure continues until no more improving moves are possible.
-* `AllBest2Swap`: A method in [heuristics/maxcut/max_cut_solution.h](../include/heuristics/maxcut/max_cut_solution.h) and [heuristics/qubo/qubo_solution.h](../include/heuristics/qubo/qubo_solution.h) that identifies the pair of nodes/variables such that when both have their assignment flipped the objective value increases maximally. This procedure is continued until no improving pairs exist.
-* `AllFirst2Swap`: A method in [heuristics/maxcut/max_cut_solution.h](../include/heuristics/maxcut/max_cut_solution.h) and [heuristics/qubo/qubo_solution.h](../include/heuristics/qubo/qubo_solution.h) that iterates lexicographically through pairs of nodes/variables, flipping the assignment of both nodes/variables in the pair if it improves the objective value. The method keeps taking improving moves until no such moves exist.
-* `DiffWeightStandardDeviation`: A method in [heuristics/extended_solution.h](../include/heuristics/extended_solution.h) that returns the standard deviation of the `diff_weights_` vector.
-* `operator=`: A method in [heuristics/maxcut/max_cut_solution.h](../include/heuristics/maxcut/max_cut_solution.h) and [heuristics/qubo/qubo_solution.h](../include/heuristics/qubo/qubo_solution.h) that sets a solution equal to another solution.
+* `UpdateCutValues`: A method in [heuristics/extended_solution.h](../include/mqlib/heuristics/extended_solution.h) that flips the assignment at an indicated index, efficiently updating `assignments_`, `weight_`, and `diff_weights_`. This function is efficient in that it only needs to iterate through the neighbors of the indicated node (Max-Cut) / the list of variables with non-zero interactions with the indicated variable (QUBO).
+* `ImprovingMove`: A method in [heuristics/extended_solution.h](../include/mqlib/heuristics/extended_solution.h) that indicates if flipping the assignment at an indicated index will improve a solution (taking into account floating point rounding considerations).
+* `NonDetrimentalMove`: A method in [heuristics/extended_solution.h](../include/mqlib/heuristics/extended_solution.h) that indicates if flipping the assignment at an indicated index will not cause the solution to get worse (taking into account floating point rounding considerations).
+* `PopulateFromAssignments`: A method in [heuristics/maxcut/max_cut_solution.h](../include/mqlib/heuristics/maxcut/max_cut_solution.h) and [heuristics/qubo/qubo_solution.h](../include/mqlib/heuristics/qubo/qubo_solution.h) that computes `weight_` and `diff_weights_` based on the current values in `assignments_`. This function should be used sparingly because it involves iterating through the full set of edges in the graph (Max-Cut) / the full list of non-zero interactions in the matrix (QUBO).
+* `AllBest1Swap`: A method in [heuristics/extended_solution.h](../include/mqlib/heuristics/extended_solution.h) that identifies the index with the highest `diff_weights_` value, flipping the assignment at this index. This procedure is continued until no more improving moves are possible.
+* `AllFirst1Swap`: A method in [heuristics/extended_solution.h](../include/mqlib/heuristics/extended_solution.h) that identifies the lexicographically first index in `diff_weights_` with a positive value, flipping the assignment at this index. This procedure is continued until no more improving moves are possible.
+* `AllShuffle1Swap`: A method in [heuristics/extended_solution.h](../include/mqlib/heuristics/extended_solution.h) that randomly shuffles the node/variable indices and steps through this list, flipping the first index with a positive `diff_weights_` value. The procedure continues until no more improving moves are possible.
+* `AllBest2Swap`: A method in [heuristics/maxcut/max_cut_solution.h](../include/mqlib/heuristics/maxcut/max_cut_solution.h) and [heuristics/qubo/qubo_solution.h](../include/mqlib/heuristics/qubo/qubo_solution.h) that identifies the pair of nodes/variables such that when both have their assignment flipped the objective value increases maximally. This procedure is continued until no improving pairs exist.
+* `AllFirst2Swap`: A method in [heuristics/maxcut/max_cut_solution.h](../include/mqlib/heuristics/maxcut/max_cut_solution.h) and [heuristics/qubo/qubo_solution.h](../include/mqlib/heuristics/qubo/qubo_solution.h) that iterates lexicographically through pairs of nodes/variables, flipping the assignment of both nodes/variables in the pair if it improves the objective value. The method keeps taking improving moves until no such moves exist.
+* `DiffWeightStandardDeviation`: A method in [heuristics/extended_solution.h](../include/mqlib/heuristics/extended_solution.h) that returns the standard deviation of the `diff_weights_` vector.
+* `operator=`: A method in [heuristics/maxcut/max_cut_solution.h](../include/mqlib/heuristics/maxcut/max_cut_solution.h) and [heuristics/qubo/qubo_solution.h](../include/mqlib/heuristics/qubo/qubo_solution.h) that sets a solution equal to another solution.
 
 ### Comparing Two Solutions
 
 Several methods enable the comparison of a pair of solutions:
 
-* `SymmetricDifference`: Several overloaded methods in [heuristics/base_solution.h](../include/heuristics/base_solution.h) that compute the symmetric difference between two solutions, returning the hamming distance and (optionally) the indices that differ and that are the same.
-* `ImprovesOver`: A method in [heuristics/base_solution.h](../include/heuristics/base_solution.h) that determines if one solution's objective value is better than another's (taking into account floating point rounding considerations).
-* `ImprovesOverAfterMove`: A method in [heuristics/extended_solution.h](../include/heuristics/extended_solution.h) that indicates if flipping the assignment at an indicated index will cause this solution to be better than another solution (taking into account floating point rounding considerations).
-* `operator==` / `operator!=`: Methods in [heuristics/base_solution.h](../include/heuristics/base_solution.h) that perform efficient comparison of two solutions to determine if they are identical.
-* `operator>=` / `operator<=` / `operator>` / `operator<`: Operators in [heuristics/base_solution.h](../include/heuristics/base_solution.h) that enable solutions to be sorted based on their objective function values.
+* `SymmetricDifference`: Several overloaded methods in [heuristics/base_solution.h](../include/mqlib/heuristics/base_solution.h) that compute the symmetric difference between two solutions, returning the hamming distance and (optionally) the indices that differ and that are the same.
+* `ImprovesOver`: A method in [heuristics/base_solution.h](../include/mqlib/heuristics/base_solution.h) that determines if one solution's objective value is better than another's (taking into account floating point rounding considerations).
+* `ImprovesOverAfterMove`: A method in [heuristics/extended_solution.h](../include/mqlib/heuristics/extended_solution.h) that indicates if flipping the assignment at an indicated index will cause this solution to be better than another solution (taking into account floating point rounding considerations).
+* `operator==` / `operator!=`: Methods in [heuristics/base_solution.h](../include/mqlib/heuristics/base_solution.h) that perform efficient comparison of two solutions to determine if they are identical.
+* `operator>=` / `operator<=` / `operator>` / `operator<`: Operators in [heuristics/base_solution.h](../include/mqlib/heuristics/base_solution.h) that enable solutions to be sorted based on their objective function values.
 
 ### Example of Extending Solution Classes
 
@@ -137,7 +137,7 @@ In our header file `include/heuristics/qubo/silberholz2015.h`, not only will we 
 #ifndef HEURISTICS_QUBO_SILBERHOLZ_2015_
 #define HEURISTICS_QUBO_SILBERHOLZ_2015_
 
-#include "problem/qubo_heuristic.h"
+#include "mqlib/problem/qubo_heuristic.h"
 
 namespace mqlib {
 
@@ -166,8 +166,8 @@ In the source file located at `src/heuristics/qubo/silberholz2015.cpp`, we would
 
 ```
 #include <math.h>
-#include "heuristics/qubo/silberholz2015.h"
-#include "util/random.h"
+#include "mqlib/heuristics/qubo/silberholz2015.h"
+#include "mqlib/util/random.h"
 
 namespace mqlib {
 
@@ -207,7 +207,7 @@ Silberholz2015::Silberholz2015(const QUBOInstance &qi, double rt_limit,
 
 As in the first example in this document, several small changes would be needed to [src/heuristics/heuristic_factory.cpp](heuristics/heuristic_factory.cpp) to enable us to run the new heuristic.
 
-Note that this code uses the utility class `Random`, which is included through [util/random.h](../include/util/random.h) and provides functions `RandInt` and `RandDouble` as well as weighted selection from a set through the `RouletteWheel` and `MultiRouletteWheel` functions.
+Note that this code uses the utility class `Random`, which is included through [util/random.h](../include/mqlib/util/random.h) and provides functions `RandInt` and `RandDouble` as well as weighted selection from a set through the `RouletteWheel` and `MultiRouletteWheel` functions.
 
 Further, this code periodically reports the current solution during the simulated annealing procedure. This ensures a long-running call to `SA` does not cause the heuristic to run far past the runtime limit.
 
@@ -215,15 +215,15 @@ Further, this code periodically reports the current solution during the simulate
 
 In this section we reviewed the `MaxCutSolution` and `QUBOSolution` classes, and in the next section we will review `MaxCutPartialSolution` and `QUBOPartialSolution`. While these are by far the most commonly used solution classes, there are several more implemented that may be useful.
 
-`FixedFirstMaxCutSolution`, provided as part of [heuristics/maxcut/max_cut_solution.h](../include/heuristics/maxcut/max_cut_solution.h), fixes the first node to a specified assignment and does not allow it to change throughout the execution of the procedure. This could help procedures avoid dealing with symmetric Max-Cut solutions with all set inclusions flipped but the same objective value.
+`FixedFirstMaxCutSolution`, provided as part of [heuristics/maxcut/max_cut_solution.h](../include/mqlib/heuristics/maxcut/max_cut_solution.h), fixes the first node to a specified assignment and does not allow it to change throughout the execution of the procedure. This could help procedures avoid dealing with symmetric Max-Cut solutions with all set inclusions flipped but the same objective value.
 
-`MaxCutSimpleSolution` and `QUBOSimpleSolution`, which extend `BaseSolution` and are included from header files [heuristics/maxcut/max_cut_simple_solution.h](../include/heuristics/maxcut/max_cut_simple_solution.h) as well as [heuristics/qubo/qubo_simple_solution.h](../include/heuristics/qubo/qubo_simple_solution.h), are solution classes that do not track the `diff_weights_` vector. As a result they are cheaper to instantiate and use less memory than `MaxCutSolution` and `QUBOSolution`, though the instantiation and storage costs are asymptotically the same. The simple solution classes do not enable efficient local search, as significant computation would be required to determine the change in objective value from flipping each index.
+`MaxCutSimpleSolution` and `QUBOSimpleSolution`, which extend `BaseSolution` and are included from header files [heuristics/maxcut/max_cut_simple_solution.h](../include/mqlib/heuristics/maxcut/max_cut_simple_solution.h) as well as [heuristics/qubo/qubo_simple_solution.h](../include/mqlib/heuristics/qubo/qubo_simple_solution.h), are solution classes that do not track the `diff_weights_` vector. As a result they are cheaper to instantiate and use less memory than `MaxCutSolution` and `QUBOSolution`, though the instantiation and storage costs are asymptotically the same. The simple solution classes do not enable efficient local search, as significant computation would be required to determine the change in objective value from flipping each index.
 
 ## Partial Solution Classes
 
 When initializing a new solution, some heuristics use constructive procedures that consider the nodes/variables that have already been assigned when choosing how to assign the remaining values. In such procedures, it is often important to know how the objective function of the partial solution will change for each possible decision with an unassigned node.
 
-The `MaxCutPartialSolution` and `QUBOPartialSolution` classes from the header files [heuristics/maxcut/max_cut_partial_solution.h](../include/heuristics/maxcut/max_cut_partial_solution.h) and [heuristics/qubo/qubo_partial_solution.h](../include/heuristics/qubo/qubo_partial_solution.h) enable such constructive methods. They include the following protected class variables:
+The `MaxCutPartialSolution` and `QUBOPartialSolution` classes from the header files [heuristics/maxcut/max_cut_partial_solution.h](../include/mqlib/heuristics/maxcut/max_cut_partial_solution.h) and [heuristics/qubo/qubo_partial_solution.h](../include/mqlib/heuristics/qubo/qubo_partial_solution.h) enable such constructive methods. They include the following protected class variables:
 
 * `N_`: A convenience variable indicating the number of nodes in the problem instance (Max-Cut) or the number of variables in the problem instance (QUBO).
 * `assignments_`: A vector (of length `N_`) storing the solution. Values -1 and 1 are used to indicate the two possible set inclusions for Max-Cut solutions, and 0 indicates a node that is unassigned. For QUBO solutions, any double value between 0 and 1 (inclusive) is allowed. Public accessor method `get_assignments` provides access to this vector.
@@ -244,8 +244,8 @@ We would use the following header in `include/heuristics/maxcut/silberholz2015.h
 #ifndef HEURISTICS_MAXCUT_SILBERHOLZ_2015_
 #define HEURISTICS_MAXCUT_SILBERHOLZ_2015_
 
-#include "heuristics/maxcut/max_cut_partial_solution.h"
-#include "problem/max_cut_heuristic.h"
+#include "mqlib/heuristics/maxcut/max_cut_partial_solution.h"
+#include "mqlib/problem/max_cut_heuristic.h"
 
 namespace mqlib {
 
@@ -269,8 +269,8 @@ Next we would implement the heuristic in `src/heuristics/maxcut/silberholz2015.c
 
 ```
 #include <algorithm>
-#include "heuristics/maxcut/silberholz2015.h"
-#include "util/random.h"
+#include "mqlib/heuristics/maxcut/silberholz2015.h"
+#include "mqlib/util/random.h"
 
 namespace mqlib {
 
@@ -317,12 +317,12 @@ In this code, a `MaxCutSolution` was constructed from our `MaxCutPartialSolution
 
 All heuristics interact with the problem instance, but often through higher-level methods like `UpdateCutValues`, `PopulateFromAssignments`, or a local search procedure. As a result, many heuristics do not need to directly interact with the problem instance. This section addresses how to access problem instance data for heuristic designers who do need lower-level access to the instance. Instances are provided either through the `MaxCutInstance` class or the `QUBOInstance` class.
 
-The `MaxCutInstance` class, declared in [problem/max_cut_instance.h](../include/problem/max_cut_instance.h), stores a graph in a sparse edge list representation, with the following member variables:
+The `MaxCutInstance` class, declared in [problem/max_cut_instance.h](../include/mqlib/problem/max_cut_instance.h), stores a graph in a sparse edge list representation, with the following member variables:
 
 * `all_edges_`: A vector of all edges in the graph, of type `Instance::InstanceTuple`, which is a typedef of `std::pair<std::pair<int, int>, double>`. The two integer values stored in the inner pair represent the (0-indexed) endpoints of the edge and the double in the outer pair represents the edge weight. Each edge only appears once in this vector, with its endpoints in increasing order. Access to this vector and iterators are provided by public functions `get_all_edges`, `get_all_edges_begin`, and `get_all_edges_end`.
 * `edges_`: A vector storing the edge list from each node to all other nodes, stored as a vector of vectors. The inner vectors are of type `std::pair<int, double>` indicating the (0-indexed) linked node and weight of the link. Access to a node's edge list and iterators for this vector are provided by public functions `get_edges`, `get_edges_begin`, and `get_edges_end`.
 
-The `QUBOInstance` class, declared in [problem/qubo_instance.h](../include/problem/qubo_instance.h), has a similar sparse representation, storing elements of the (symmetric) input matrix with non-zero values in the following member variables:
+The `QUBOInstance` class, declared in [problem/qubo_instance.h](../include/mqlib/problem/qubo_instance.h), has a similar sparse representation, storing elements of the (symmetric) input matrix with non-zero values in the following member variables:
 
 * `all_nonzero_`: A vector of all non-zero elements `Q_ij, i < j`, in the input matrix `Q`, of type `Instance::InstanceTuple`, which is a typedef of `std::pair<std::pair<int, int>, double>`. For element `Q_ij`, the inner pair stores `i` and `j` (0-indexed) and the last value in the tuple is the value `Q_ij`. Iterators on this vector are provided by public functions `get_all_nonzero_begin` and `get_all_nonzero_end`.
 * `nonzero_`: A vector storing the list of all non-zero elements in each row of the input matrix `Q` except any element on the diagonal, stored as a vector of vectors with the inner vector of type `std::pair<int, double>` indicating the (0-indexed) column number of the element and value. Iterators for each row are provided by public functions `get_nonzero_begin` and `get_nonzero_end`.
@@ -367,7 +367,7 @@ double GraphMetrics::GetPropMaxEdges() {
 }
 ```
 
-The `MaxCutInstance` for which we are computing metrics is accessible with member variable `mi_`. We would additionally need to edit the header file [include/metrics/max_cut_metrics.h](../include/metrics/max_cut_metrics.h), adding the following line in the definition of the `GraphMetrics` class:
+The `MaxCutInstance` for which we are computing metrics is accessible with member variable `mi_`. We would additionally need to edit the header file [include/metrics/max_cut_metrics.h](../include/mqlib/metrics/max_cut_metrics.h), adding the following line in the definition of the `GraphMetrics` class:
 
 ```
 double GetPropMaxEdges();
@@ -424,7 +424,7 @@ void GraphMetrics::PropAboveAverageEdges(std::vector<double>* output) {
 
 Note that this function outputs a number of summary statistics into a passed `std::vector<double>` object using the `GetSummary` function.
 
-We would additionally need to edit the header file [include/metrics/max_cut_metrics.h](../include/metrics/max_cut_metrics.h), adding the following line in the definition of the `GraphMetrics` class:
+We would additionally need to edit the header file [include/metrics/max_cut_metrics.h](../include/mqlib/metrics/max_cut_metrics.h), adding the following line in the definition of the `GraphMetrics` class:
 
 ```
 void PropAboveAverageEdges(std::vector<double>* output);
