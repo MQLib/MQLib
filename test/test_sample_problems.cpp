@@ -1,7 +1,8 @@
-#include "heuristics/heuristic_factory.h"
 #include <string>
 #include <vector>
 #include <iostream>
+
+#include "mqlib/heuristics/heuristic_factory.h"
 
 using namespace mqlib;
 
