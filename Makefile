@@ -1,4 +1,5 @@
-CFLAGS = -Iinclude -std=c++0x -O2 -Wall
+CXX ?= g++
+CXXFLAGS = -Iinclude -std=c++0x -O2 -Wall
 LFLAGS = -lm
 SHAREFLAGS = -shared -fPIC
 BUILDDIR = .build
@@ -12,7 +13,7 @@ DEPS = $(shell echo "$(OBJS)" | sed -e "s/\.o/.P/g")
 all: $(EXECUTABLE) $(STATIC)
 
 $(EXECUTABLE): $(OBJS)
-	g++ $(LFLAGS) -o $(EXECUTABLE) $(OBJS)
+	$(CXX) $(LFLAGS) -o $(EXECUTABLE) $(OBJS)
 
 $(STATIC): $(OBJS)
 	@type ar >/dev/null 2>&1 || { echo >&2 "ar required for building static library but it's not installed.  Aborting."; exit 1; }
@@ -20,8 +21,8 @@ $(STATIC): $(OBJS)
 
 ### Conversion from .d to .P from http://mad-scientist.net/make/autodep.html
 $(BUILDDIR)/%.o : $(SRCDIR)/%.cpp
-	@type g++ >/dev/null 2>&1 || { echo >&2 "g++ required for compilation but it's not installed.  Aborting."; exit 1; }
-	g++ -c -MD $(CFLAGS) -o $@ $<
+	@type $(CXX) >/dev/null 2>&1 || { echo >&2 "$(CXX) required for compilation but it's not installed.  Aborting."; exit 1; }
+	$(CXX) -c -MD $(CXXFLAGS) -o $@ $<
 	@cp $(BUILDDIR)/$(*).d $(BUILDDIR)/$(*).P; \
 	sed -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' -e '/^$$/ d' -e 's/$$/ :/' < $(BUILDDIR)/$(*).d >> $(BUILDDIR)/$(*).P; \
 	rm -f $(BUILDDIR)/$(*).d
