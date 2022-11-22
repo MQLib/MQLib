@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <iostream>
+#include <limits>
 #include "heuristics/qubo/katayama2000.h"
 #include "util/random.h"
 
