@@ -1,2 +1,6 @@
 .DS_Store
 .Rhistory
+
+cmake-*
+build/
+.idea/
