@@ -10,6 +10,8 @@ namespace mqlib {
 
     class Heuristic {
     public:
+        Heuristic() = delete;
+
         Heuristic(double runtime_limit, bool validation);
 
         // Compute the runtime from start until now
@@ -17,6 +19,12 @@ namespace mqlib {
 
         // Getters
         double get_best() const { return best_; }
+
+        double get_best_time() const { return past_solution_times_[past_solution_times_.size() - 1]; }
+
+        const std::vector<double> &get_past_solution_values() const;
+
+        const std::vector<double> &get_past_solution_times() const;
 
         /* In this section we have various functions for checking if the heuristic
          *   should keep going or stop. In all cases, the following hierarchy is used
@@ -45,10 +53,6 @@ namespace mqlib {
         // Information about the history of new best solutions found by the heuristic.
         std::vector<double> past_solution_values_;
         std::vector<double> past_solution_times_;
-
-    private:
-        // Disable default constructor
-        Heuristic();
     };
 
 }

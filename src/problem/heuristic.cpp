@@ -30,4 +30,12 @@ namespace mqlib {
         return out_str.str();
     }
 
+    const std::vector<double> &Heuristic::get_past_solution_values() const {
+        return past_solution_values_;
+    }
+
+    const std::vector<double> &Heuristic::get_past_solution_times() const {
+        return past_solution_times_;
+    }
+
 }
