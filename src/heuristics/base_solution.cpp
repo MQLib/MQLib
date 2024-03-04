@@ -12,7 +12,7 @@ namespace mqlib {
     BaseSolution::BaseSolution(const std::vector<int> &assignments, double weight) :
             assignments_(assignments),
             weight_(weight),
-            N_(assignments.size()) {}
+            N_(static_cast<int>(assignments.size())) {}
 
     int BaseSolution::SymmetricDifference(const BaseSolution &other) const {
         int num_different = 0;
@@ -30,7 +30,7 @@ namespace mqlib {
                 diff->push_back(i);
             }
         }
-        return diff->size();
+        return static_cast<int>(diff->size());
     }
 
     int BaseSolution::SymmetricDifference(const BaseSolution &other,
@@ -45,7 +45,7 @@ namespace mqlib {
                 common->push_back(i);
             }
         }
-        return diff->size();
+        return static_cast<int>(diff->size());
     }
 
     bool BaseSolution::operator==(const BaseSolution &other) const {

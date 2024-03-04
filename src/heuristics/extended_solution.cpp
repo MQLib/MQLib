@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cmath>
+#include <random>
 #include "mqlib/heuristics/extended_solution.h"
 
 namespace mqlib {
@@ -51,16 +52,16 @@ namespace mqlib {
         for (int idx = startpos; idx < N_; ++idx) {
             indices.push_back(idx);
         }
-        std::random_shuffle(indices.begin(), indices.end());
+        std::shuffle(indices.begin(), indices.end(), std::mt19937(std::random_device()()));
 
         // Take all profitable 1-moves, taking the first one we find when scanning the
         // nodes/variables sequentially.
         bool move_made = true;
         while (move_made) {
             move_made = false;
-            for (auto iter = indices.begin(); iter != indices.end(); ++iter) {
-                if (ImprovingMove(*iter)) {
-                    UpdateCutValues(*iter);
+            for (int & indice : indices) {
+                if (ImprovingMove(indice)) {
+                    UpdateCutValues(indice);
                     move_made = true;
                     break;
                 }

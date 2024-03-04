@@ -175,8 +175,8 @@ namespace mqlib {
             return;
         }
         codes->clear();
-        for (auto iter = max_cut_map_.begin(); iter != max_cut_map_.end(); ++iter) {
-            codes->push_back(iter->first);
+        for (auto & iter : max_cut_map_) {
+            codes->push_back(iter.first);
         }
         std::sort(codes->begin(), codes->end());
     }
@@ -186,8 +186,8 @@ namespace mqlib {
             return;
         }
         codes->clear();
-        for (auto iter = qubo_map_.begin(); iter != qubo_map_.end(); ++iter) {
-            codes->push_back(iter->first);
+        for (auto & iter : qubo_map_) {
+            codes->push_back(iter.first);
         }
         std::sort(codes->begin(), codes->end());
     }
@@ -200,26 +200,26 @@ namespace mqlib {
         std::cout << "Max-Cut heuristics" << std::endl;
         std::cout << "------------------" << std::endl << std::endl;
         std::vector<std::string> max_cut_names;
-        for (auto iter = max_cut_map_.begin(); iter != max_cut_map_.end(); ++iter) {
-            max_cut_names.push_back(iter->first);
+        for (auto & iter : max_cut_map_) {
+            max_cut_names.push_back(iter.first);
         }
         std::sort(max_cut_names.begin(), max_cut_names.end());
-        for (int i = 0; i < max_cut_names.size(); ++i) {
-            std::cout << max_cut_names[i] << std::endl;
-            std::cout << "  " << max_cut_map_[max_cut_names[i]].second << std::endl;
+        for (auto & max_cut_name : max_cut_names) {
+            std::cout << max_cut_name << std::endl;
+            std::cout << "  " << max_cut_map_[max_cut_name].second << std::endl;
         }
         std::cout << std::endl;
         std::cout << "---------------" << std::endl;
         std::cout << "QUBO heuristics" << std::endl;
         std::cout << "---------------" << std::endl << std::endl;
         std::vector<std::string> qubo_names;
-        for (auto iter = qubo_map_.begin(); iter != qubo_map_.end(); ++iter) {
-            qubo_names.push_back(iter->first);
+        for (auto & iter : qubo_map_) {
+            qubo_names.push_back(iter.first);
         }
         std::sort(qubo_names.begin(), qubo_names.end());
-        for (int i = 0; i < qubo_names.size(); ++i) {
-            std::cout << qubo_names[i] << std::endl;
-            std::cout << "  " << qubo_map_[qubo_names[i]].second << std::endl;
+        for (auto & qubo_name : qubo_names) {
+            std::cout << qubo_name << std::endl;
+            std::cout << "  " << qubo_map_[qubo_name].second << std::endl;
         }
     }
 
