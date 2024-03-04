@@ -72,7 +72,7 @@ namespace mqlib {
 
                 // Alg 1 Steps 8-10: Update loop vars
                 double thisBest = X[0].get_weight();
-                for (int j = 1; j < X.size(); ++j) {
+                for (uint64_t j = 1; j < X.size(); ++j) {
                     thisBest = std::max<double>(thisBest, X[j].get_weight());
                 }
                 if (BaseSolution::ImprovesOver(thisBest, bestSolution)) {
@@ -100,9 +100,9 @@ namespace mqlib {
         // First, identify the best solution in the population.
         int bestIdx = 0;
         double bestWeight = (*X)[0].get_weight();
-        for (int idx = 1; idx < X->size(); ++idx) {
+        for (uint64_t idx = 1; idx < X->size(); ++idx) {
             if ((*X)[idx].get_weight() > bestWeight) {
-                bestIdx = idx;
+                bestIdx = static_cast<int>(idx);
                 bestWeight = (*X)[idx].get_weight();
             }
         }
@@ -111,18 +111,18 @@ namespace mqlib {
         (*X)[bestIdx].AllShuffle1Swap();
         inL[bestIdx] = true;
         ++numInL;
-        for (int i = 0; i < X->size(); ++i) {
+        for (uint64_t i = 0; i < X->size(); ++i) {
             if (!inL[i]) {
                 distL[i] += (*X)[bestIdx].SymmetricDifference((*X)[i]);
             }
         }
 
         // Loop while |L| < delta * N
-        while (numInL < delta * X->size()) {
+        while (numInL < delta * static_cast<double>(X->size())) {
             // Alg 2 Step 3: Find solution s furthest from L
             int bestDist = -1;
             int s = -1;
-            for (int i = 0; i < X->size(); ++i) {
+            for (uint64_t i = 0; i < X->size(); ++i) {
                 if (!inL[i] && distL[i] > bestDist) {
                     s = i;
                     bestDist = distL[i];
@@ -133,9 +133,9 @@ namespace mqlib {
             (*X)[s].AllShuffle1Swap();
             inL[s] = true;
             ++numInL;
-            if (numInL < delta * X->size()) {
+            if (numInL < delta * static_cast<double>(X->size())) {
                 // If it's not the last iteration, increment distL values
-                for (int i = 0; i < X->size(); ++i) {
+                for (uint64_t i = 0; i < X->size(); ++i) {
                     if (!inL[i]) {
                         distL[i] += (*X)[s].SymmetricDifference((*X)[i]);
                     }
@@ -148,7 +148,7 @@ namespace mqlib {
                                  bool validation, MaxCutCallback *mc) :
             MaxCutHeuristic(mi, runtime_limit, validation, mc) {
         // Parameters
-        int N = std::max<int>(1, 0.031 * mi.get_size());
+        int N = std::max<int>(1, static_cast<int>(0.031 * mi.get_size()));
         double alpha = 0.9;
         int K = 100;
 
@@ -161,7 +161,7 @@ namespace mqlib {
             for (int t = 0; t < K; ++t) {
                 // Alg 3 Step 4: Generate N random solutions using probabilities p
                 std::vector<FirstFixedMaxCutSolution> X;
-                while (X.size() < N) {
+                while (X.size() < static_cast<uint64_t>(N)) {
                     X.push_back(FirstFixedMaxCutSolution::RandomSolution(mi, p, this, 1));
                 }
 
@@ -180,10 +180,10 @@ namespace mqlib {
                 // Check termination criterion for best solution in X
                 double bestWt = X[0].get_weight();
                 int bestIdx = 0;
-                for (int idx = 1; idx < X.size(); ++idx) {
+                for (uint64_t idx = 1; idx < X.size(); ++idx) {
                     if (X[idx].get_weight() > bestWt) {
                         bestWt = X[idx].get_weight();
-                        bestIdx = idx;
+                        bestIdx = static_cast<int>(idx);
                     }
                 }
                 if (!Report(X[bestIdx], iter)) {

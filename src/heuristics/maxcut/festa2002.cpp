@@ -34,9 +34,9 @@ namespace mqlib {
         // Though it's not clear from Section 2.1, build.f shows that the adaptive
         // greedy construction procedure starts by selecting an edge from a restricted
         // version of the sorted list of edges, restricting using alpha.
-        int nrcl = std::min<int>(sorted.size(),
-                                 1 + (int) (sorted.size() * (1.0 - alpha)));
-        int startEdge = Random::RandInt(0, nrcl - 1);
+        uint64_t nrcl = std::min<uint64_t>(sorted.size(),
+                                 1 + static_cast<int>(static_cast<double>(sorted.size()) * (1.0 - alpha)));
+        int startEdge = Random::RandInt(0, static_cast<int>(nrcl) - 1);
         UpdateCutValues(sorted[startEdge].first.first, 1);
         S_.push_back(sorted[startEdge].first.first);
         UpdateCutValues(sorted[startEdge].first.second, -1);
@@ -63,15 +63,15 @@ namespace mqlib {
             std::vector<std::pair<int, bool> > made_cutoff;
             for (int i = 0; i < N_; ++i) {
                 if (assignments_[i] == 0 && gainS_[i] >= cutoff) {
-                    made_cutoff.push_back(std::pair<int, bool>(i, true));
+                    made_cutoff.emplace_back(i, true);
                 }
                 if (assignments_[i] == 0 && gainNS_[i] >= cutoff) {
-                    made_cutoff.push_back(std::pair<int, bool>(i, false));
+                    made_cutoff.emplace_back(i, false);
                 }
             }
 
             // Randomly select and add a valid node, updating sigma_S and sigma_NS
-            int selectId = Random::RandInt(0, made_cutoff.size() - 1);
+            int selectId = Random::RandInt(0, static_cast<int>(made_cutoff.size()) - 1);
             if (made_cutoff[selectId].second) {
                 UpdateCutValues(made_cutoff[selectId].first, 1);
                 S_.push_back(made_cutoff[selectId].first);
@@ -82,10 +82,10 @@ namespace mqlib {
         }
     }
 
-    Festa2002Solution::Festa2002Solution(const MaxCutInstance &mi,
+    Festa2002Solution::Festa2002Solution(const MaxCutInstance & /*mi*/,
                                          const Festa2002Solution &x,
                                          const Festa2002Solution &z,
-                                         MaxCutHeuristic *heuristic) :
+                                         MaxCutHeuristic * /*heuristic*/) :
             MaxCutSolution(x),
             S_(x.S_),
             Sbar_(x.Sbar_) {
@@ -106,10 +106,10 @@ namespace mqlib {
             // among solutions in the symmetric difference set).
             double best_diff = y_diff_weights[diff[0]];
             int best_index = 0;
-            for (int i = 1; i < diff.size(); ++i) {
+            for (uint64_t i = 1; i < diff.size(); ++i) {
                 if (y_diff_weights[diff[i]] > best_diff) {
                     best_diff = y_diff_weights[diff[i]];
-                    best_index = i;
+                    best_index = static_cast<int>(i);
                 }
             }
 
@@ -136,18 +136,18 @@ namespace mqlib {
             std::vector<int> extraS;
             std::vector<int> newSbar;
             std::vector<int> extraSbar;
-            for (int i = 0; i < S_.size(); ++i) {
-                if (assignments_[S_[i]] == 1) {
-                    newS.push_back(S_[i]);
+            for (int & i : S_) {
+                if (assignments_[i] == 1) {
+                    newS.push_back(i);
                 } else {
-                    extraSbar.push_back(S_[i]);
+                    extraSbar.push_back(i);
                 }
             }
-            for (int i = 0; i < Sbar_.size(); ++i) {
-                if (assignments_[Sbar_[i]] == -1) {
-                    newSbar.push_back(Sbar_[i]);
+            for (int & i : Sbar_) {
+                if (assignments_[i] == -1) {
+                    newSbar.push_back(i);
                 } else {
-                    extraS.push_back(Sbar_[i]);
+                    extraS.push_back(i);
                 }
             }
             std::copy(extraS.begin(), extraS.end(), std::back_inserter(newS));
@@ -160,7 +160,7 @@ namespace mqlib {
     Festa2002Solution::Festa2002Solution(const MaxCutInstance &mi,
                                          const Festa2002Solution &base,
                                          int neighborhood,
-                                         MaxCutHeuristic *heuristic) :
+                                         MaxCutHeuristic * /*heuristic*/) :
             MaxCutSolution(base),
             S_(base.S_),
             Sbar_(base.Sbar_) {
@@ -169,7 +169,7 @@ namespace mqlib {
         std::vector<int> to_flip(mi.get_size(), 0);
         for (int i = 0; i < neighborhood; ++i) {
             int index;
-            while (1) {
+            while (true) {
                 index = Random::RandInt(0, mi.get_size() - 1);
                 if (!to_flip[index]) {
                     to_flip[index] = 1;
@@ -183,14 +183,14 @@ namespace mqlib {
         // end of respective vectors.
         std::vector<int> newS;
         std::vector<int> newSbar;
-        for (int i = 0; i < S_.size(); ++i) {
-            if (!to_flip[S_[i]]) {
-                newS.push_back(S_[i]);
+        for (int & i : S_) {
+            if (!to_flip[i]) {
+                newS.push_back(i);
             }
         }
-        for (int i = 0; i < Sbar_.size(); ++i) {
-            if (!to_flip[Sbar_[i]]) {
-                newSbar.push_back(Sbar_[i]);
+        for (int & i : Sbar_) {
+            if (!to_flip[i]) {
+                newSbar.push_back(i);
             }
         }
         for (int i = 0; i < N_; ++i) {
@@ -242,7 +242,7 @@ namespace mqlib {
     void Festa2002Solution::LocalSearch() {
         // Maintain an ordered list of all elements in S and Sbar and go through
         // them in order, checking for improving moves
-        if (S_.size() == 0 && Sbar_.size() == 0) {
+        if (S_.empty() && Sbar_.empty()) {
             std::cout << "Missing S_ and Sbar_" << std::endl;
             exit(0);
         }
@@ -258,8 +258,8 @@ namespace mqlib {
             int Spos = 0;
             int Sbarpos = 0;
             bool moveInS = false;
-            while (Spos < S_.size() || Sbarpos < Sbar_.size()) {
-                if (Spos < S_.size()) {
+            while (static_cast<uint64_t>(Spos) < S_.size() || static_cast<uint64_t>(Sbarpos) < Sbar_.size()) {
+                if (static_cast<uint64_t>(Spos) < S_.size()) {
                     int var = S_[Spos];
                     ++Spos;
                     if (ImprovingMove(var)) {
@@ -270,7 +270,7 @@ namespace mqlib {
                     }
                 }
 
-                if (Sbarpos < Sbar_.size()) {
+                if (static_cast<uint64_t>(Sbarpos) < Sbar_.size()) {
                     int var = Sbar_[Sbarpos];
                     ++Sbarpos;
                     if (ImprovingMove(var)) {
@@ -285,7 +285,7 @@ namespace mqlib {
             if (move_made) {
                 if (moveInS) {
                     // Update Sbar_, adding moved element to back
-                    if (Sbarpos < Sbar_.size()) {
+                    if (static_cast<uint64_t>(Sbarpos) < Sbar_.size()) {
                         tmp.clear();
                         std::copy(Sbar_.begin() + Sbarpos, Sbar_.end(),
                                   std::back_inserter(tmp));
@@ -298,7 +298,7 @@ namespace mqlib {
                     }
 
                     // Update S_, removing moved element
-                    if (Spos < S_.size()) {
+                    if (static_cast<uint64_t>(Spos) < S_.size()) {
                         tmp.clear();
                         std::copy(S_.begin() + Spos, S_.end(), std::back_inserter(tmp));
                         if (Spos >= 2) {
@@ -311,7 +311,7 @@ namespace mqlib {
                     }
                 } else {
                     // Update S_, adding moved element to back
-                    if (Spos < S_.size()) {
+                    if (static_cast<uint64_t>(Spos) < S_.size()) {
                         tmp.clear();
                         std::copy(S_.begin() + Spos, S_.end(), std::back_inserter(tmp));
                         std::copy(S_.begin(), S_.begin() + Spos, std::back_inserter(tmp));
@@ -322,7 +322,7 @@ namespace mqlib {
                     }
 
                     // Update Sbar_, removing moved element
-                    if (Sbarpos < Sbar_.size()) {
+                    if (static_cast<uint64_t>(Sbarpos) < Sbar_.size()) {
                         tmp.clear();
                         std::copy(Sbar_.begin() + Sbarpos, Sbar_.end(),
                                   std::back_inserter(tmp));
@@ -373,7 +373,7 @@ namespace mqlib {
         int MaxElite = 30;
         // The minimum symmetric difference to be considered "different enough"
         // from a member of the elite set.
-        int sufficiently_different = (int) ceil(0.01 * mi.get_size());
+        int sufficiently_different = static_cast<int>(ceil(0.01 * mi.get_size()));
         int kMax = 15;
         if (vns && !grasp) {
             kMax = 100;
@@ -412,7 +412,7 @@ namespace mqlib {
                         break;
                     }
                 } else {
-                    int idx = Random::RandInt(0, elite.size() - 1);
+                    int idx = Random::RandInt(0, static_cast<int>(elite.size()) - 1);
                     Festa2002Solution pr_solution =
                             Festa2002Solution::PathRelinkingSolution(mi, solution, elite[idx],
                                                                      this);
@@ -421,7 +421,7 @@ namespace mqlib {
                     if (!Report(pr_solution, i)) {
                         break;
                     }
-                    if (elite.size() < MaxElite) {
+                    if (elite.size() < static_cast<uint64_t>(MaxElite)) {
                         elite.push_back(pr_solution);
                     } else {
                         int too_close = 0;  // Too close to one of the elite solutions
@@ -429,17 +429,17 @@ namespace mqlib {
                         int winner = 0;  // Whether solution beats an elite solution
                         double worst_obj = elite[0].get_weight();
                         int worst_index = 0;
-                        for (int i = 0; i < MaxElite; ++i) {
-                            if (elite[i].get_weight() < worst_obj) {
-                                worst_obj = elite[i].get_weight();
-                                worst_index = i;
+                        for (int j = 0; j < MaxElite; ++j) {
+                            if (elite[j].get_weight() < worst_obj) {
+                                worst_obj = elite[j].get_weight();
+                                worst_index = j;
                             }
-                            if (elite[i].ImprovesOver(pr_solution)) {
+                            if (elite[j].ImprovesOver(pr_solution)) {
                                 beaten = 1;
-                            } else if (pr_solution.ImprovesOver(elite[i])) {
+                            } else if (pr_solution.ImprovesOver(elite[j])) {
                                 winner = 1;
                             }
-                            if (pr_solution.SymmetricDifference(elite[i]) <
+                            if (pr_solution.SymmetricDifference(elite[j]) <
                                 sufficiently_different) {
                                 too_close = 1;
                             }

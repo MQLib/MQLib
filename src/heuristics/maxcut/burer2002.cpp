@@ -198,9 +198,9 @@ namespace mqlib {
         std::vector<std::pair<double, int> > angles;
         for (int ct = 0; ct < N_; ++ct) {
             (*theta)[ct] -= 2 * M_PI * floor((*theta)[ct] / (2 * M_PI));
-            angles.push_back(std::pair<double, int>((*theta)[ct], ct));
+            angles.emplace_back((*theta)[ct], ct);
         }
-        angles.push_back(std::pair<double, int>(2 * M_PI, N_));
+        angles.emplace_back(2 * M_PI, N_);
         std::sort(angles.begin(), angles.end());
 
         // Determine initial set inclusion, and setup variables to be updated
@@ -208,8 +208,8 @@ namespace mqlib {
         for (int ct = 0; ct < N_; ++ct) {
             assignments_[ct] = -1;
         }
-        std::vector<std::pair<double, int> >::iterator first_it = angles.begin();
-        std::vector<std::pair<double, int> >::iterator second_it =
+        auto first_it = angles.begin();
+        auto second_it =
                 angles.begin();
         while (second_it->first <= M_PI) {
             assignments_[second_it->second] = 1;  // The first set has angles in [0, pi]
@@ -228,7 +228,7 @@ namespace mqlib {
         std::vector<double> curr_diff_weights(diff_weights_);
 
         // Compute the optimal cut by exhaustively searching through the possible cuts
-        while (1) {
+        while (true) {
             // Update the cut angle
             int update_index;
             if (first_it->first <= second_it->first - M_PI) {

@@ -16,8 +16,8 @@ namespace mqlib {
 
 // Random solution (p=0.5 for each vertex)
     MaxCutSolution::MaxCutSolution(const MaxCutInstance &mi,
-                                   MaxCutHeuristic *heuristic, int ignored1,
-                                   int ignored2) :
+                                   MaxCutHeuristic *heuristic, int  /*ignored1*/,
+                                   int /*ignored2*/) :
             ExtendedSolution(mi.get_size(), -1),
             mi_(mi),
             heuristic_(heuristic) {
@@ -179,7 +179,7 @@ namespace mqlib {
 // Random solution
     FirstFixedMaxCutSolution::FirstFixedMaxCutSolution(const MaxCutInstance &mi,
                                                        MaxCutHeuristic *heuristic,
-                                                       int fixedVal, int ignored2) :
+                                                       int fixedVal, int  /*ignored2*/) :
             MaxCutSolution(mi, heuristic, fixedVal),
             fixedVal_(fixedVal) {
         // Random assignments in {-1, 1} (don't assign the first one; already handled

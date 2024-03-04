@@ -52,12 +52,12 @@ namespace mqlib {
             mch_(mch) {}
 
     bool HyperheuristicMaxCutCallback::Report(const MaxCutSimpleSolution &solution,
-                                              bool newBest, double runtime) {
+                                              bool  /*newBest*/, double  /*runtime*/) {
         return mch_->Report(solution);
     }
 
     bool HyperheuristicMaxCutCallback::Report(const MaxCutSimpleSolution &solution,
-                                              bool newBest, double runtime,
+                                              bool  /*newBest*/, double  /*runtime*/,
                                               int iter) {
         return mch_->Report(solution, iter);
     }
@@ -67,7 +67,7 @@ namespace mqlib {
             mi_(mi) {}
 
     bool HyperheuristicQUBOCallback::Report(const QUBOSimpleSolution &solution,
-                                            bool newBest, double runtime) {
+                                            bool newBest, double  /*runtime*/) {
         if (newBest) {
             // Need to convert from QUBO to Max-Cut and report
             MaxCutSimpleSolution mcSol(solution, mi_, mch_);
@@ -78,7 +78,7 @@ namespace mqlib {
     }
 
     bool HyperheuristicQUBOCallback::Report(const QUBOSimpleSolution &solution,
-                                            bool newBest, double runtime,
+                                            bool newBest, double  /*runtime*/,
                                             int iter) {
         if (newBest) {
             // Need to convert from QUBO to Max-Cut and report
@@ -98,7 +98,7 @@ namespace mqlib {
         // Step 1: Calculate graph metrics for this instance.
         GraphMetrics gm(mi);
         std::vector<double> metrics;
-        gm.AllMetrics(&metrics, NULL);
+        gm.AllMetrics(&metrics, nullptr);
 
         // Step 2: Obtain predicted probabilities from each random forest model.
         // Best-performing model information (using streaming alg to select best)
@@ -111,15 +111,15 @@ namespace mqlib {
         HeuristicFactory factory;
         std::vector<std::string> codes;
         factory.MaxCutHeuristicCodes(&codes);
-        for (int i = 0; i < codes.size(); ++i) {
-            UpdateBestModel(codes[i], MaxCut, metrics, &bestProbability, &bestProblem,
+        for (auto & code : codes) {
+            UpdateBestModel(code, MaxCut, metrics, &bestProbability, &bestProblem,
                             &bestCode, &numBest);
         }
 
         // Check the QUBO heuristics
         factory.QUBOHeuristicCodes(&codes);
-        for (int i = 0; i < codes.size(); ++i) {
-            UpdateBestModel(codes[i], QUBO, metrics, &bestProbability, &bestProblem,
+        for (auto & code : codes) {
+            UpdateBestModel(code, QUBO, metrics, &bestProbability, &bestProblem,
                             &bestCode, &numBest);
         }
         if (selected) {

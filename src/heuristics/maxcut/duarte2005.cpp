@@ -114,7 +114,7 @@ namespace mqlib {
             // PAPER: gg=Intial_Population();
             std::vector<Duarte2005Solution> population;
             for (int sol = 0; sol < init_pop_size; sol++) {
-                population.push_back(Duarte2005Solution::RandomSolution(mi, this));
+                population.emplace_back(Duarte2005Solution::RandomSolution(mi, this));
             }
 
             // Improve a pi fraction of the initial population members with local search
@@ -174,12 +174,12 @@ namespace mqlib {
                 population_scores = std::vector<double>(population.size());
                 int best_score_sol = 0;
                 best_score = 0;
-                for (int sol = 0; sol < population.size(); sol++) {
+                for (uint64_t sol = 0; sol < population.size(); sol++) {
                     const double score_sol = population[sol].get_weight();
                     population_scores[sol] = score_sol;
                     if (score_sol > best_score) {
                         best_score = score_sol;
-                        best_score_sol = sol;
+                        best_score_sol = static_cast<int>(sol);
                     }
                 }
 
@@ -189,8 +189,8 @@ namespace mqlib {
                 }
 
                 // PAPER: Apply(Mutation(),pm)
-                for (int sol = 0; sol < next_population.size(); sol++)
-                    next_population[sol].Mutate(p_m);
+                for (auto & sol : next_population)
+                    sol.Mutate(p_m);
             } // PAPER: end for
         }
     }
