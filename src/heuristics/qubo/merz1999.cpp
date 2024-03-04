@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <random>
 #include "mqlib/heuristics/qubo/merz1999.h"
 #include "mqlib/util/random.h"
 
@@ -7,10 +8,10 @@ namespace mqlib {
     Merz1999Solution::Merz1999Solution(const QUBOSolution &x) :
             QUBOSolution(x) {}
 
-    Merz1999Solution::Merz1999Solution(const QUBOInstance &qi,
+    Merz1999Solution::Merz1999Solution(const QUBOInstance & /*qi*/,
                                        const Merz1999Solution &parent_a,
                                        const Merz1999Solution &parent_b,
-                                       QUBOHeuristic *heuristic) :
+                                       QUBOHeuristic * /*heuristic*/) :
             QUBOSolution(parent_a) {
         // Implements the HUX cross over with restricted local search
         // Store the bits which were identical with parents before commencing local search.
@@ -26,7 +27,7 @@ namespace mqlib {
         for (int i = 0; i < N_; i++)
             genes[i] = i;
         // Pick random ordering of genes
-        std::random_shuffle(genes.begin(), genes.end());
+        std::shuffle(genes.begin(), genes.end(), std::mt19937(std::random_device()()));
         int left_to_swap = half_hamming_distance;
         const std::vector<int> &a_genes = parent_a.get_assignments();
         const std::vector<int> &b_genes = parent_b.get_assignments();
@@ -52,7 +53,7 @@ namespace mqlib {
         //         recombination is restricted to a region of the search space
         //         defined by the two parents: the genes with equal values in
         //         the two parents are not modified during local search.
-        while (1) {
+        while (true) {
             double best_move = 0.0;
             int best_pos = -1;
             for (int i = 0; i < N_; ++i) {
@@ -73,11 +74,11 @@ namespace mqlib {
     }
 
 
-    Merz1999Solution::Merz1999Solution(const QUBOInstance &qi,
+    Merz1999Solution::Merz1999Solution(const QUBOInstance & /*qi*/,
                                        const Merz1999Solution &parent_a,
                                        const Merz1999Solution &parent_b,
-                                       QUBOHeuristic *heuristic,
-                                       double dummy) :
+                                       QUBOHeuristic * /*heuristic*/,
+                                       double  /*dummy*/) :
             QUBOSolution(parent_a) {
         const std::vector<int> &a_genes = parent_a.get_assignments();
         const std::vector<int> &b_genes = parent_b.get_assignments();
@@ -121,7 +122,7 @@ namespace mqlib {
         // PAPER:  initialize population P;
         std::vector<Merz1999Solution> population;
         for (int i = 0; i < POP_SIZE; i++)
-            population.push_back(QUBOSolution::RandomSolution(qi, this));
+            population.emplace_back(QUBOSolution::RandomSolution(qi, this));
         if (version == 0)
             // PAPER:   foreach individual i \in P do i := Local-Search(i);
             for (int i = 0; i < POP_SIZE; i++)
@@ -131,13 +132,13 @@ namespace mqlib {
         int last_iteration_with_change = 1;
         for (int iteration = 0;; ++iteration) {
             // PAPER:  for i := 1 to #crossovers do
-            int num_crossovers = static_cast<int>(population.size() * RECOMBINATION_RATE);
+            int num_crossovers = static_cast<int>(static_cast<double>(population.size()) * RECOMBINATION_RATE);
             for (int i = 0; i < num_crossovers; i++) {
                 // PAPER:  select two parents i_a, i_b \in P randomly;
-                int i_a = Random::RandInt(0, population.size() - 1);
+                int i_a = Random::RandInt(0, static_cast<int>(population.size() - 1));
                 int i_b = i_a;
                 while (i_a == i_b)
-                    i_b = Random::RandInt(0, population.size() - 1);
+                    i_b = Random::RandInt(0, static_cast<int>(population.size() - 1));
                 // Version 0 (local search)
                 if (version == 0) {
                     // PAPER:  i_c = Crossover(i_a, i_b);
@@ -167,14 +168,14 @@ namespace mqlib {
             // NOTES:  Take best POP_SIZE of current solutions
             // Retrieve (weight, index) pairs
             std::vector<std::pair<double, int>> population_weights(population.size());
-            for (int i = 0; i < population.size(); i++) {
+            for (uint64_t i = 0; i < population.size(); i++) {
                 population_weights[i] = std::pair<double, int>(population[i].get_weight(), i);
             }
             // Sort pairs ascending order
             std::sort(population_weights.begin(), population_weights.end());
             // Take last POP_SIZE of list
             std::vector<Merz1999Solution> new_population;
-            for (int i = population.size() - 1; i >= population.size() - POP_SIZE; i--) {
+            for (uint64_t i = population.size() - 1; i >= population.size() - POP_SIZE; i--) {
                 int j = population_weights[i].second;
                 new_population.push_back(population[j]);
             }
@@ -202,7 +203,7 @@ namespace mqlib {
             //std::cout << "  hamming_mean = " << hamming_mean << std::endl;
             if (hamming_mean <= 10 || (iteration - last_iteration_with_change) >= 30) {
                 // PAPER:  foeach individual i \in P\{best} do i := LocalSearch(Mutate(i))
-                for (int i = 1; i < population.size(); i++) {  // Skip best
+                for (uint64_t i = 1; i < population.size(); i++) {  // Skip best
                     // PAPER:  During the restarts, the individuals were mutated
                     //         by flipping a third of all the bits in the bit vector.
                     population[i].RestartMutate();
