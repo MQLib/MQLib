@@ -1,0 +1,69 @@
+# run using: clang-tidy <file> -p=<build-dir> -config-file=.clang-tidy
+Checks: >
+  -*,
+  bugprone-*,
+  google-*,
+  misc-*,
+  modernize-*,
+  performance-*,
+  -performance-avoid-endl,
+  readability-avoid-const-params-in-decls,
+  readability-const-return-type,
+  readability-container-size-empty,
+  readability-identifier-naming,
+  readability-make-member-function-const,
+  -google-readability-braces-around-statements, 
+  -google-readability-namespace-comments, 
+  -google-runtime-references, 
+  -misc-non-private-member-variables-in-classes,
+  -misc-const-correctness,
+  -modernize-return-braced-init-list,
+  -modernize-use-trailing-return-type,
+  -modernize-avoid-c-arrays,
+  -modernize-use-nodiscard,
+  -bugprone-easily-swappable-parameters,
+
+# temp. disabled: bugprone-exception-escape
+# google-readability-braces-around-statements: would block single line if blocks without braces
+# google-readability-namespace-comments: requires namespaces to have closing comments
+# google-runtime-references: warns if non-const reference is passed as argument
+# misc-non-private-member-variables-in-classes: does not allow protected data members
+# misc-const-correctness: warns if variables could be const but is not
+# modernize-return-braced-init-list: uses braced init list if object are returned
+# modernize-use-trailing-return-type: less readable according to google
+# modernize-avoid-c-arrays: we use scip
+# modernize-use-nodiscard: no discards clutters the code
+# bugprone-easily-swappable-parameters: google: too many false positives
+
+# Turn the warnings from the checks above into errors.
+# To turn all warnings into errors, simply write '*'
+# in the first line after WarningsAsErrors
+WarningsAsErrors: >
+  *,-readability-identifier-naming,-google-global-names-in-headers
+
+FormatStyle: 'file'
+HeaderFilterRegex: 'sms/include/sms.*\.hpp$'#'.*\/sms\/include\/sms\/.*\.hpp' #'.*\/(include\/networkit|networkit\/cpp|\/objscip)\/.*\.hpp$' #'*\/sms\/*\/*.hpp'
+CheckOptions:
+  - { key: readability-identifier-naming.NamespaceCase,                  value: lower_case }
+  - { key: readability-identifier-naming.ClassCase,                      value: CamelCase }
+  - { key: readability-identifier-naming.StructCase,                     value: CamelCase }
+  - { key: readability-identifier-naming.TemplateParameterCase,          value: CamelCase }
+  - { key: readability-identifier-naming.FunctionCase,                   value: aNy_CasE }
+  - { key: readability-identifier-naming.VariableCase,                   value: camelBack }
+  - { key: readability-identifier-naming.ClassMemberCase,                value: camelBack }
+  - { key: readability-identifier-naming.ClassMemberSuffix,              value: _ }
+  - { key: readability-identifier-naming.PrivateMemberSuffix,            value: _ }
+  - { key: readability-identifier-naming.ProtectedMemberSuffix,          value: _ }
+  - { key: readability-identifier-naming.EnumConstantCase,               value: CamelCase }
+  - { key: readability-identifier-naming.EnumConstantPrefix,             value: k }
+  - { key: readability-identifier-naming.ConstexprVariableCase,          value: CamelCase }
+  - { key: readability-identifier-naming.ConstexprVariablePrefix,        value: k }
+  - { key: readability-identifier-naming.GlobalConstantCase,             value: CamelCase }
+  - { key: readability-identifier-naming.GlobalConstantPrefix,           value: k }
+  - { key: readability-identifier-naming.MemberConstantCase,             value: CamelCase }
+  - { key: readability-identifier-naming.MemberConstantPrefix,           value: k }
+  - { key: readability-identifier-naming.StaticConstantCase,             value: CamelCase }
+  - { key: readability-identifier-naming.StaticConstantPrefix,           value: k }
+  - { key: readability-implicit-bool-conversion.AllowIntegerConditions,  value: 1 }
+  - { key: readability-function-cognitive-complexity.IgnoreMacros,       value: 1 }
+

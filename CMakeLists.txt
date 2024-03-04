@@ -4,6 +4,8 @@ project(mqlib)
 
 set(CMAKE_CXX_STANDARD 11)
 
+set(CMAKE_CXX_FLAGS "-Wall -Wextra")
+
 set(SOURCES
         src/util/randomForest.cpp
         src/util/random.cpp
