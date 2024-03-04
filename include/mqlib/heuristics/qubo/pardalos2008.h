@@ -15,7 +15,7 @@ namespace mqlib {
 
         // Generate a solution from a base solution x and set of generation probs
         static Pardalos2008QUBOSolution
-        GenerateSolution(const Pardalos2008QUBOSolution x,
+        GenerateSolution(const Pardalos2008QUBOSolution& x,
                          const std::vector<double> &probs, int k) {
             return Pardalos2008QUBOSolution(x, probs, k);
         }
@@ -39,7 +39,7 @@ namespace mqlib {
         Pardalos2008Elite(int Esize);
 
         // Getters
-        int size() const { return Elite_.size(); }
+        int size() const { return static_cast<int>(Elite_.size()); }
 
         void clear() { Elite_.clear(); }
 

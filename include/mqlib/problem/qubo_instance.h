@@ -31,9 +31,9 @@ namespace mqlib {
         QUBOInstance &operator=(const QUBOInstance &qi);
 
         // Getters
-        int get_size() const { return nonzero_.size(); }
+        int get_size() const { return static_cast<int>(nonzero_.size()); }
 
-        int get_edge_count() const { return all_nonzero_.size(); }
+        int get_edge_count() const { return static_cast<int>(all_nonzero_.size()); }
 
         std::vector<std::pair<int, double> >::const_iterator
         get_nonzero_begin(int idx) const { return nonzero_[idx].begin(); }

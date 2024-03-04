@@ -52,7 +52,7 @@ namespace ez {
 
 /* ################################################################### */
     static inline bool isdigit(const std::string &s, int i = 0) {
-        int n = s.length();
+        int n = static_cast<int>(s.length());
         for (; i < n; ++i)
             switch (s[i]) {
                 case '0':
@@ -75,7 +75,7 @@ namespace ez {
 
 /* ################################################################### */
     static bool isdigit(const std::string *s, int i = 0) {
-        int n = s->length();
+        int n = static_cast<int>(s->length());
         for (; i < n; ++i)
             switch (s->at(i)) {
                 case '0':
@@ -103,12 +103,12 @@ For example, -d < --dimension < --dmn, and also lower come before upper. The def
     static bool CmpOptStringPtr(std::string *s1, std::string *s2) {
         int c1, c2;
         const char *s = s1->c_str();
-        for (c1 = 0; c1 < (long int) s1->size(); ++c1)
+        for (c1 = 0; c1 < static_cast<long int>(s1->size()); ++c1)
             if (isalnum(s[c1])) // locale sensitive.
                 break;
 
         s = s2->c_str();
-        for (c2 = 0; c2 < (long int) s2->size(); ++c2)
+        for (c2 = 0; c2 < static_cast<long int>(s2->size()); ++c2)
             if (isalnum(s[c2]))
                 break;
 
@@ -150,7 +150,7 @@ splitting at (and excluding) delimiter "token".
 
         while (i != e) {
             while (i != e && *i++ != token);
-            std::string *newstr = new std::string(j, i);
+            auto *newstr = new std::string(j, i);
             if (newstr->at(newstr->size() - 1) == token) newstr->erase(newstr->size() - 1);
             result->push_back(newstr);
             j = i;
@@ -180,7 +180,7 @@ splitting at (and excluding) delimiter "token".
 
         while (i != e) {
             while (i != e && *i++ != token);
-            std::string *newstr = new std::string(j, i);
+            auto *newstr = new std::string(j, i);
             if (newstr->at(newstr->size() - 1) == token) newstr->erase(newstr->size() - 1);
             result.push_back(newstr);
             j = i;
@@ -190,28 +190,28 @@ splitting at (and excluding) delimiter "token".
 /* ################################################################### */
     static void ToU1(std::string **strings, unsigned char *out, int n) {
         for (int i = 0; i < n; ++i) {
-            out[i] = (unsigned char) atoi(strings[i]->c_str());
+            out[i] = static_cast<unsigned char>(atoi(strings[i]->c_str()));
         }
     };
 
 /* ################################################################### */
     static void ToS1(std::string **strings, char *out, int n) {
         for (int i = 0; i < n; ++i) {
-            out[i] = (char) atoi(strings[i]->c_str());
+            out[i] = static_cast<char>(atoi(strings[i]->c_str()));
         }
     };
 
 /* ################################################################### */
     static void ToU2(std::string **strings, unsigned short *out, int n) {
         for (int i = 0; i < n; ++i) {
-            out[i] = (unsigned short) atoi(strings[i]->c_str());
+            out[i] = static_cast<unsigned short>(atoi(strings[i]->c_str()));
         }
     };
 
 /* ################################################################### */
     static void ToS2(std::string **strings, short *out, int n) {
         for (int i = 0; i < n; ++i) {
-            out[i] = (short) atoi(strings[i]->c_str());
+            out[i] = static_cast<short>(atoi(strings[i]->c_str()));
         }
     };
 
@@ -225,7 +225,7 @@ splitting at (and excluding) delimiter "token".
 /* ################################################################### */
     static void ToU4(std::string **strings, unsigned int *out, int n) {
         for (int i = 0; i < n; ++i) {
-            out[i] = (unsigned int) strtoul(strings[i]->c_str(), NULL, 0);
+            out[i] = static_cast<unsigned int>(strtoul(strings[i]->c_str(), NULL, 0));
         }
     };
 
@@ -248,97 +248,97 @@ splitting at (and excluding) delimiter "token".
 /* ################################################################### */
     static void ToF(std::string **strings, float *out, int n) {
         for (int i = 0; i < n; ++i) {
-            out[i] = (float) atof(strings[i]->c_str());
+            out[i] = static_cast<float>(atof(strings[i]->c_str()));
         }
     };
 
 /* ################################################################### */
     static void ToD(std::string **strings, double *out, int n) {
         for (int i = 0; i < n; ++i) {
-            out[i] = (double) atof(strings[i]->c_str());
+            out[i] = atof(strings[i]->c_str());
         }
     };
 
 /* ################################################################### */
     static void StringsToInts(std::vector<std::string> &strings, std::vector<int> &out) {
-        for (int i = 0; i < (long int) strings.size(); ++i) {
-            out.push_back(atoi(strings[i].c_str()));
+        for (auto &string: strings) {
+            out.push_back(atoi(string.c_str()));
         }
     };
 
 /* ################################################################### */
     static void StringsToInts(std::vector<std::string *> *strings, std::vector<int> *out) {
-        for (int i = 0; i < (long int) strings->size(); ++i) {
-            out->push_back(atoi(strings->at(i)->c_str()));
+        for (auto &string: *strings) {
+            out->push_back(atoi(string->c_str()));
         }
     };
 
 /* ################################################################### */
     static void StringsToLongs(std::vector<std::string> &strings, std::vector<long> &out) {
-        for (int i = 0; i < (long int) strings.size(); ++i) {
-            out.push_back(atol(strings[i].c_str()));
+        for (auto &string: strings) {
+            out.push_back(atol(string.c_str()));
         }
     };
 
 /* ################################################################### */
     static void StringsToLongs(std::vector<std::string *> *strings, std::vector<long> *out) {
-        for (int i = 0; i < (long int) strings->size(); ++i) {
-            out->push_back(atol(strings->at(i)->c_str()));
+        for (auto &string: *strings) {
+            out->push_back(atol(string->c_str()));
         }
     };
 
 /* ################################################################### */
     static void StringsToULongs(std::vector<std::string> &strings, std::vector<unsigned long> &out) {
-        for (int i = 0; i < (long int) strings.size(); ++i) {
-            out.push_back(strtoul(strings[i].c_str(), 0, 0));
+        for (auto &string: strings) {
+            out.push_back(strtoul(string.c_str(), 0, 0));
         }
     };
 
 /* ################################################################### */
     static void StringsToULongs(std::vector<std::string *> *strings, std::vector<unsigned long> *out) {
-        for (int i = 0; i < (long int) strings->size(); ++i) {
-            out->push_back(strtoul(strings->at(i)->c_str(), 0, 0));
+        for (auto &string: *strings) {
+            out->push_back(strtoul(string->c_str(), 0, 0));
         }
     };
 
 /* ################################################################### */
     static void StringsToFloats(std::vector<std::string> &strings, std::vector<float> &out) {
-        for (int i = 0; i < (long int) strings.size(); ++i) {
-            out.push_back(atof(strings[i].c_str()));
+        for (auto &string: strings) {
+            out.push_back(static_cast<float>(atof(string.c_str())));
         }
     };
 
 /* ################################################################### */
     static void StringsToFloats(std::vector<std::string *> *strings, std::vector<float> *out) {
-        for (int i = 0; i < (long int) strings->size(); ++i) {
-            out->push_back(atof(strings->at(i)->c_str()));
+        for (auto &string: *strings) {
+            out->push_back(static_cast<float>(atof(string->c_str())));
         }
     };
 
 /* ################################################################### */
     static void StringsToDoubles(std::vector<std::string> &strings, std::vector<double> &out) {
-        for (int i = 0; i < (long int) strings.size(); ++i) {
-            out.push_back(atof(strings[i].c_str()));
+        for (auto &string: strings) {
+            out.push_back(atof(string.c_str()));
         }
     };
 
 /* ################################################################### */
     static void StringsToDoubles(std::vector<std::string *> *strings, std::vector<double> *out) {
-        for (int i = 0; i < (long int) strings->size(); ++i) {
-            out->push_back(atof(strings->at(i)->c_str()));
+        for (auto &string: *strings) {
+            out->push_back(atof(string->c_str()));
         }
     };
 
 /* ################################################################### */
     static void StringsToStrings(std::vector<std::string *> *strings, std::vector<std::string> *out) {
-        for (int i = 0; i < (long int) strings->size(); ++i) {
-            out->push_back(*strings->at(i));
+        for (auto &string: *strings) {
+            out->push_back(*string);
         }
     };
 
 /* ################################################################### */
     static void ToLowerASCII(std::string &s) {
-        int n = s.size();
+        int n = static_cast<int>(s.size());
         int i = 0;
         char c;
         for (; i < n; ++i) {
@@ -364,9 +364,9 @@ splitting at (and excluding) delimiter "token".
         len = strlen(CmdLine);
         i = ((len + 2) / 2) * sizeof(void *) + sizeof(void *);
 
-        argv = (char **) malloc(i + (len + 2) * sizeof(char));
+        argv = static_cast<char **>(malloc(i + (len + 2) * sizeof(char)));
 
-        _argv = (char *) (((unsigned char *) argv) + i);
+        _argv = reinterpret_cast<char *>((reinterpret_cast<unsigned char *>(argv)) + i);
 
         argc = 0;
         argv[argc] = _argv;
@@ -424,9 +424,9 @@ splitting at (and excluding) delimiter "token".
             i++;
         }
         _argv[j] = '\0';
-        argv[argc] = NULL;
+        argv[argc] = nullptr;
 
-        (*_argc) = argc;
+        (*_argc) = static_cast<int>(argc);
         return argv;
     };
 /* ################################################################### */
@@ -558,7 +558,7 @@ A regcomp/regexec based class could be created in the future if a need arises.
                     delete t[i];
 
                 delete[] t;
-                t = 0;
+                t = nullptr;
                 break;
             default:
                 break;
@@ -570,117 +570,130 @@ A regcomp/regexec based class could be created in the future if a need arises.
     };
 
 /* ------------------------------------------------------------------- */
-    ezOptionValidator::ezOptionValidator(char _type) : s1(0), op(0), quiet(1), type(_type), size(0), insensitive(0) {
+    ezOptionValidator::ezOptionValidator(char _type) : s1(nullptr), op(0), quiet(true), type(_type), size(0),
+                                                       insensitive(false) {
         id = ezOptionParserIDGenerator::instance().next();
     };
 
 /* ------------------------------------------------------------------- */
-    ezOptionValidator::ezOptionValidator(char _type, char _op, const char *list, int _size) : s1(0), op(_op), quiet(1),
+    ezOptionValidator::ezOptionValidator(char _type, char _op, const char *list, int _size) : s1(nullptr), op(_op),
+                                                                                              quiet(true),
                                                                                               type(_type), size(_size),
-                                                                                              insensitive(0) {
+                                                                                              insensitive(false) {
         id = ezOptionParserIDGenerator::instance().next();
         s1 = new char[size];
         memcpy(s1, list, size);
     };
 
 /* ------------------------------------------------------------------- */
-    ezOptionValidator::ezOptionValidator(char _type, char _op, const unsigned char *list, int _size) : u1(0), op(_op),
-                                                                                                       quiet(1),
+    ezOptionValidator::ezOptionValidator(char _type, char _op, const unsigned char *list, int _size) : u1(nullptr),
+                                                                                                       op(_op),
+                                                                                                       quiet(true),
                                                                                                        type(_type),
                                                                                                        size(_size),
-                                                                                                       insensitive(0) {
+                                                                                                       insensitive(
+                                                                                                               false) {
         id = ezOptionParserIDGenerator::instance().next();
         u1 = new unsigned char[size];
         memcpy(u1, list, size);
     };
 
 /* ------------------------------------------------------------------- */
-    ezOptionValidator::ezOptionValidator(char _type, char _op, const short *list, int _size) : s2(0), op(_op), quiet(1),
+    ezOptionValidator::ezOptionValidator(char _type, char _op, const short *list, int _size) : s2(nullptr), op(_op),
+                                                                                               quiet(true),
                                                                                                type(_type), size(_size),
-                                                                                               insensitive(0) {
+                                                                                               insensitive(false) {
         id = ezOptionParserIDGenerator::instance().next();
         s2 = new short[size];
         memcpy(s2, list, size * sizeof(short));
     };
 
 /* ------------------------------------------------------------------- */
-    ezOptionValidator::ezOptionValidator(char _type, char _op, const unsigned short *list, int _size) : u2(0), op(_op),
-                                                                                                        quiet(1),
+    ezOptionValidator::ezOptionValidator(char _type, char _op, const unsigned short *list, int _size) : u2(nullptr),
+                                                                                                        op(_op),
+                                                                                                        quiet(true),
                                                                                                         type(_type),
                                                                                                         size(_size),
-                                                                                                        insensitive(0) {
+                                                                                                        insensitive(
+                                                                                                                false) {
         id = ezOptionParserIDGenerator::instance().next();
         u2 = new unsigned short[size];
         memcpy(u2, list, size * sizeof(unsigned short));
     };
 
 /* ------------------------------------------------------------------- */
-    ezOptionValidator::ezOptionValidator(char _type, char _op, const int *list, int _size) : s4(0), op(_op), quiet(1),
+    ezOptionValidator::ezOptionValidator(char _type, char _op, const int *list, int _size) : s4(nullptr), op(_op),
+                                                                                             quiet(true),
                                                                                              type(_type), size(_size),
-                                                                                             insensitive(0) {
+                                                                                             insensitive(false) {
         id = ezOptionParserIDGenerator::instance().next();
         s4 = new int[size];
         memcpy(s4, list, size * sizeof(int));
     };
 
 /* ------------------------------------------------------------------- */
-    ezOptionValidator::ezOptionValidator(char _type, char _op, const unsigned int *list, int _size) : u4(0), op(_op),
-                                                                                                      quiet(1),
+    ezOptionValidator::ezOptionValidator(char _type, char _op, const unsigned int *list, int _size) : u4(nullptr),
+                                                                                                      op(_op),
+                                                                                                      quiet(true),
                                                                                                       type(_type),
                                                                                                       size(_size),
-                                                                                                      insensitive(0) {
+                                                                                                      insensitive(
+                                                                                                              false) {
         id = ezOptionParserIDGenerator::instance().next();
         u4 = new unsigned int[size];
         memcpy(u4, list, size * sizeof(unsigned int));
     };
 
 /* ------------------------------------------------------------------- */
-    ezOptionValidator::ezOptionValidator(char _type, char _op, const long long *list, int _size) : s8(0), op(_op),
-                                                                                                   quiet(1),
+    ezOptionValidator::ezOptionValidator(char _type, char _op, const long long *list, int _size) : s8(nullptr), op(_op),
+                                                                                                   quiet(true),
                                                                                                    type(_type),
                                                                                                    size(_size),
-                                                                                                   insensitive(0) {
+                                                                                                   insensitive(false) {
         id = ezOptionParserIDGenerator::instance().next();
         s8 = new long long[size];
         memcpy(s8, list, size * sizeof(long long));
     };
 
 /* ------------------------------------------------------------------- */
-    ezOptionValidator::ezOptionValidator(char _type, char _op, const unsigned long long *list, int _size) : u8(0),
+    ezOptionValidator::ezOptionValidator(char _type, char _op, const unsigned long long *list, int _size) : u8(nullptr),
                                                                                                             op(_op),
-                                                                                                            quiet(1),
+                                                                                                            quiet(true),
                                                                                                             type(_type),
                                                                                                             size(_size),
                                                                                                             insensitive(
-                                                                                                                    0) {
+                                                                                                                    false) {
         id = ezOptionParserIDGenerator::instance().next();
         u8 = new unsigned long long[size];
         memcpy(u8, list, size * sizeof(unsigned long long));
     };
 
 /* ------------------------------------------------------------------- */
-    ezOptionValidator::ezOptionValidator(char _type, char _op, const float *list, int _size) : f(0), op(_op), quiet(1),
+    ezOptionValidator::ezOptionValidator(char _type, char _op, const float *list, int _size) : f(nullptr), op(_op),
+                                                                                               quiet(true),
                                                                                                type(_type), size(_size),
-                                                                                               insensitive(0) {
+                                                                                               insensitive(false) {
         id = ezOptionParserIDGenerator::instance().next();
         f = new float[size];
         memcpy(f, list, size * sizeof(float));
     };
 
 /* ------------------------------------------------------------------- */
-    ezOptionValidator::ezOptionValidator(char _type, char _op, const double *list, int _size) : d(0), op(_op), quiet(1),
+    ezOptionValidator::ezOptionValidator(char _type, char _op, const double *list, int _size) : d(nullptr), op(_op),
+                                                                                                quiet(true),
                                                                                                 type(_type),
                                                                                                 size(_size),
-                                                                                                insensitive(0) {
+                                                                                                insensitive(false) {
         id = ezOptionParserIDGenerator::instance().next();
         d = new double[size];
         memcpy(d, list, size * sizeof(double));
     };
 
 /* ------------------------------------------------------------------- */
-    ezOptionValidator::ezOptionValidator(char _type, char _op, const char **list, int _size, bool _insensitive) : t(0),
+    ezOptionValidator::ezOptionValidator(char _type, char _op, const char **list, int _size, bool _insensitive) : t(
+            nullptr),
                                                                                                                   op(_op),
-                                                                                                                  quiet(1),
+                                                                                                                  quiet(true),
                                                                                                                   type(_type),
                                                                                                                   size(_size),
                                                                                                                   insensitive(
@@ -700,7 +713,7 @@ _op: lt, gt, ..., in
 _list: comma-delimited string
 */
     ezOptionValidator::ezOptionValidator(const char *_type, const char *_op, const char *_list, bool _insensitive) : t(
-            0), quiet(1), type(0), size(0), insensitive(_insensitive) {
+            nullptr), quiet(true), type(0), size(0), insensitive(_insensitive) {
         id = ezOptionParserIDGenerator::instance().next();
 
         switch (_type[0]) {
@@ -826,8 +839,8 @@ _list: comma-delimited string
         std::list<std::string *> split;
         std::list<std::string *>::iterator it;
         SplitDelim(unsplit, ',', split);
-        size = split.size();
-        std::string **strings = new std::string *[size];
+        size = static_cast<int>(split.size());
+        auto **strings = new std::string *[size];
 
         int i = 0;
         for (it = split.begin(); it != split.end(); ++it)
@@ -870,7 +883,7 @@ _list: comma-delimited string
 
 /* ------------------------------------------------------------------- */
     bool ezOptionValidator::isValid(const std::string *valueAsString) {
-        if (valueAsString == 0) return false;
+        if (valueAsString == nullptr) return false;
 
 #define CHECKRANGE(E, T) {\
   std::stringstream ss(valueAsString->c_str()); \
@@ -944,7 +957,7 @@ _list: comma-delimited string
                 }
                     break;
                 case F: {
-                    double dmax = static_cast<double>(std::numeric_limits<float>::max());
+                    auto dmax = static_cast<double>(std::numeric_limits<float>::max());
                     double dvalue = atof(valueAsString->c_str());
                     double dmin = -dmax;
                     if (dvalue < dmin) {
@@ -963,7 +976,7 @@ _list: comma-delimited string
                 }
                     break;
                 case D: {
-                    long double ldmax = static_cast<long double>(std::numeric_limits<double>::max());
+                    auto ldmax = static_cast<long double>(std::numeric_limits<double>::max());
                     std::stringstream ss(valueAsString->c_str());
                     long double ldvalue;
                     ss >> ldvalue;
@@ -1136,7 +1149,7 @@ _list: comma-delimited string
 
         ~OptionGroup() {
             int i;
-            for (i = 0; i < (long int) flags.size(); ++i)
+            for (i = 0; i < static_cast<long int>(flags.size()); ++i)
                 delete flags[i];
 
             flags.clear();
@@ -1209,8 +1222,8 @@ _list: comma-delimited string
 /* ################################################################### */
     void OptionGroup::clearArgs() {
         int i, j;
-        for (i = 0; i < (long int) args.size(); ++i) {
-            for (j = 0; j < (long int) args[i]->size(); ++j)
+        for (i = 0; i < static_cast<long int>(args.size()); ++i) {
+            for (j = 0; j < static_cast<long int>(args[i]->size()); ++j)
                 delete args[i]->at(j);
 
             delete args[i];
@@ -1282,7 +1295,7 @@ _list: comma-delimited string
             if (args.empty() || args[0]->empty())
                 out = 0;
             else {
-                out = strtoul(args[0]->at(0)->c_str(), 0, 0);
+                out = strtoul(args[0]->at(0)->c_str(), nullptr, 0);
             }
         }
     };
@@ -1312,12 +1325,12 @@ _list: comma-delimited string
             if (defaults.empty())
                 out = 0.0;
             else
-                out = (float) atof(defaults.c_str());
+                out = static_cast<float>(atof(defaults.c_str()));
         } else {
             if (args.empty() || args[0]->empty())
                 out = 0.0;
             else {
-                out = (float) atof(args[0]->at(0)->c_str());
+                out = static_cast<float>(atof(args[0]->at(0)->c_str()));
             }
         }
     };
@@ -1444,8 +1457,8 @@ _list: comma-delimited string
             }
         } else {
             if (!args.empty()) {
-                int n = args.size();
-                if ((long int) out.size() < n) out.resize(n);
+                int n = static_cast<int>(args.size());
+                if (static_cast<long int>(out.size()) < n) out.resize(n);
                 for (int i = 0; i < n; ++i) {
                     StringsToInts(args[i], &out[i]);
                 }
@@ -1459,13 +1472,13 @@ _list: comma-delimited string
             if (!defaults.empty()) {
                 std::vector<std::string> strings;
                 SplitDelim(defaults, delim, strings);
-                if (out.size() < 1) out.resize(1);
+                if (out.empty()) out.resize(1);
                 StringsToLongs(strings, out[0]);
             }
         } else {
             if (!args.empty()) {
-                int n = args.size();
-                if ((long int) out.size() < n) out.resize(n);
+                int n = static_cast<int>(args.size());
+                if (static_cast<long int>(out.size()) < n) out.resize(n);
                 for (int i = 0; i < n; ++i) {
                     StringsToLongs(args[i], &out[i]);
                 }
@@ -1479,13 +1492,13 @@ _list: comma-delimited string
             if (!defaults.empty()) {
                 std::vector<std::string> strings;
                 SplitDelim(defaults, delim, strings);
-                if (out.size() < 1) out.resize(1);
+                if (out.empty()) out.resize(1);
                 StringsToULongs(strings, out[0]);
             }
         } else {
             if (!args.empty()) {
-                int n = args.size();
-                if ((long int) out.size() < n) out.resize(n);
+                int n = static_cast<int>(args.size());
+                if (static_cast<long int>(out.size()) < n) out.resize(n);
                 for (int i = 0; i < n; ++i) {
                     StringsToULongs(args[i], &out[i]);
                 }
@@ -1499,13 +1512,13 @@ _list: comma-delimited string
             if (!defaults.empty()) {
                 std::vector<std::string> strings;
                 SplitDelim(defaults, delim, strings);
-                if (out.size() < 1) out.resize(1);
+                if (out.empty()) out.resize(1);
                 StringsToFloats(strings, out[0]);
             }
         } else {
             if (!args.empty()) {
-                int n = args.size();
-                if ((long int) out.size() < n) out.resize(n);
+                int n = static_cast<int>(args.size());
+                if (static_cast<long int>(out.size()) < n) out.resize(n);
                 for (int i = 0; i < n; ++i) {
                     StringsToFloats(args[i], &out[i]);
                 }
@@ -1519,13 +1532,13 @@ _list: comma-delimited string
             if (!defaults.empty()) {
                 std::vector<std::string> strings;
                 SplitDelim(defaults, delim, strings);
-                if (out.size() < 1) out.resize(1);
+                if (out.empty()) out.resize(1);
                 StringsToDoubles(strings, out[0]);
             }
         } else {
             if (!args.empty()) {
-                int n = args.size();
-                if ((long int) out.size() < n) out.resize(n);
+                int n = static_cast<int>(args.size());
+                if (static_cast<long int>(out.size()) < n) out.resize(n);
                 for (int i = 0; i < n; ++i) {
                     StringsToDoubles(args[i], &out[i]);
                 }
@@ -1539,16 +1552,16 @@ _list: comma-delimited string
             if (!defaults.empty()) {
                 std::vector<std::string> strings;
                 SplitDelim(defaults, delim, strings);
-                if (out.size() < 1) out.resize(1);
+                if (out.empty()) out.resize(1);
                 out[0] = strings;
             }
         } else {
             if (!args.empty()) {
-                int n = args.size();
-                if ((long int) out.size() < n) out.resize(n);
+                int n = static_cast<int>(args.size());
+                if (static_cast<long int>(out.size()) < n) out.resize(n);
 
                 for (int i = 0; i < n; ++i) {
-                    for (int j = 0; j < (long int) args[i]->size(); ++j)
+                    for (int j = 0; j < static_cast<long int>(args[i]->size()); ++j)
                         out[i].push_back(*args[i]->at(j));
                 }
             }
@@ -1568,19 +1581,19 @@ _list: comma-delimited string
 
         inline void
         add(const char *defaults, bool required, int expectArgs, char delim, const char *help, const char *flag1,
-            ezOptionValidator *validator = 0);
+            ezOptionValidator *validator = nullptr);
 
         inline void
         add(const char *defaults, bool required, int expectArgs, char delim, const char *help, const char *flag1,
-            const char *flag2, ezOptionValidator *validator = 0);
+            const char *flag2, ezOptionValidator *validator = nullptr);
 
         inline void
         add(const char *defaults, bool required, int expectArgs, char delim, const char *help, const char *flag1,
-            const char *flag2, const char *flag3, ezOptionValidator *validator = 0);
+            const char *flag2, const char *flag3, ezOptionValidator *validator = nullptr);
 
         inline void
         add(const char *defaults, bool required, int expectArgs, char delim, const char *help, const char *flag1,
-            const char *flag2, const char *flag3, const char *flag4, ezOptionValidator *validator = 0);
+            const char *flag2, const char *flag3, const char *flag4, ezOptionValidator *validator = nullptr);
 
         inline bool exportFile(const char *filename, bool all = false);
 
@@ -1648,19 +1661,19 @@ _list: comma-delimited string
         this->doublespace = 1;
 
         int i;
-        for (i = 0; i < (long int) groups.size(); ++i)
+        for (i = 0; i < static_cast<long int>(groups.size()); ++i)
             delete groups[i];
         groups.clear();
 
-        for (i = 0; i < (long int) unknownArgs.size(); ++i)
+        for (i = 0; i < static_cast<long int>(unknownArgs.size()); ++i)
             delete unknownArgs[i];
         unknownArgs.clear();
 
-        for (i = 0; i < (long int) firstArgs.size(); ++i)
+        for (i = 0; i < static_cast<long int>(firstArgs.size()); ++i)
             delete firstArgs[i];
         firstArgs.clear();
 
-        for (i = 0; i < (long int) lastArgs.size(); ++i)
+        for (i = 0; i < static_cast<long int>(lastArgs.size()); ++i)
             delete lastArgs[i];
         lastArgs.clear();
 
@@ -1676,18 +1689,18 @@ _list: comma-delimited string
 /* ################################################################### */
     void ezOptionParser::resetArgs() {
         int i;
-        for (i = 0; i < (long int) groups.size(); ++i)
+        for (i = 0; i < static_cast<long int>(groups.size()); ++i)
             groups[i]->clearArgs();
 
-        for (i = 0; i < (long int) unknownArgs.size(); ++i)
+        for (i = 0; i < static_cast<long int>(unknownArgs.size()); ++i)
             delete unknownArgs[i];
         unknownArgs.clear();
 
-        for (i = 0; i < (long int) firstArgs.size(); ++i)
+        for (i = 0; i < static_cast<long int>(firstArgs.size()); ++i)
             delete firstArgs[i];
         firstArgs.clear();
 
-        for (i = 0; i < (long int) lastArgs.size(); ++i)
+        for (i = 0; i < static_cast<long int>(lastArgs.size()); ++i)
             delete lastArgs[i];
         lastArgs.clear();
     };
@@ -1695,15 +1708,15 @@ _list: comma-delimited string
 /* ################################################################### */
     void ezOptionParser::add(const char *defaults, bool required, int expectArgs, char delim, const char *help,
                              const char *flag1, ezOptionValidator *validator) {
-        int id = this->groups.size();
-        OptionGroup *g = new OptionGroup;
+        int id = static_cast<int>(this->groups.size());
+        auto *g = new OptionGroup;
         g->defaults = defaults;
         g->isRequired = required;
         g->expectArgs = expectArgs;
         g->delim = delim;
-        g->isSet = 0;
+        g->isSet = false;
         g->help = help;
-        std::string *f1 = new std::string(flag1);
+        auto *f1 = new std::string(flag1);
         g->flags.push_back(f1);
         this->optionGroupIds[flag1] = id;
         this->groups.push_back(g);
@@ -1720,17 +1733,17 @@ _list: comma-delimited string
 /* ################################################################### */
     void ezOptionParser::add(const char *defaults, bool required, int expectArgs, char delim, const char *help,
                              const char *flag1, const char *flag2, ezOptionValidator *validator) {
-        int id = this->groups.size();
-        OptionGroup *g = new OptionGroup;
+        int id = static_cast<int>(this->groups.size());
+        auto *g = new OptionGroup;
         g->defaults = defaults;
         g->isRequired = required;
         g->expectArgs = expectArgs;
         g->delim = delim;
-        g->isSet = 0;
+        g->isSet = false;
         g->help = help;
-        std::string *f1 = new std::string(flag1);
+        auto *f1 = new std::string(flag1);
         g->flags.push_back(f1);
-        std::string *f2 = new std::string(flag2);
+        auto *f2 = new std::string(flag2);
         g->flags.push_back(f2);
         this->optionGroupIds[flag1] = id;
         this->optionGroupIds[flag2] = id;
@@ -1749,19 +1762,19 @@ _list: comma-delimited string
 /* ################################################################### */
     void ezOptionParser::add(const char *defaults, bool required, int expectArgs, char delim, const char *help,
                              const char *flag1, const char *flag2, const char *flag3, ezOptionValidator *validator) {
-        int id = this->groups.size();
-        OptionGroup *g = new OptionGroup;
+        int id = static_cast<int>(this->groups.size());
+        auto *g = new OptionGroup;
         g->defaults = defaults;
         g->isRequired = required;
         g->expectArgs = expectArgs;
         g->delim = delim;
-        g->isSet = 0;
+        g->isSet = false;
         g->help = help;
-        std::string *f1 = new std::string(flag1);
+        auto *f1 = new std::string(flag1);
         g->flags.push_back(f1);
-        std::string *f2 = new std::string(flag2);
+        auto *f2 = new std::string(flag2);
         g->flags.push_back(f2);
-        std::string *f3 = new std::string(flag3);
+        auto *f3 = new std::string(flag3);
         g->flags.push_back(f3);
         this->optionGroupIds[flag1] = id;
         this->optionGroupIds[flag2] = id;
@@ -1782,21 +1795,21 @@ _list: comma-delimited string
     void ezOptionParser::add(const char *defaults, bool required, int expectArgs, char delim, const char *help,
                              const char *flag1, const char *flag2, const char *flag3, const char *flag4,
                              ezOptionValidator *validator) {
-        int id = this->groups.size();
-        OptionGroup *g = new OptionGroup;
+        int id = static_cast<int>(this->groups.size());
+        auto *g = new OptionGroup;
         g->defaults = defaults;
         g->isRequired = required;
         g->expectArgs = expectArgs;
         g->delim = delim;
-        g->isSet = 0;
+        g->isSet = false;
         g->help = help;
-        std::string *f1 = new std::string(flag1);
+        auto *f1 = new std::string(flag1);
         g->flags.push_back(f1);
-        std::string *f2 = new std::string(flag2);
+        auto *f2 = new std::string(flag2);
         g->flags.push_back(f2);
-        std::string *f3 = new std::string(flag3);
+        auto *f3 = new std::string(flag3);
         g->flags.push_back(f3);
-        std::string *f4 = new std::string(flag4);
+        auto *f4 = new std::string(flag4);
         g->flags.push_back(f4);
         this->optionGroupIds[flag1] = id;
         this->optionGroupIds[flag2] = id;
@@ -1821,7 +1834,7 @@ _list: comma-delimited string
         bool quote;
 
         // Export the first args, except the program name, so start from 1.
-        for (i = 1; i < (long int) firstArgs.size(); ++i) {
+        for (i = 1; i < static_cast<long int>(firstArgs.size()); ++i) {
             quote = ((firstArgs[i]->find_first_of(" \t") != std::string::npos) &&
                      (firstArgs[i]->find_first_of("\'\"") == std::string::npos));
 
@@ -1840,7 +1853,7 @@ _list: comma-delimited string
 
         std::vector<std::string *> stringPtrs(groups.size());
         int m;
-        int n = groups.size();
+        int n = static_cast<int>(groups.size());
         for (i = 0; i < n; ++i) {
             stringPtrs[i] = groups[i]->flags[0];
         }
@@ -1867,11 +1880,11 @@ _list: comma-delimited string
                         out.append("\n");
                     }
                 } else {
-                    int n = g->args.size();
-                    for (int j = 0; j < n; ++j) {
+                    int n2 = static_cast<int>(g->args.size());
+                    for (int j = 0; j < n2; ++j) {
                         out.append(*stringPtrs[i]);
                         out.append(" ");
-                        m = g->args[j]->size();
+                        m = static_cast<int>(g->args[j]->size());
 
                         for (int k = 0; k < m; ++k) {
                             quote = ((*g->args[j]->at(k)).find_first_of(" \t") != std::string::npos);
@@ -1892,7 +1905,7 @@ _list: comma-delimited string
         }
 
         // Export the last args.
-        for (i = 0; i < (long int) lastArgs.size(); ++i) {
+        for (i = 0; i < static_cast<long int>(lastArgs.size()); ++i) {
             quote = (lastArgs[i]->find_first_of(" \t") != std::string::npos);
             if (quote)
                 out.append("\"");
@@ -1929,7 +1942,7 @@ _list: comma-delimited string
 
         // Read entire file contents.
         std::ifstream::pos_type size = file.tellg();
-        char *memblock = new char[(int) size + 1]; // Add one for end of string.
+        char *memblock = new char[static_cast<int>(size) + 1]; // Add one for end of string.
         file.seekg(0, std::ios::beg);
         file.read(memblock, size);
         memblock[size] = '\0';
@@ -1951,7 +1964,7 @@ _list: comma-delimited string
         for (iter = lines.begin(); iter != lines.end(); ++iter) {
             line = *iter;
             str = line->c_str();
-            n = line->size();
+            n = static_cast<int>(line->size());
             sq.clear();
             dq.clear();
             if (n) {
@@ -1963,7 +1976,7 @@ _list: comma-delimited string
                 } else {
                     // Erase whitespace prefix.
                     line->erase(0, pos);
-                    n = line->size();
+                    n = static_cast<int>(line->size());
                 }
 
                 if (line->at(0) == '"')
@@ -1986,19 +1999,19 @@ _list: comma-delimited string
             for (i = 1; i < n; ++i) {
                 if ((line->at(i) == comment) && (line->at(i - 1) != '\\')) {
                     // If within open/close quote pair, then not real comment.
-                    if (sq.size()) {
+                    if (!sq.empty()) {
                         lo = std::lower_bound(sq.begin(), sq.end(), i);
                         // All start of strings will be even indices, closing quotes is odd indices.
-                        j = (int) (lo - sq.begin());
+                        j = static_cast<int>(lo - sq.begin());
                         if ((j % 2) == 0) { // Even implies comment char not in quote pair.
                             // Erase from comment char to end of line.
                             line->erase(i);
                             break;
                         }
-                    } else if (dq.size()) {
+                    } else if (!dq.empty()) {
                         // Repeat tests for double quotes.
                         lo = std::lower_bound(dq.begin(), dq.end(), i);
-                        j = (int) (lo - dq.begin());
+                        j = static_cast<int>(lo - dq.begin());
                         if ((j % 2) == 0) {
                             line->erase(i);
                             break;
@@ -2023,7 +2036,7 @@ _list: comma-delimited string
 
         // Now parse as if from command line.
         int argc = 0;
-        char **argv = CommandLineToArgvA((char *) cmd.c_str(), &argc);
+        char **argv = CommandLineToArgvA(const_cast<char *>(cmd.c_str()), &argc);
 
         // Parse.
         parse(argc, (const char **) argv);
@@ -2060,7 +2073,7 @@ _list: comma-delimited string
             return groups[optionGroupIds[name]];
         }
 
-        return 0;
+        return nullptr;
     };
 
 /* ################################################################### */
@@ -2091,7 +2104,7 @@ _list: comma-delimited string
         std::map<std::string *, int> stringPtrToIndexMap;
         std::vector<std::string *> stringPtrs(groups.size());
 
-        for (i = 0; i < (long int) groups.size(); ++i) {
+        for (i = 0; i < static_cast<long int>(groups.size()); ++i) {
             std::sort(groups[i]->flags.begin(), groups[i]->flags.end(), CmpOptStringPtr);
             stringPtrToIndexMap[groups[i]->flags[0]] = i;
             stringPtrs[i] = groups[i]->flags[0];
@@ -2102,7 +2115,7 @@ _list: comma-delimited string
         std::vector<std::string> sortedOpts;
         // Sort first flag of each group with other groups.
         std::sort(stringPtrs.begin(), stringPtrs.end(), CmpOptStringPtr);
-        for (i = 0; i < (long int) groups.size(); ++i) {
+        for (i = 0; i < static_cast<long int>(groups.size()); ++i) {
             //printf("DEBUG:%d: %d %d %s\n", __LINE__, i, stringPtrToIndexMap[stringPtrs[i]], stringPtrs[i]->c_str());
             k = stringPtrToIndexMap[stringPtrs[i]];
             opts.clear();
@@ -2110,7 +2123,7 @@ _list: comma-delimited string
                 opts.append(*groups[k]->flags[j]);
                 opts.append(", ");
 
-                if ((long int) opts.size() > width)
+                if (static_cast<long int>(opts.size()) > width)
                     opts.append("\n");
             }
             // The last flag. No need to append comma anymore.
@@ -2138,9 +2151,9 @@ _list: comma-delimited string
         // Find longest opt flag string to set column start for help usage descriptions.
         int maxlen = 0;
         if (layout == ALIGN) {
-            for (i = 0; i < (long int) groups.size(); ++i) {
-                if (maxlen < (long int) sortedOpts[i].size())
-                    maxlen = sortedOpts[i].size();
+            for (i = 0; i < static_cast<long int>(groups.size()); ++i) {
+                if (maxlen < static_cast<long int>(sortedOpts[i].size()))
+                    maxlen = static_cast<int>(sortedOpts[i].size());
             }
         }
 
@@ -2148,11 +2161,11 @@ _list: comma-delimited string
         int helpwidth;
         std::list<std::string *>::iterator cIter, insertionIter;
         size_t pos;
-        for (i = 0; i < (long int) groups.size(); ++i) {
+        for (i = 0; i < static_cast<long int>(groups.size()); ++i) {
             k = stringPtrToIndexMap[stringPtrs[i]];
 
             if (layout == STAGGER)
-                maxlen = sortedOpts[i].size();
+                maxlen = static_cast<int>(sortedOpts[i].size());
 
             int pad = gutter + maxlen;
             helpwidth = width - pad;
@@ -2163,13 +2176,13 @@ _list: comma-delimited string
             for (insertionIter = desc.begin(), cIter = insertionIter++;
                  cIter != desc.end();
                  cIter = insertionIter++) {
-                if ((long int) ((*cIter)->size()) > helpwidth) {
+                if (static_cast<long int>((*cIter)->size()) > helpwidth) {
                     // Get pointer to next string to insert new strings before it.
                     std::string *rem = *cIter;
                     // Remove this line and add back in pieces.
                     desc.erase(cIter);
                     // Loop until remaining string is short enough.
-                    while ((long int) rem->size() > helpwidth) {
+                    while (static_cast<long int>(rem->size()) > helpwidth) {
                         // Find whitespace to split before helpwidth.
                         if (rem->at(helpwidth) == ' ') {
                             // If word ends exactly at helpwidth, then split after it.
@@ -2185,7 +2198,7 @@ _list: comma-delimited string
                         rem->erase(0, pos);
                     }
 
-                    if (rem->size())
+                    if (!rem->empty())
                         desc.insert(insertionIter, rem);
                     else
                         delete rem;
@@ -2201,7 +2214,7 @@ _list: comma-delimited string
                 usage.append(gutter, ' ');
             }
 
-            if (desc.size() > 0) { // Crash fix by Bruce Shankle.
+            if (!desc.empty()) { // Crash fix by Bruce Shankle.
                 // First line already padded above (before calling SplitDelim) after option flag names.
                 cIter = desc.begin();
                 usage.append(**cIter);
@@ -2228,7 +2241,7 @@ _list: comma-delimited string
     bool ezOptionParser::gotExpected(std::vector<std::string> &badOptions) {
         int i, j;
 
-        for (i = 0; i < (long int) groups.size(); ++i) {
+        for (i = 0; i < static_cast<long int>(groups.size()); ++i) {
             OptionGroup *g = groups[i];
             // If was set, ensure number of args is correct.
             if (g->isSet) {
@@ -2237,8 +2250,8 @@ _list: comma-delimited string
                     continue;
                 }
 
-                for (j = 0; j < (long int) g->args.size(); ++j) {
-                    if ((g->expectArgs != -1) && (g->expectArgs != (long int) g->args[j]->size()))
+                for (j = 0; j < static_cast<long int>(g->args.size()); ++j) {
+                    if ((g->expectArgs != -1) && (g->expectArgs != static_cast<long int>(g->args[j]->size())))
                         badOptions.push_back(*g->flags[0]);
                 }
             }
@@ -2251,7 +2264,7 @@ _list: comma-delimited string
     bool ezOptionParser::gotRequired(std::vector<std::string> &badOptions) {
         int i;
 
-        for (i = 0; i < (long int) groups.size(); ++i) {
+        for (i = 0; i < static_cast<long int>(groups.size()); ++i) {
             OptionGroup *g = groups[i];
             // Simple case when required but user never set it.
             if (g->isRequired && (!g->isSet)) {
@@ -2277,13 +2290,13 @@ _list: comma-delimited string
             ezOptionValidator *v = validators[validatorid];
             bool nextgroup = false;
 
-            for (int i = 0; i < (long int) g->args.size(); ++i) {
+            for (int i = 0; i < static_cast<long int>(g->args.size()); ++i) {
                 if (nextgroup) break;
                 std::vector<std::string *> *args = g->args[i];
-                for (int j = 0; j < (long int) args->size(); ++j) {
-                    if (!v->isValid(args->at(j))) {
+                for (auto &arg: *args) {
+                    if (!v->isValid(arg)) {
                         badOptions.push_back(*g->flags[0]);
-                        badArgs.push_back(*args->at(j));
+                        badArgs.push_back(*arg);
                         nextgroup = true;
                         break;
                     }
@@ -2338,7 +2351,7 @@ _list: comma-delimited string
             if (optionGroupIds.count(s)) {
                 k = optionGroupIds[s];
                 g = groups[k];
-                g->isSet = 1;
+                g->isSet = true;
                 g->parseIndex.push_back(i);
 
                 if (g->expectArgs) {
@@ -2382,13 +2395,13 @@ _list: comma-delimited string
         int i, j, k;
 
         out += "First Args:\n";
-        for (i = 0; i < (long int) firstArgs.size(); ++i) {
+        for (i = 0; i < static_cast<long int>(firstArgs.size()); ++i) {
             sprintf(tmp, "%d: %s\n", i + 1, firstArgs[i]->c_str());
             out += tmp;
         }
 
         // Sort the option flag names.
-        int n = groups.size();
+        int n = static_cast<int>(groups.size());
         std::vector<std::string *> stringPtrs(n);
         for (i = 0; i < n; ++i) {
             stringPtrs[i] = groups[i]->flags[0];
@@ -2403,7 +2416,7 @@ _list: comma-delimited string
             g = get(stringPtrs[i]->c_str());
             out += "\n";
             // The flag names:
-            for (j = 0; j < (long int) g->flags.size() - 1; ++j) {
+            for (j = 0; j < static_cast<long int>(g->flags.size()) - 1; ++j) {
                 sprintf(tmp, "%s, ", g->flags[j]->c_str());
                 out += tmp;
             }
@@ -2416,8 +2429,8 @@ _list: comma-delimited string
                         sprintf(tmp, "%s (default)\n", g->defaults.c_str());
                         out += tmp;
                     } else {
-                        for (k = 0; k < (long int) g->args.size(); ++k) {
-                            for (j = 0; j < (long int) g->args[k]->size() - 1; ++j) {
+                        for (k = 0; k < static_cast<long int>(g->args.size()); ++k) {
+                            for (j = 0; j < static_cast<long int>(g->args[k]->size()) - 1; ++j) {
                                 sprintf(tmp, "%s%c", g->args[k]->at(j)->c_str(), g->delim);
                                 out += tmp;
                             }
@@ -2436,13 +2449,13 @@ _list: comma-delimited string
         }
 
         out += "\nLast Args:\n";
-        for (i = 0; i < (long int) lastArgs.size(); ++i) {
+        for (i = 0; i < static_cast<long int>(lastArgs.size()); ++i) {
             sprintf(tmp, "%d: %s\n", i + 1, lastArgs[i]->c_str());
             out += tmp;
         }
 
         out += "\nUnknown Args:\n";
-        for (i = 0; i < (long int) unknownArgs.size(); ++i) {
+        for (i = 0; i < static_cast<long int>(unknownArgs.size()); ++i) {
             sprintf(tmp, "%d: %s\n", i + 1, unknownArgs[i]->c_str());
             out += tmp;
         }

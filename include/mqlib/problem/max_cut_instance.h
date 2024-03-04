@@ -45,11 +45,11 @@ namespace mqlib {
         void PrintInstance() const;
 
         // Getters
-        int get_size() const { return edges_.size(); }
+        int get_size() const { return static_cast<int>(edges_.size()); }
 
-        int get_edge_count() const { return all_edges_.size(); }
+        int get_edge_count() const { return static_cast<int>(all_edges_.size()); }
 
-        int get_vertex_degree(int idx) const { return edges_[idx].size(); }
+        int get_vertex_degree(int idx) const { return static_cast<int>(edges_[idx].size()); }
 
         std::vector<std::vector<std::pair<int, double> > > get_edges() const { return edges_; }
 
