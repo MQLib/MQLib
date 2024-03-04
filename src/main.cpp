@@ -20,8 +20,8 @@ void Usage(ez::ezOptionParser &opt) {
 double GetTime(const struct timeval &start) {
     // Runtime in seconds since the passed start time
     struct timeval end;
-    gettimeofday(&end, 0);
-    return (end.tv_sec - start.tv_sec) + 0.000001 * (end.tv_usec - start.tv_usec);
+    gettimeofday(&end, nullptr);
+    return static_cast<double>(end.tv_sec - start.tv_sec) + 0.000001 * static_cast<double>(end.tv_usec - start.tv_usec);
 }
 
 // The runtime limit according to instance size (may be overwritten on command
@@ -45,7 +45,7 @@ int main(int argc, const char *argv[]) {
     opt.example = "./bin/MQlib -h BURER2002 -fM bin/sampleMaxCut.txt -r 10\n";
 
     opt.add("",  // Default
-            0,  // Required?
+            false,  // Required?
             1,  // Number of args expected
             0,  // Delimiter if expecting multiple args
             "Heuristic code.",  // Help description
@@ -54,7 +54,7 @@ int main(int argc, const char *argv[]) {
     );
 
     opt.add("",  // Default
-            0,  // Required?
+            false,  // Required?
             0,  // Number of args expected
             0,  // Delimiter if expecting multiple args
             "Use the Max-Cut hyper-heuristic",  // Help description
@@ -63,7 +63,7 @@ int main(int argc, const char *argv[]) {
     );
 
     opt.add("",  // Default
-            0,  // Required?
+            false,  // Required?
             1,  // Number of args expected
             0,  // Delimiter if expecting multiple args
             "Filename for Max-Cut problem instance.",  // Help description
@@ -72,7 +72,7 @@ int main(int argc, const char *argv[]) {
     );
 
     opt.add("",  // Default
-            0,  // Required?
+            false,  // Required?
             1,  // Number of args expected
             0,  // Delimiter if expecting multiple args
             "Filename for QUBO problem instance.",  // Help description
@@ -81,9 +81,9 @@ int main(int argc, const char *argv[]) {
     );
 
     // Limit seed to range of unsigned short
-    ez::ezOptionValidator *vU2 = new ez::ezOptionValidator("u2");
+    auto *vU2 = new ez::ezOptionValidator("u2");
     opt.add("",  // Default
-            0,  // Required?
+            false,  // Required?
             1,  // Number of args expected
             0,  // Delimiter if expecting multiple args
             "Random seed (range 0 to 65535).",  // Help description
@@ -93,7 +93,7 @@ int main(int argc, const char *argv[]) {
     );
 
     opt.add("",  // Default
-            0,  // Required?
+            false,  // Required?
             0,  // Number of args expected
             0,  // Delimiter if expecting multiple args
             "No validation (after the run is complete, don't check the solutions to make sure objectives were reported accurately).",  // Help description
@@ -102,7 +102,7 @@ int main(int argc, const char *argv[]) {
     );
 
     opt.add("",  // Default
-            0,  // Required?
+            false,  // Required?
             0,  // Number of args expected
             0,  // Delimiter if expecting multiple args
             "Output problem instance statistics.",  // Help description
@@ -111,7 +111,7 @@ int main(int argc, const char *argv[]) {
     );
 
     opt.add("",  // Default
-            0,  // Required?
+            false,  // Required?
             0,  // Number of args expected
             0,  // Delimiter if expecting multiple args
             "Output header for problem instance statistics",  // Help description
@@ -120,7 +120,7 @@ int main(int argc, const char *argv[]) {
     );
 
     opt.add("",  // Default
-            0,   // Required?
+            false,   // Required?
             0,   // Number of args expected
             0,   // Delimiter if expecting multiple args
             "Print solution to screen",  // Help description
@@ -129,7 +129,7 @@ int main(int argc, const char *argv[]) {
     );
 
     opt.add("",  // Default
-            0,  // Required?
+            false,  // Required?
             0,  // Number of args expected
             0,  // Delimiter if expecting multiple args
             "Fast run (10x faster than full run)",  // Help description
@@ -138,7 +138,7 @@ int main(int argc, const char *argv[]) {
     );
 
     opt.add("",  // Default
-            0,  // Required?
+            false,  // Required?
             0,  // Number of args expected
             0,  // Delimiter if expecting multiple args
             "List all heuristic codes and brief descriptions",  // Help description
@@ -147,9 +147,9 @@ int main(int argc, const char *argv[]) {
     );
 
     // Runtime limit must be a double
-    ez::ezOptionValidator *vD = new ez::ezOptionValidator("d");
+    auto *vD = new ez::ezOptionValidator("d");
     opt.add("",  // Default
-            0,  // Required?
+            false,  // Required?
             1,  // Number of args expected
             0,  // Delimiter if expecting multiple args
             "Runtime limit (seconds), or iteration count for baseline",  // Help description
@@ -162,17 +162,17 @@ int main(int argc, const char *argv[]) {
 
     std::vector<std::string> badOptions;
     if (!opt.gotRequired(badOptions)) {
-        for (int i = 0; i < badOptions.size(); ++i) {
-            std::cout << "ERROR: Missing required option " << badOptions[i] << ".\n\n";
+        for (auto & badOption : badOptions) {
+            std::cout << "ERROR: Missing required option " << badOption << ".\n\n";
         }
         Usage(opt);
         return 1;
     }
 
     if (!opt.gotExpected(badOptions)) {
-        for (int i = 0; i < badOptions.size(); ++i) {
+        for (auto & badOption : badOptions) {
             std::cout << "ERROR: Got unexpected number of arguments for option " <<
-                      badOptions[i] << ".\n\n";
+                      badOption << ".\n\n";
         }
         Usage(opt);
         return 1;
@@ -180,7 +180,7 @@ int main(int argc, const char *argv[]) {
 
     std::vector<std::string> badArgs;
     if (!opt.gotValid(badOptions, badArgs)) {
-        for (int i = 0; i < badOptions.size(); ++i) {
+        for (uint64_t i = 0; i < badOptions.size(); ++i) {
             std::cerr << "ERROR: Got invalid argument \"" << badArgs[i] <<
                       "\" for option " << badOptions[i] << ".\n\n";
         }
@@ -193,7 +193,7 @@ int main(int argc, const char *argv[]) {
                    opt.isSet("-ps") || opt.isSet("-q") || opt.isSet("-r") || opt.isSet("-s");
     bool metricSet = opt.isSet("-m") || opt.isSet("-mh");
     bool listSet = opt.isSet("-l");
-    int numSet = ((int) heurSet) + ((int) metricSet) + ((int) listSet);
+    int numSet = (static_cast<int>(heurSet)) + (static_cast<int>(metricSet)) + (static_cast<int>(listSet));
     if (numSet != 1) {
         std::cout << "ERROR: Invalid usage." << std::endl;
         Usage(opt);
@@ -243,8 +243,8 @@ int main(int argc, const char *argv[]) {
 
     // Build the problem instance
     std::string filename;
-    MaxCutInstance *mi = 0;
-    QUBOInstance *qi = 0;
+    MaxCutInstance *mi = nullptr;
+    QUBOInstance *qi = nullptr;
     if (opt.isSet("-fM")) {
         opt.get("-fM")->getString(filename);
         mi = new MaxCutInstance(filename);
@@ -256,7 +256,7 @@ int main(int argc, const char *argv[]) {
     if (heurSet) {
         /************* Handle heuristicSet case ****************/
         // Set the seed if it's provided; otherwise set to current time
-        int seed = time(0);
+        int seed = static_cast<int>(time(nullptr));
         if (opt.isSet("-s")) {
             opt.get("-s")->getInt(seed);
         }
@@ -277,9 +277,9 @@ int main(int argc, const char *argv[]) {
 
         // Run the heuristic
         bool validation = !opt.isSet("-nv");
-        MaxCutHeuristic *mh = NULL;
-        QUBOHeuristic *qh = NULL;
-        Heuristic *heuristic = NULL;
+        MaxCutHeuristic *mh = nullptr;
+        QUBOHeuristic *qh = nullptr;
+        Heuristic *heuristic = nullptr;
         std::string heuristic_code;
         if (opt.isSet("-h")) {
             // Run a specified heuristic
@@ -290,14 +290,14 @@ int main(int argc, const char *argv[]) {
                     mi = new MaxCutInstance(*qi);
                 }
                 mh = factory.RunMaxCutHeuristic(heuristic_code, *mi, runtime_limit,
-                                                validation, NULL);
+                                                validation, nullptr);
                 heuristic = mh;
             } else if (factory.ValidQUBOHeuristicCode(heuristic_code)) {
                 if (!qi) {
                     qi = new QUBOInstance(*mi);
                 }
                 qh = factory.RunQUBOHeuristic(heuristic_code, *qi, runtime_limit,
-                                              validation, NULL);
+                                              validation, nullptr);
                 heuristic = qh;
             } else {
                 std::cout << "Illegal heuristic code " << heuristic_code << std::endl;
@@ -311,7 +311,7 @@ int main(int argc, const char *argv[]) {
                 mi = new MaxCutInstance(*qi);
             }
             std::string selected;
-            mh = new MaxCutHyperheuristic(*mi, runtime_limit, validation, NULL, seed,
+            mh = new MaxCutHyperheuristic(*mi, runtime_limit, validation, nullptr, seed,
                                           &selected);
             heuristic = mh;
             heuristic_code = "HH_" + selected;
@@ -338,10 +338,10 @@ int main(int argc, const char *argv[]) {
                 const MaxCutSimpleSolution &sol = mh->get_best_solution();
                 sol.PrintSolution();
             } else if (mh && opt.isSet("-fQ")) {
-                QUBOSimpleSolution sol(mh->get_best_solution(), *qi, NULL);
+                QUBOSimpleSolution sol(mh->get_best_solution(), *qi, nullptr);
                 sol.PrintSolution();
             } else if (qh && opt.isSet("-fM")) {
-                MaxCutSimpleSolution sol(qh->get_best_solution(), *mi, NULL);
+                MaxCutSimpleSolution sol(qh->get_best_solution(), *mi, nullptr);
                 sol.PrintSolution();
             } else if (qh && opt.isSet("-fQ")) {
                 const QUBOSimpleSolution &sol = qh->get_best_solution();
@@ -351,11 +351,11 @@ int main(int argc, const char *argv[]) {
 
         if (mh) {
             delete mh;
-            mh = NULL;
+            mh = nullptr;
         }
         if (qh) {
             delete qh;
-            qh = NULL;
+            qh = nullptr;
         }
     } else {
         /************* Handle metricSet case ****************/
@@ -363,7 +363,7 @@ int main(int argc, const char *argv[]) {
             // Column order is [metrics], [runtimes]
             std::vector<std::string> metric_names;
             GraphMetrics::AllMetricNames(&metric_names);
-            for (int i = 0; i < metric_names.size(); ++i) {
+            for (uint64_t i = 0; i < metric_names.size(); ++i) {
                 if (i != 0) {
                     std::cout << ",";
                 }
@@ -371,8 +371,8 @@ int main(int argc, const char *argv[]) {
             }
             std::vector<std::string> runtime_names;
             GraphMetrics::AllRuntimeTypes(&runtime_names);
-            for (int i = 0; i < runtime_names.size(); ++i) {
-                std::cout << "," << runtime_names[i];
+            for (auto & runtime_name : runtime_names) {
+                std::cout << "," << runtime_name;
             }
             std::cout << std::endl;
         }
@@ -388,14 +388,14 @@ int main(int argc, const char *argv[]) {
             std::vector<double> runtimes;
             GraphMetrics gm(*mi);
             gm.AllMetrics(&metrics, &runtimes);
-            for (int i = 0; i < metrics.size(); ++i) {
+            for (uint64_t i = 0; i < metrics.size(); ++i) {
                 if (i != 0) {
                     std::cout << ",";
                 }
                 std::cout << metrics[i];
             }
-            for (int i = 0; i < runtimes.size(); ++i) {
-                std::cout << "," << runtimes[i];
+            for (double runtime : runtimes) {
+                std::cout << "," << runtime;
             }
             std::cout << std::endl;
         }
@@ -404,11 +404,11 @@ int main(int argc, const char *argv[]) {
     // Clean up memory allocated for instances
     if (mi) {
         delete mi;
-        mi = 0;
+        mi = nullptr;
     }
     if (qi) {
         delete qi;
-        qi = 0;
+        qi = nullptr;
     }
 
     return 0;
