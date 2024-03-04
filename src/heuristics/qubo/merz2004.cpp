@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <iostream>
 #include <limits>
+#include <random>
 #include "mqlib/heuristics/qubo/merz2004.h"
 #include "mqlib/util/random.h"
 
@@ -19,15 +20,15 @@ namespace mqlib {
         for (int t = 0; t < num; ++t) {
             // Fig 7 steps 9-12: Flip a random non-common bit with positive diff_weights_
             std::vector<int> positive;  // Positions in nCB of positive diff_weights_
-            for (int i = 0; i < nCB.size(); ++i) {
+            for (uint64_t i = 0; i < nCB.size(); ++i) {
                 if (ImprovingMove(nCB[i])) {
                     positive.push_back(i);
                 }
             }
 
-            if (positive.size() > 0) {
+            if (!positive.empty()) {
                 // Fig 7 Step 9: Randomly select the variable
-                int idx = positive[Random::RandInt(0, positive.size() - 1)];  // pos in nCB
+                int idx = positive[Random::RandInt(0, static_cast<int>(positive.size() - 1))];  // pos in nCB
 
                 // Fig 7 Steps 10-11: Flip the variable and update gains
                 UpdateCutValues(nCB[idx]);
@@ -38,11 +39,11 @@ namespace mqlib {
             }
 
             // Fig 7 Steps 14-18: If CB is non-empty, flip the best variable in it
-            if (CB.size() > 0) {
+            if (!CB.empty()) {
                 // Fig 7 Step 14: Find the element of CB with the best gain
                 int bestIdx = 0;
                 double bestGain = diff_weights_[CB[0]];
-                for (int i = 1; i < CB.size(); ++i) {
+                for (uint64_t i = 1; i < CB.size(); ++i) {
                     if (diff_weights_[CB[i]] > bestGain) {
                         bestIdx = i;
                         bestGain = diff_weights_[CB[i]];
@@ -87,7 +88,7 @@ namespace mqlib {
                 for (int i = 0; i < N_; ++i) {
                     RP.push_back(i);
                 }
-                std::random_shuffle(RP.begin(), RP.end());
+                std::shuffle(RP.begin(), RP.end(), std::mt19937(std::random_device()()));
 
                 // Fig 1 Step 1.2.2: Search all variables (regardless of whether they're
                 // in C) in RP order, and flip a variable if doing so will improve best.
@@ -148,7 +149,7 @@ namespace mqlib {
         for (int i = 0; i < N_; ++i) {
             toflip.push_back(i);
         }
-        std::random_shuffle(toflip.begin(), toflip.end());
+        std::shuffle(toflip.begin(), toflip.end(), std::mt19937(std::random_device()()));
 
         // Flip selected bits
         for (int i = 0; i < numFlip; ++i) {
@@ -183,21 +184,21 @@ namespace mqlib {
         // total values (note that there may be less than PS_ final values if there are
         // duplicates).
         P_.clear();
-        for (int i = 0; i < x->size(); ++i) {
+        for (auto & i : *x) {
             // Check if it's duplicated
             bool match = false;
-            for (int j = 0; j < P_.size(); ++j) {
-                if ((*x)[i] == P_[j]) {
+            for (const auto & j : P_) {
+                if (i == j) {
                     match = true;
                     break;
                 }
             }
 
             if (!match) {
-                P_.push_back((*x)[i]);
+                P_.push_back(i);
             }
 
-            if (P_.size() == PS_) {
+            if (P_.size() == static_cast<uint64_t>(PS_)) {
                 break;  // We have selected all the elements
             }
         }
@@ -233,7 +234,7 @@ namespace mqlib {
             stepsSinceImprovement_ = 0;
 
             // Mutate and local search on each solution except the best (position 0)
-            for (int i = 1; i < P_.size(); ++i) {
+            for (uint64_t i = 1; i < P_.size(); ++i) {
                 P_[i].Mutate();
                 P_[i].RandomizedKOpt();
             }
@@ -263,7 +264,7 @@ namespace mqlib {
             std::vector<Merz2004Solution> Pc;
             for (int idx = 0; idx < crossoverRate * PS; ++idx) {
                 // Fig 5 Step 5: Select two parents at random from P
-                int popSize = P.get_P().size();
+                int popSize = static_cast<int>(P.get_P().size());
                 int a, b;
                 if (popSize == 1) {
                     a = 0;

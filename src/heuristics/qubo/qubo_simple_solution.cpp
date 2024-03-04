@@ -26,7 +26,7 @@ namespace mqlib {
 // Random solution (p=0.5 for each vertex)
     QUBOSimpleSolution::QUBOSimpleSolution(const QUBOInstance &qi,
                                            QUBOHeuristic *heuristic,
-                                           int ignored1, int ignored2) :
+                                           int  /*ignored1*/, int  /*ignored2*/) :
             BaseSolution(qi.get_size(), -1),
             qi_(qi),
             heuristic_(heuristic) {
@@ -70,7 +70,7 @@ namespace mqlib {
         // 0 values and objective 0, so we need to change to assignment 1 when
         // appropriate and copy the objective value.
         const std::vector<int> &mc_assignments = sol.get_assignments();
-        if (mc_assignments.size() != N_ + 1) {
+        if (mc_assignments.size() != static_cast<uint64_t>(N_ + 1)) {
             std::cout << "ERROR: Instance size mismatch when building " <<
                       "QUBOSimpleSolution from MaxCutSimpleSolution" << std::endl;
             exit(1);

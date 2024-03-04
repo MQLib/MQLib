@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <iostream>
 #include <limits>
+#include <random>
 #include "mqlib/heuristics/qubo/katayama2000.h"
 #include "mqlib/util/random.h"
 
@@ -41,7 +42,7 @@ namespace mqlib {
                     identical.push_back(i);
                 }
             }
-            std::random_shuffle(identical.begin(), identical.end());
+            std::shuffle(identical.begin(), identical.end(), std::mt19937(std::random_device()()));
             for (int i = 0; i < numFlip; ++i) {
                 UpdateCutValues(identical[i]);
             }
@@ -69,7 +70,7 @@ namespace mqlib {
                 for (int i = 0; i < N_; ++i) {
                     RP[i] = i;
                 }
-                std::random_shuffle(RP.begin(), RP.end());
+                std::shuffle(RP.begin(), RP.end(), std::mt19937(std::random_device()()));
 
                 // Fig 1 Step 1.2.2: Search all variables (regardless of whether they're
                 // in C) in RP order, and flip a variable if doing so will improve best.
@@ -128,7 +129,7 @@ namespace mqlib {
         for (int i = 0; i < N_; ++i) {
             toflip[i] = i;
         }
-        std::random_shuffle(toflip.begin(), toflip.end());
+        std::shuffle(toflip.begin(), toflip.end(), std::mt19937(std::random_device()()));
 
         // Flip selected bits
         for (int i = 0; i < numFlip; ++i) {
@@ -143,7 +144,7 @@ namespace mqlib {
             stepsSinceImprovement_(0) {
         // Initialize a random population of size PS, and run local search on each
         for (int ct = 0; ct < PS; ++ct) {
-            P_.push_back(QUBOSolution::RandomSolution(qi, heuristic));
+            P_.emplace_back(QUBOSolution::RandomSolution(qi, heuristic));
             P_[ct].VariantKOpt();
 
             // This is a pretty time-consuming initialization, so we'll report each new
@@ -169,21 +170,21 @@ namespace mqlib {
 
         // Add the best non-duplicated solutions to P_.
         P_.clear();
-        for (int i = 0; i < combined.size(); ++i) {
+        for (auto & i : combined) {
             // Check if it's duplicated
             bool match = false;
-            for (int j = 0; j < P_.size(); ++j) {
-                if (combined[i] == P_[j]) {
+            for (const auto & j : P_) {
+                if (i == j) {
                     match = true;
                     break;
                 }
             }
 
             if (!match) {
-                P_.push_back(combined[i]);
+                P_.push_back(i);
             }
 
-            if (P_.size() == PS_) {
+            if (P_.size() == static_cast<uint64_t>(PS_)) {
                 break;  // We have selected the maximum number of elements
             }
         }
@@ -207,12 +208,12 @@ namespace mqlib {
         } else {
             // Check pairwise hamming distances
             int hammingSum = 0;
-            for (int i = 0; i < P_.size(); ++i) {
-                for (int j = i + 1; j < P_.size(); ++j) {
+            for (uint64_t i = 0; i < P_.size(); ++i) {
+                for (uint64_t j = i + 1; j < P_.size(); ++j) {
                     hammingSum += P_[i].SymmetricDifference(P_[j]);
                 }
             }
-            if (hammingSum < avgDistThreshold * P_.size() * (P_.size() - 1) / 2.0) {
+            if (hammingSum < avgDistThreshold * static_cast<double>(P_.size()) * static_cast<double>(P_.size() - 1) / 2.0) {
                 needDiversify = true;
             }
         }
@@ -225,7 +226,7 @@ namespace mqlib {
             stepsSinceImprovement_ = 0;
 
             // Mutate and local search on each solution
-            for (int i = 1; i < P_.size(); ++i) {
+            for (uint64_t i = 1; i < P_.size(); ++i) {
                 P_[i].Mutate();
                 P_[i].VariantKOpt();
 
@@ -256,7 +257,7 @@ namespace mqlib {
         }
 
         // Fig 2 Step 3: Loop until termination criterion (runtime limit)
-        while (1) {
+        while (true) {
             // Fig 2 Step 3.2: Build PS/2 offspring
             std::vector<Katayama2000QUBOSolution> offspring;
             for (int ct = 0; ct < PS / 2; ++ct) {

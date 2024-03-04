@@ -9,7 +9,7 @@ namespace mqlib {
         // Parameters
         double SFACTOR = 0.3;
         double TFACTOR = 0.007;
-        int ITER = std::max<int>(1, N_ * SFACTOR);
+        int ITER = std::max<int>(1, static_cast<int>(N_ * SFACTOR));
         double T_final = T_initial * TFACTOR;
         int ConsecFailureLimit = 10;
         double log_delta_plus_one = 0.09531018;  // log(1+delta) for delta = 0.1
@@ -23,7 +23,7 @@ namespace mqlib {
         //         failures).
         while (T > T_final && ConsecFailure < ConsecFailureLimit) {
             // Step 2.1: Test a random 1-swap ITER times
-            double changed = false;  // Did we change in the ITER tries?
+            bool changed = false;  // Did we change in the ITER tries?
             Alkhamis1998Solution best(*this);
             for (int i = 0; i < ITER; ++i) {
                 // Step 2.1.1: Randomly select a variable to test
@@ -83,8 +83,8 @@ namespace mqlib {
         for (int iter = 0; iter < m; ++iter) {
             QUBOSolution x = QUBOSolution::RandomSolution(qi, this);
             const std::vector<double> &diff_weights = x.get_diff_weights();
-            for (int i = 0; i < diff_weights.size(); ++i) {
-                if (x.NonDetrimentalMove(i)) {
+            for (uint64_t i = 0; i < diff_weights.size(); ++i) {
+                if (x.NonDetrimentalMove(static_cast<int>(i))) {
                     ++m1;
                 } else {
                     ++m2;

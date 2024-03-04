@@ -40,7 +40,7 @@ namespace mqlib {
             // merz2002 does not comment on what to do if one or both of these values
             // are negative, we'll do something natural (if both are negative, pick
             // randomly; if one is negative, update the positive one). **
-            double flip1;  // We will flip the best choice for 1
+            bool flip1;  // We will flip the best choice for 1
             if ((best0val > 0.0 && best1val > 0.0) ||
                 (best0val == 0.0 && best1val == 0.0)) {
                 flip1 = (Random::RandInt(0, 1) == 1);
@@ -104,7 +104,7 @@ namespace mqlib {
                        QUBOCallback *qc, bool greedy, LStype type) :
             QUBOHeuristic(qi, runtime_limit, validation, qc) {
         // Add random restarts around procedure until out of time
-        while (1) {
+        while (true) {
             // Step 1: Construct procedure (either random or greedy)
             Merz2002QUBOSolution x =
                     greedy ? Merz2002PartialSolution::RandomizedGreedy(qi, this) :

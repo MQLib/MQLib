@@ -2,6 +2,8 @@
 #include <cmath>
 #include <iostream>
 #include <limits>
+#include <random>
+#include <utility>
 #include <vector>
 #include "mqlib/heuristics/qubo/pardalos2008.h"
 #include "mqlib/util/random.h"
@@ -12,7 +14,7 @@ namespace mqlib {
             QUBOSolution(x) {}
 
     Pardalos2008QUBOSolution::Pardalos2008QUBOSolution
-            (const Pardalos2008QUBOSolution x, const std::vector<double> &probs, int k) :
+            (const Pardalos2008QUBOSolution& x, const std::vector<double> &probs, int k) :
             QUBOSolution(x) {
         // Parameters
         int distmax = (k <= 5) ? N_ / 2 : N_ / 5;
@@ -92,7 +94,7 @@ namespace mqlib {
                     }
 
                     // Alg 2 Step 10: Randomly permute M
-                    std::random_shuffle(M.begin(), M.end());
+                    std::shuffle(M.begin(), M.end(), std::mt19937(std::random_device()()));
 
                     // Alg 2 Steps 11-20: Go through the variables in the order of M,
                     // flipping if they're non-decreasing 1-moves and either allowed by the
@@ -153,15 +155,15 @@ namespace mqlib {
             Esize_(Esize) {}
 
     const Pardalos2008QUBOSolution &Pardalos2008Elite::Best() const {
-        if (Elite_.size() == 0) {
+        if (Elite_.empty()) {
             std::cout << "Called Best() without any elite solutions" << std::endl;
             exit(0);
         }
         int best_idx = 0;
         double best_weight = Elite_[0].get_weight();
-        for (int idx = 1; idx < Elite_.size(); ++idx) {
+        for (uint64_t idx = 1; idx < Elite_.size(); ++idx) {
             if (Elite_[idx].get_weight() > best_weight) {
-                best_idx = idx;
+                best_idx = static_cast<int>(idx);
                 best_weight = Elite_[idx].get_weight();
             }
         }
@@ -178,19 +180,19 @@ namespace mqlib {
     void Pardalos2008Elite::AddSolutions(const std::vector<
             Pardalos2008QUBOSolution> &slns) {
         // Check if each solution can be added to the list of elite solutions
-        for (int idx = 0; idx < slns.size(); ++idx) {
-            if (Elite_.size() < Esize_) {
+        for (const auto & sln : slns) {
+            if (Elite_.size() < static_cast<uint64_t>(Esize_)) {
                 // Elite_ is not full; just add the new solution and re-make heap
-                Elite_.push_back(slns[idx]);
+                Elite_.push_back(sln);
                 std::push_heap(Elite_.begin(), Elite_.end(),
                                std::greater<Pardalos2008QUBOSolution>());
-            } else if (slns[idx].ImprovesOver(Elite_[0])) {
+            } else if (sln.ImprovesOver(Elite_[0])) {
                 // Elite_ is full but new solution is better than the worst in Elite_,
                 // so replace it
                 std::pop_heap(Elite_.begin(), Elite_.end(),
                               std::greater<Pardalos2008QUBOSolution>());
                 Elite_.pop_back();
-                Elite_.push_back(slns[idx]);
+                Elite_.push_back(sln);
                 std::push_heap(Elite_.begin(), Elite_.end(),
                                std::greater<Pardalos2008QUBOSolution>());
             }
@@ -203,8 +205,8 @@ namespace mqlib {
         int dp = 200;  // Prohibition parameter
 
         // If there are fewer than dp variables, just throw away all elite solutions.
-        if (Elite_.size() > 0 && Elite_[0].get_assignments().size() < dp &&
-            bests.size() > 0) {
+        if (!Elite_.empty() && Elite_[0].get_assignments().size() < static_cast<uint64_t>(dp) &&
+            !bests.empty()) {
             Elite_.clear();
             return;
         }
@@ -212,16 +214,16 @@ namespace mqlib {
         // Remove any elite solution that is within dp of any of the passed best
         // solutions.
         std::vector<Pardalos2008QUBOSolution> NewElite;
-        for (int i = 0; i < Elite_.size(); ++i) {
+        for (auto & i : Elite_) {
             bool tooClose = false;
-            for (int j = 0; j < bests.size(); ++j) {
-                if (Elite_[i].SymmetricDifference(bests[j]) <= dp) {
+            for (const auto & best : bests) {
+                if (i.SymmetricDifference(best) <= dp) {
                     tooClose = true;
                     break;
                 }
             }
             if (!tooClose) {
-                NewElite.push_back(Elite_[i]);
+                NewElite.push_back(i);
             }
         }
         std::make_heap(NewElite.begin(), NewElite.end(),
@@ -231,14 +233,14 @@ namespace mqlib {
 
     Pardalos2008Probs::Pardalos2008Probs(const std::vector<
             Pardalos2008QUBOSolution> &slns, int K,
-                                         const std::vector<double> &mu) :
+                                         std::vector<double> mu) :
             K_(K),
-            mu_(mu),
-            N_(slns[0].get_assignments().size()),
-            numerator0_((K_ + 1) * N_, 0.0),
-            numerator1_((K_ + 1) * N_, 0.0),
-            denominator0_((K_ + 1) * N_, 0.0),
-            denominator1_((K_ + 1) * N_, 0.0),
+            mu_(std::move(mu)),
+            N_(static_cast<int>(slns[0].get_assignments().size())),
+            numerator0_(static_cast<uint64_t>(K_ + 1) * N_, 0.0),
+            numerator1_(static_cast<uint64_t>(K_ + 1) * N_, 0.0),
+            denominator0_(static_cast<uint64_t >(K_ + 1) * N_, 0.0),
+            denominator1_(static_cast<uint64_t >(K_ + 1) * N_, 0.0),
             freq1_(N_, 0),
             freq_(0) {
         AddSolutions(slns);
@@ -247,23 +249,23 @@ namespace mqlib {
     void Pardalos2008Probs::AddSolutions(const std::vector<
             Pardalos2008QUBOSolution> &slns) {
         // Update frequency information
-        freq_ += slns.size();
-        for (int idx = 0; idx < slns.size(); ++idx) {
+        freq_ += static_cast<int>(slns.size());
+        for (const auto & sln : slns) {
             for (int j = 0; j < N_; ++j) {
-                freq1_[j] += (slns[idx].get_assignments()[j] == 1);
+                freq1_[j] += (sln.get_assignments()[j] == 1);
             }
         }
 
         // Update numerator and denominator information
-        for (int idx = 0; idx < slns.size(); ++idx) {
+        for (const auto & sln : slns) {
             for (int k = 0; k <= K_; ++k) {
-                double expWeight = exp(-mu_[k] * slns[idx].get_weight());
+                double expWeight = exp(-mu_[k] * sln.get_weight());
                 for (int j = 0; j < N_; ++j) {
-                    if (slns[idx].get_assignments()[j]) {
-                        numerator1_[k * N_ + j] += slns[idx].get_weight() * expWeight;
+                    if (sln.get_assignments()[j]) {
+                        numerator1_[k * N_ + j] += sln.get_weight() * expWeight;
                         denominator1_[k * N_ + j] += expWeight;
                     } else {
-                        numerator0_[k * N_ + j] += slns[idx].get_weight() * expWeight;
+                        numerator0_[k * N_ + j] += sln.get_weight() * expWeight;
                         denominator0_[k * N_ + j] += expWeight;
                     }
                 }
@@ -280,7 +282,7 @@ namespace mqlib {
                 probs->push_back(1.0);
             } else {
                 // We have seen both a 1 and 0 in position j; compute the prob
-                double pj0 = ((double) freq1_[j]) / freq_;  // Prop of position j as 1
+                double pj0 = (static_cast<double>(freq1_[j])) / freq_;  // Prop of position j as 1
                 double expval = 0.0;
                 for (int i = 0; i < k; ++i) {
                     expval -= 0.5 * (mu_[i + 1] - mu_[i]) *
@@ -317,7 +319,7 @@ namespace mqlib {
         std::vector<Pardalos2008QUBOSolution> bests;  // Set of iter.-end best slns
 
         // Alg 1 step 2: Loop until termination criterion met
-        while (1) {
+        while (true) {
             // Alg 1 steps 3-8: Stilde is initialized to be equal to Elite in all cases;
             // if Elite starts as empty then we'll need to initialize it. This also
             // causes P (set of neighborhoods around best solutions) to be emptied.
@@ -363,12 +365,12 @@ namespace mqlib {
                         // the set R.
                         probs.AddSolutions(R);
                         Elite.AddSolutions(R);
-                        for (int idx = 0; idx < R.size(); ++idx) {
-                            if (R[idx].ImprovesOver(xmax)) {
-                                xmax = R[idx];
+                        for (auto & idx : R) {
+                            if (idx.ImprovesOver(xmax)) {
+                                xmax = idx;
                             }
-                            if (R[idx].ImprovesOver(xbest)) {
-                                xbest = R[idx];
+                            if (idx.ImprovesOver(xbest)) {
+                                xbest = idx;
                             }
                         }
 

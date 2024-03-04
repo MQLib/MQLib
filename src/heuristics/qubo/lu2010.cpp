@@ -12,7 +12,7 @@ namespace mqlib {
     void Lu2010QUBOSolution::TabuSearch() {
         // Parameters (different values were given for "Random" and "SPP (Set
         // Partitioning Problem)); since random is QUBO we'll use those.
-        int tt = (int) (N_ / 150);  // Tabu tenure constant
+        int tt = static_cast<int>(N_ / 150);  // Tabu tenure constant
         int randTenure = 10;  // Upper bound on random component of tabu tenure
         int alpha = N_ * 5;  // Improvement cutoff for TS
 
@@ -39,8 +39,8 @@ namespace mqlib {
 
             // Randomly select index to flip from bests and flip it, updating the
             // tabu tenure for that index
-            if (bests.size() > 0) {
-                int idx = bests[Random::RandInt(0, bests.size() - 1)];
+            if (!bests.empty()) {
+                int idx = bests[Random::RandInt(0, static_cast<int>(bests.size() - 1))];
                 UpdateCutValues(idx);
                 TabuIter[idx] = iter + tt + Random::RandInt(1, randTenure) + 1;
             }
@@ -103,12 +103,12 @@ namespace mqlib {
 
         // Iteratively assign the most promising move for each index.
         bool matchI = true;  // Are we matching to xi this round?
-        while (NC.size() > 0) {
+        while (!NC.empty()) {
             // First, loop through the values in NC and pick the most promising
             int tomove = -1;  // The variable number to move
             int tomove_idx = -1;  // The index in NC of the variable to move
             double bestDiff = -std::numeric_limits<double>::max();
-            for (int idx = 0; idx < NC.size(); ++idx) {
+            for (uint64_t idx = 0; idx < NC.size(); ++idx) {
                 int i = NC[idx];
                 double thisMove;
                 if (matchI) {
@@ -118,7 +118,7 @@ namespace mqlib {
                 }
                 if (thisMove > bestDiff) {
                     tomove = i;
-                    tomove_idx = idx;
+                    tomove_idx = static_cast<int>(idx);
                     bestDiff = thisMove;
                 }
             }
@@ -138,8 +138,8 @@ namespace mqlib {
     Lu2010Population::Lu2010Population(int p, const QUBOInstance &qi,
                                        QUBOHeuristic *heuristic) :
             p_(p),
-            HD_(p * p, 0),
-            NHD_(p * p, 0.0),
+            HD_(static_cast<uint64_t>(p) * static_cast<uint64_t>(p), 0),
+            NHD_(static_cast<uint64_t>(p) * static_cast<uint64_t>(p), 0.0),
             min_NHD_(p, std::numeric_limits<double>::max()),
             VI_(qi.get_size(), 0.0) {
         // Parameters
@@ -148,7 +148,7 @@ namespace mqlib {
         // Build a population by generating random solutions and then running tabu
         // search on each
         for (int ct = 0; ct < p; ++ct) {
-            P_.push_back(QUBOSolution::RandomSolution(qi, heuristic));
+            P_.emplace_back(QUBOSolution::RandomSolution(qi, heuristic));
             P_[ct].TabuSearch();
             if (!heuristic->Report(P_[ct])) {
                 return;  // Out of time
@@ -175,8 +175,8 @@ namespace mqlib {
                 std::vector<int> diffs;
                 HD_[i * p + j] = P_[i].SymmetricDifference(P_[j], &diffs);
                 HD_sum += HD_[i * p + j];
-                for (int idx = 0; idx < diffs.size(); ++idx) {
-                    NHD_[i * p + j] += VI_[diffs[idx]];
+                for (int diff : diffs) {
+                    NHD_[i * p + j] += VI_[diff];
                 }
                 min_NHD_[i] = std::min<double>(min_NHD_[i], NHD_[i * p + j]);
                 min_NHD_[j] = std::min<double>(min_NHD_[j], NHD_[i * p + j]);
@@ -247,8 +247,8 @@ namespace mqlib {
         for (int i = 0; i < p_; ++i) {
             std::vector<int> diffs;
             x0_HD[i] = x0.SymmetricDifference(P_[i], &diffs);
-            for (int idx = 0; idx < diffs.size(); ++idx) {
-                x0_NHD[i] += VI_[diffs[idx]];
+            for (int diff : diffs) {
+                x0_NHD[i] += VI_[diff];
             }
             new_min_NHD[i] = std::min<double>(new_min_NHD[i], x0_NHD[i]);
             x0_min_NHD = std::min<double>(x0_min_NHD, x0_NHD[i]);
@@ -324,7 +324,7 @@ namespace mqlib {
 
             // Build the initial population, by randomly generating p solutions and
             // performing tabu search on each
-            Lu2010Population P(p, qi, this);
+            Lu2010Population P(static_cast<int>(p), qi, this);
             // If we hit the termination criterion while generating the population, just
             // exit.
             if (!QUBOHeuristic::Report()) {

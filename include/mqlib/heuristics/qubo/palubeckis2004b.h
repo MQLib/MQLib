@@ -46,7 +46,7 @@ namespace mqlib {
 
         // Runs the STEEPEST_ASCENT procedure, used in MST2, as well as Step 6 of
         // MST2, which flips the selected elements of I_star.
-        void SteepestAscent(const std::vector<int> I_star);
+        void SteepestAscent(const std::vector<int>& I_star);
 
         // best_objective is a pointer to the best objective value ever found in the
         // master problem, Z, mStar, and Delta are parameters, and B is a vector to be

@@ -21,13 +21,13 @@ namespace mqlib {
             std::vector<std::pair<double, int> > sorted;
             for (int i = 0; i < N_; ++i) {
                 if (I[i]) {
-                    sorted.push_back(std::pair<double, int>(diff_weights_[i], i));
+                    sorted.emplace_back(diff_weights_[i], i);
                 }
             }
-            if (sorted.size() == 0) {
+            if (sorted.empty()) {
                 break;
             }
-            int effective_b = std::min<int>(b, sorted.size());
+            int effective_b = std::min<int>(b, static_cast<int>(sorted.size()));
             std::partial_sort(sorted.begin(), sorted.begin() + effective_b, sorted.end(),
                               std::greater<std::pair<double, int> >());
 
@@ -55,7 +55,7 @@ namespace mqlib {
         int mtilde = mu * qi.get_size();
         int d1 = 10;
         double d2 = 0.1;
-        int rangemax = std::max((int) floor(d2 * qi.get_size()), d1);
+        int rangemax = std::max(static_cast<int>(floor(d2 * qi.get_size())), d1);
         int b = 5;
 
         // Since ITS is perturb-then-optimize (GSP to perturb and TS to optimize), we

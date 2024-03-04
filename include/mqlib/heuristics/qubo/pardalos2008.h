@@ -27,7 +27,7 @@ namespace mqlib {
     private:
         // Run the generation procedure (Figure 3, Sec. 2.4) from base solution x
         // with generation probabilities probs.
-        Pardalos2008QUBOSolution(const Pardalos2008QUBOSolution x,
+        Pardalos2008QUBOSolution(const Pardalos2008QUBOSolution& x,
                                  const std::vector<double> &probs, int k);
     };
 
@@ -75,7 +75,7 @@ namespace mqlib {
     public:
         // Initialize with an initial set of solutions
         Pardalos2008Probs(const std::vector<Pardalos2008QUBOSolution> &slns, int K,
-                          const std::vector<double> &mu);
+                          std::vector<double> mu);
 
         // Add a set of solutions to the numerators and denominators of E_{kj}^u.
         void AddSolutions(const std::vector<Pardalos2008QUBOSolution> &slns);

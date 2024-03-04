@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cmath>
+#include <random>
 #include "mqlib/heuristics/qubo/katayama2001.h"
 #include "mqlib/util/random.h"
 
@@ -63,7 +64,7 @@ namespace mqlib {
                     counter++;
                     // PAPER: SA: 3.2 Generate a random permutation RP[] ranging
                     //                from 1 to n
-                    std::random_shuffle(RP.begin(), RP.end());
+                    std::shuffle(RP.begin(), RP.end(), std::mt19937(std::random_device()()));
                     // PAPER: SA: 3.3 For j = 1 to n
                     for (int j = 0; j < qi.get_size(); j++) {
                         // PAPER: SA: 3.3.1 k = RP[j];

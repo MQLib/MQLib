@@ -28,7 +28,7 @@ namespace mqlib {
 
         // Use the MinRangeInternal function to fix all the indices that we can,
         // updating LB_ and UB_. After this is run CF_ will be properly fixed.
-        MinRangeInternal(&CF_, &LB_, &UB_, NULL);
+        MinRangeInternal(&CF_, &LB_, &UB_, nullptr);
     }
 
     void Lodi1999MinRange::MinRange(std::vector<int> *fixed,
@@ -45,14 +45,14 @@ namespace mqlib {
                                             std::vector<double> *UB,
                                             ExtendedSolution *x) const {
         // Update bounds based on the passed fixed values
-        for (int i = 0; i < fixed->size(); ++i) {
+        for (uint64_t i = 0; i < fixed->size(); ++i) {
             if ((*fixed)[i] != CF_[i]) {
                 if (CF_[i] >= 0) {
                     std::cout << "Mismatch with CF in MinRange" << std::endl;
                     exit(1);
                 } else {
                     // Variable is fixed in this solution but not globally
-                    FixVariable(i, (*fixed)[i], LB, UB);
+                    FixVariable(static_cast<int>(i), (*fixed)[i], LB, UB);
                 }
             }
         }
@@ -62,7 +62,7 @@ namespace mqlib {
         // because: 1) Those indices will be fixed immediately for all solutions, and
         // 2) When solving MAX-CUT (the current use of the code) there will never be
         // globally fixed variables.
-        if (x == NULL) {
+        if (x == nullptr) {
             return;
         }
 
@@ -270,12 +270,12 @@ namespace mqlib {
             //           and the remaining g elements are the best solutions found in
             //           previous restarts performed by the algorithm.
             std::vector<Lodi1999Solution> population;
-            for (int p = 0; p < SIZEmin - best_of_restarts.size(); p++) {
+            for (uint64_t p = 0; p < SIZEmin - best_of_restarts.size(); p++) {
                 population.push_back(Lodi1999Solution::RandomWithCF(mr.get_CF(), qi,
                                                                     this));
             }
-            for (int p = 0; p < best_of_restarts.size(); p++) {
-                population.push_back(best_of_restarts[p]);
+            for (auto & best_of_restart : best_of_restarts) {
+                population.push_back(best_of_restart);
             }
             std::sort(population.begin(), population.end(),
                       std::greater<Lodi1999Solution>());
@@ -294,17 +294,17 @@ namespace mqlib {
                 // NOTES: It will always be sorted at this point
                 double y1 = Random::RandDouble();
                 double y2 = Random::RandDouble();
-                int SIZE = population.size();
-                int P1 = y1 * y1 * SIZE + 1;
-                int temp = y2 * y2 * (SIZE - 1) + 1;
+                uint64_t SIZE = population.size();
+                auto P1 = static_cast<int>(y1 * y1 * static_cast<double>(SIZE) + 1);
+                auto temp = static_cast<int>(y2 * y2 * static_cast<double>(SIZE - 1) + 1);
                 int P2 = (temp < P1) ? temp : temp + 1;
                 // PAPER: 4: generate a new solution by applying a cross-over operator
                 //           to the parents
                 //        5: the new solution is modified by a mutation operator
                 assert(P1 - 1 >= 0);
                 assert(P2 - 1 >= 0);
-                assert(P1 - 1 < population.size());
-                assert(P2 - 1 < population.size());
+                assert(static_cast<uint64_t>(P1 - 1) < population.size());
+                assert(static_cast<uint64_t>(P2 - 1) < population.size());
                 Lodi1999Solution child = Lodi1999Solution::Child(population[P1 - 1],
                                                                  population[P2 - 1], mr);
                 // PAPER: 6: insert the new solution in the population and update the
@@ -322,14 +322,14 @@ namespace mqlib {
                     if (population.size() == SIZEmax) {
                         population.pop_back();
                     }
-                    std::vector<Lodi1999Solution>::iterator pos =
+                    auto pos =
                             std::lower_bound(population.begin(), population.end(),
                                              child, std::greater<Lodi1999Solution>());
                     population.insert(pos, child);
                 }
 
                 // PAPER: (ii) a prefixed time limit is reached
-                assert(population.size() >= 1);
+                assert(!population.empty());
                 if (!Report(population[0])) {
                     break;
                 }
@@ -346,7 +346,7 @@ namespace mqlib {
                     iterations_without_improvement = 0;
                 }
             } // end 2: repeat
-            assert(population.size() >= 1);
+            assert(!population.empty());
             if (!Report(population[0])) {
                 break;
             }

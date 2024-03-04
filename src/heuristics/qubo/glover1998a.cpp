@@ -77,7 +77,7 @@ namespace mqlib {
             N_(qi.get_size()),
             tabuR_(qi.get_size(), 0.0),
             tabuF_(qi.get_size(), 0.0),
-            recent_(qi.get_size() * t_, 0.0),
+            recent_(qi.get_size() * static_cast<uint64_t>(t_), 0.0),
             recent_pos_(0) {}
 
     void Glover1998aTabu::CriticalEvent(const QUBOSolution &x) {

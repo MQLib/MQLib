@@ -15,7 +15,7 @@ namespace mqlib {
 
 // All-zero solution
     QUBOSolution::QUBOSolution(const QUBOInstance &qi, QUBOHeuristic *heuristic,
-                               int ignored1, int ignored2) :
+                               int  /*ignored1*/, int  /*ignored2*/) :
             ExtendedSolution(qi.get_size(), 0),
             qi_(qi),
             heuristic_(heuristic) {
@@ -24,7 +24,7 @@ namespace mqlib {
 
 // Random solution (p=0.5 for each vertex)
     QUBOSolution::QUBOSolution(const QUBOInstance &qi, QUBOHeuristic *heuristic,
-                               int ignored) :
+                               int  /*ignored*/) :
             ExtendedSolution(qi.get_size(), 0),
             qi_(qi),
             heuristic_(heuristic) {
@@ -93,7 +93,7 @@ namespace mqlib {
 
     void QUBOSolution::AllBest2Swap() {
         // Take all profitable 2-moves, taking the most profitable first.
-        while (1) {
+        while (true) {
             double best_move = 0.0;
             int best_i = -1;
             int best_j = -1;
@@ -213,7 +213,7 @@ namespace mqlib {
         // Copy over the assignments from the partial solution, converting to int.
         // Copy over the appropriate diff_weights_ value, as well.
         for (int i = 0; i < N_; ++i) {
-            assignments_[i] = (int) (x.get_assignments()[i]);
+            assignments_[i] = static_cast<int>(x.get_assignments()[i]);
             if (assignments_[i]) {
                 diff_weights_[i] = x.get_diff0()[i];
             } else {

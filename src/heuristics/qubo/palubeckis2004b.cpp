@@ -58,7 +58,7 @@ namespace mqlib {
             if (rho) {
                 LocalSearch(&z);
                 *best_objective = weight_;  // New best objective ever
-                if (best != NULL) {
+                if (best != nullptr) {
                     *best = *this;
                 }
                 if (reportBest && !heuristic_->Report(*this)) {
@@ -67,8 +67,8 @@ namespace mqlib {
             }
 
             // Adaptive Memory update step
-            if (B != NULL) {
-                if (B->size() == 0) {
+            if (B != nullptr) {
+                if (B->empty()) {
                     B->push_back(QUBOSolution(*this));
                 } else {
                     // Loop through B, checking if our current solution matches a solution
@@ -77,7 +77,7 @@ namespace mqlib {
                     bool matches = false;
                     int worst_pos = -1;
                     double worst_weight = std::numeric_limits<double>::max();
-                    for (int ct = 0; ct < B->size(); ++ct) {
+                    for (uint64_t ct = 0; ct < B->size(); ++ct) {
                         if ((*B)[ct] == *this) {
                             matches = true;
                             break;
@@ -94,13 +94,13 @@ namespace mqlib {
                         if (ImprovesOver(worst_weight)) {
                             include = true;  // Always include if improving on some elt of B
                         } else if (BaseSolution::ImprovesOver(worst_weight, weight_) &&
-                                   B->size() >= mStar) {
+                                   B->size() >= static_cast<uint64_t>(mStar)) {
                             include = false;  // Exclude if B is full and solution worse than all
                         } else {
                             // Check diversity condition
                             include = true;
-                            for (auto iter = B->begin(); iter != B->end(); ++iter) {
-                                if (SymmetricDifference(*iter) <= Delta * N_) {
+                            for (auto & iter2 : *B) {
+                                if (SymmetricDifference(iter2) <= Delta * N_) {
                                     include = false;
                                     break;
                                 }
@@ -112,7 +112,7 @@ namespace mqlib {
 
                     // Actually add the current solution to the B set
                     if (include) {
-                        if (B->size() < mStar) {
+                        if (B->size() < static_cast<uint64_t>(mStar)) {
                             B->push_back(QUBOSolution(*this));
                         } else {
                             (*B)[worst_pos] = QUBOSolution(*this);
@@ -127,7 +127,7 @@ namespace mqlib {
     }
 
     void Palubeckis2004bSolution::LocalSearch(int *z) {
-        while (1) {
+        while (true) {
             // Step 1: Initialize rho (whether we've improved this iteration
             int rho = 0;
 
@@ -198,7 +198,7 @@ namespace mqlib {
         // Step 1: I* is empty, d values set to diff_weights_ values.
         I_star->clear();
         for (int ct = 0; ct < N_; ++ct) {
-            d.push_back(std::pair<double, bool>(diff_weights_[ct], false));
+            d.emplace_back(diff_weights_[ct], false);
         }
 
         // Loop until n_prime values added to I_star
@@ -206,10 +206,10 @@ namespace mqlib {
             // Step 2: compute e values from d values. First, grab d_min and d_max:
             double d_min = std::numeric_limits<double>::max();
             double d_max = -std::numeric_limits<double>::max();
-            for (int ct = 0; ct < N_; ++ct) {
-                if (!d[ct].second) {
-                    d_max = std::max<double>(d_max, d[ct].first);
-                    d_min = std::min<double>(d_min, d[ct].first);
+            for (int ct2 = 0; ct2 < N_; ++ct2) {
+                if (!d[ct2].second) {
+                    d_max = std::max<double>(d_max, d[ct2].first);
+                    d_min = std::min<double>(d_min, d[ct2].first);
                 }
             }
 
@@ -257,12 +257,12 @@ namespace mqlib {
         }
     }
 
-    void Palubeckis2004bSolution::SteepestAscent(const std::vector<int> I_star) {
+    void Palubeckis2004bSolution::SteepestAscent(const std::vector<int>& I_star) {
         // Build a bitmap of set inclusion in I_star. Will be updated as we remove
         // elements.
         std::vector<bool> in_I_star(N_, false);
-        for (int ct = 0; ct < I_star.size(); ++ct) {
-            in_I_star[I_star[ct]] = true;
+        for (int ct : I_star) {
+            in_I_star[ct] = true;
         }
 
         // We will select some subset of indices in I_star to flip. They will be added
@@ -272,8 +272,7 @@ namespace mqlib {
         // Step 1: Build h1_i and h2_i for each i in I_star
         std::vector<double> h1(N_, 0.0);
         std::vector<double> h2(N_, 0.0);
-        for (int ct = 0; ct < I_star.size(); ++ct) {
-            int i = I_star[ct];
+        for (int i : I_star) {
             h1[i] = diff_weights_[i];
             for (auto iter = qi_.get_nonzero_begin(i); iter != qi_.get_nonzero_end(i);
                  ++iter) {
@@ -289,7 +288,7 @@ namespace mqlib {
         }
 
         // Step 2: Loop for |I_star|
-        for (int iter_count = 0; iter_count < I_star.size(); ++iter_count) {
+        for (uint64_t iter_count = 0; iter_count < I_star.size(); ++iter_count) {
             // Step 2.1: Initialize V1 and V2 (and a few other vars)
             double V1 = -std::numeric_limits<double>::max();
             double V2 = -std::numeric_limits<double>::max();
@@ -297,8 +296,7 @@ namespace mqlib {
             int v = -1;
 
             // Step 2.2: Loop through the remaining elements if I_star
-            for (int ct = 0; ct < I_star.size(); ++ct) {
-                int i = I_star[ct];
+            for (int i : I_star) {
                 if (!in_I_star[i]) {
                     continue;  // This element has already been handled
                 }
@@ -351,8 +349,8 @@ namespace mqlib {
         }
 
         // Step 6 of MST2 (combined in here): flip all selected elements in I_star
-        for (int ct = 0; ct < to_flip.size(); ++ct) {
-            UpdateCutValues(to_flip[ct]);
+        for (int ct : to_flip) {
+            UpdateCutValues(ct);
         }
     }
 
@@ -373,7 +371,7 @@ namespace mqlib {
         int z1max = std::max(500000, qi.get_size() * Z1);
         int z2max = std::max(500000, qi.get_size() * Z2);
         double alpha = 0.4;
-        int n_prime = std::max<int>(10, (int) floor(alpha * qi.get_size()));
+        int n_prime = std::max<int>(10, static_cast<int>(floor(alpha * qi.get_size())));
 
         // Step 1: Generate a random solution, and set it as the best encountered.
         Palubeckis2004bSolution x = QUBOSolution::RandomSolution(qi, this);
@@ -422,7 +420,7 @@ namespace mqlib {
             std::vector<std::pair<double, int> > sorted;
             for (int i = 0; i < qi.get_size(); ++i) {
                 if (!selected[i]) {
-                    sorted.push_back(std::pair<double, int>(fabs(2 * g1[i] + g2[i]), i));
+                    sorted.emplace_back(fabs(2 * g1[i] + g2[i]), i);
                 }
             }
             if (remaining > mu) {
@@ -432,7 +430,7 @@ namespace mqlib {
 
             // Step 3: Use roulette wheel selection to pick the node to be added
             std::vector<double> scores;
-            int numSelect = std::min<int>(mu, sorted.size());
+            int numSelect = std::min<int>(mu, static_cast<int>(sorted.size()));
             for (int count = 0; count < numSelect; ++count) {
                 scores.push_back(sorted[count].first);
             }
@@ -477,7 +475,7 @@ namespace mqlib {
         // Step 1: Set the best ever objective value to 0 (score from all-0 solution)
         double best_objective = 0.0;
 
-        while (1) {
+        while (true) {
             // Step 2: Build vector with GET_START_POINT
             Palubeckis2004bSolution solution =
                     Palubeckis2004bSolution::GetStartPoint(qi, mu, this);
@@ -498,15 +496,15 @@ namespace mqlib {
             QUBOSolution(B[0]) {
         // Count number of times each variable is used in B
         std::vector<int> counts(N_, 0);
-        for (auto iter = B.begin(); iter != B.end(); ++iter) {
+        for (const auto & iter : B) {
             for (int i = 0; i < N_; ++i) {
-                counts[i] += iter->assignments_[i];
+                counts[i] += iter.assignments_[i];
             }
         }
 
         // Select the variables for this solution
         for (int i = 0; i < N_; ++i) {
-            if (counts[i] != B.size() && counts[i] != 0) {
+            if (static_cast<uint64_t>(counts[i]) != B.size() && counts[i] != 0) {
                 // Some elite solutions different on this index
                 double zeta;
                 if (Random::RandDouble() <= pPrime) {
@@ -516,7 +514,7 @@ namespace mqlib {
                 }
 
                 int newAssignment = 0;
-                if (zeta <= ((double) counts[i]) / B.size()) {
+                if (zeta <= (static_cast<double>(counts[i])) / static_cast<double>(B.size())) {
                     newAssignment = 1;
                 }
 
@@ -574,8 +572,8 @@ namespace mqlib {
 
                 // Step 5: Check if this solution matches a member of S
                 bool matches = false;
-                for (auto iter = S.begin(); iter != S.end(); ++iter) {
-                    if (solution == *iter) {
+                for (auto & iter : S) {
+                    if (solution == iter) {
                         matches = true;
                         break;
                     }
@@ -620,8 +618,8 @@ namespace mqlib {
         }
 
         // Now, let's refresh the nonzero_ vectors
-        for (int ct = 0; ct < nonzero_.size(); ++ct) {
-            nonzero_[ct].clear();
+        for (auto & ct : nonzero_) {
+            ct.clear();
         }
         for (auto iter = get_all_nonzero_begin(); iter != get_all_nonzero_end();
              ++iter) {
@@ -643,7 +641,7 @@ namespace mqlib {
     }
 
     Palubeckis2004bSolution::Palubeckis2004bSolution(const Palubeckis2004bSolution &x,
-                                                     int ignored) :
+                                                     int  /*ignored*/) :
             QUBOSolution(x.qi_, x.heuristic_) {
         // Step 0: Assign parameters
         int Z3;

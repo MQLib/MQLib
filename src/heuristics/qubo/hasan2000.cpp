@@ -36,7 +36,7 @@ namespace mqlib {
             POP_(POP) {
         // Add POP random solutions, and perform local search on each
         for (int iter = 0; iter < POP; ++iter) {
-            P_.push_back(QUBOSolution::RandomSolution(qi, heuristic));
+            P_.emplace_back(QUBOSolution::RandomSolution(qi, heuristic));
             P_[iter].AllBest1Swap();
         }
     }
@@ -58,8 +58,8 @@ namespace mqlib {
         // The paper says "the child replaces a poorer member of the population". We
         // take this to mean the child replaces a randomly selected element worse than
         // it.
-        if (worse.size() > 0) {
-            int position = worse[Random::RandInt(0, worse.size() - 1)];
+        if (!worse.empty()) {
+            int position = worse[Random::RandInt(0, static_cast<int>(worse.size() - 1))];
             P_[position] = x;
         }
         return true;  // Not duplicated
@@ -69,7 +69,7 @@ namespace mqlib {
                              bool validation, QUBOCallback *qc) :
             QUBOHeuristic(qi, runtime_limit, validation, qc) {
         // Parameters
-        int iterBeforeMutation = std::max<int>(1, 0.2 * qi.get_size());
+        int iterBeforeMutation = std::max<int>(1, static_cast<int>(0.2 * qi.get_size()));
         int numTournament = 4;
         int POP = 100;  // population size
         int nonDuplicateLimit = 20000;
@@ -89,8 +89,8 @@ namespace mqlib {
                 // Binary tournaments are used, which is just rand selection of 2 parents.
                 std::vector<Hasan2000Solution> children;
                 for (int iter = 0; iter < numTournament; ++iter) {
-                    double i = Random::RandInt(0, POP - 1);
-                    double j;
+                    uint64_t i = Random::RandInt(0, POP - 1);
+                    uint64_t j;
                     while ((j = Random::RandInt(0, POP - 1)) == i);
 
                     // Section 4.1.3: One-point crossover with a specified crossing length.
@@ -113,17 +113,17 @@ namespace mqlib {
                 // The paper doesn't specify it, but almost certainly they want to do a
                 // local search here -- it's what they do to the initial solutions and it
                 // makes the algorithm competitive.
-                for (int i = 0; i < children.size(); ++i) {
-                    children[i].AllBest1Swap();
+                for (auto & i : children) {
+                    i.AllBest1Swap();
                 }
 
                 // Identify the best child, adding each to the population if it doesn't
                 // duplicate a solution currently in the population.
                 int bestIdx = -1;
                 double bestWeight = -std::numeric_limits<double>::max();
-                for (int i = 0; i < children.size(); ++i) {
+                for (uint64_t i = 0; i < children.size(); ++i) {
                     if (children[i].get_weight() > bestWeight) {
-                        bestIdx = i;
+                        bestIdx = static_cast<int>(i);
                         bestWeight = children[i].get_weight();
                     }
                     if (P.Update(children[i])) {

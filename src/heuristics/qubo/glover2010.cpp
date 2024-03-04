@@ -25,12 +25,12 @@ namespace mqlib {
         // Step 1: Compute Score(x_i) from formula (3) for each variable. Create a
         // list of (score, index) pairs so we can sort and identify the indices.
         std::vector<std::pair<double, int> > Score;
-        double max_Freq = (double) *std::max_element(FlipFreq.begin(), FlipFreq.end());
+        double max_Freq = static_cast<double>(*std::max_element(FlipFreq.begin(), FlipFreq.end()));
 
         for (int i = 0; i < N_; ++i) {
-            double score = ((double) (EliteFreq[i] * (r - EliteFreq[i]))) / r / r +
+            double score = (static_cast<double>(EliteFreq[i] * (r - EliteFreq[i]))) / r / r +
                            beta * (1.0 - FlipFreq[i] / max_Freq);
-            Score.push_back(std::pair<double, int>(score, i));
+            Score.emplace_back(score, i);
         }
 
         // Step 2: Sort the scores and compute the weight P for each variable (in the
@@ -52,8 +52,8 @@ namespace mqlib {
         Random::MultiRouletteWheel(P, gamma, &flips);
 
         // Step 4: Flip each selected index
-        for (int idx = 0; idx < flips.size(); ++idx) {
-            UpdateCutValues(flips[idx]);
+        for (int flip : flips) {
+            UpdateCutValues(flip);
         }
     }
 
@@ -123,13 +123,13 @@ namespace mqlib {
         // than the worst elite solution and we are at maximum capacity for the
         // elite set.
 
-        if (EliteSol_.size() == R_ && !x.ImprovesOver(EliteSol_[0])) {
+        if (EliteSol_.size() == static_cast<uint64_t>(R_) && !x.ImprovesOver(EliteSol_[0])) {
             return;
         }
 
         // Reject the new solution if it matches one of the elite solutions
-        for (int idx = 0; idx < EliteSol_.size(); ++idx) {
-            if (x == EliteSol_[idx]) {
+        for (const auto & idx : EliteSol_) {
+            if (x == idx) {
                 return;
             }
         }
@@ -139,7 +139,7 @@ namespace mqlib {
         // If the elite set is currently at capacity, remove the worst element
         // (maintaining the heap structure of the elite set). Also remove the
         // frequencies of the variables in the removed solution from EliteFreq_.
-        if (EliteSol_.size() == R_) {
+        if (EliteSol_.size() == static_cast<uint64_t>(R_)) {
             const std::vector<int> &worst = EliteSol_[0].get_assignments();
             for (int j = 0; j < N_; ++j) {
                 if (worst[j] == 1) {
