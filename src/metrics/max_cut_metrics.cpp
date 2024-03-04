@@ -2,6 +2,7 @@
 #include <cmath>
 #include <algorithm>
 #include <limits>
+#include <random>
 #include <sys/time.h>
 #include "mqlib/metrics/max_cut_metrics.h"
 #include "mqlib/util/random.h"
@@ -14,8 +15,8 @@ namespace mqlib {
     double GraphMetrics::GetTime(const struct timeval &start) {
         // Runtime in seconds since the passed start time
         struct timeval end;
-        gettimeofday(&end, 0);
-        return (end.tv_sec - start.tv_sec) + 0.000001 * (end.tv_usec - start.tv_usec);
+        gettimeofday(&end, nullptr);
+        return static_cast<double>(end.tv_sec - start.tv_sec) + 0.000001 * static_cast<double>(end.tv_usec - start.tv_usec);
     }
 
     void GraphMetrics::AllMetrics(std::vector<double> *metrics,
@@ -25,11 +26,11 @@ namespace mqlib {
         double log_n = log(n);
         int m = mi_.get_edge_count();
         double log_m = log(m);
-        double avg_degree = ((double) m) / n;
+        double avg_degree = (static_cast<double>(m)) / n;
 
         // Local clustering coefficient statistics
         struct timeval clust_start;
-        gettimeofday(&clust_start, 0);
+        gettimeofday(&clust_start, nullptr);
         std::vector<double> clustering;
         GetClusteringData(&clustering);
         double clust_min = clustering[0];
@@ -44,7 +45,7 @@ namespace mqlib {
 
         // Degree metrics
         struct timeval degree_start;
-        gettimeofday(&degree_start, 0);
+        gettimeofday(&degree_start, nullptr);
         std::vector<double> degree_metrics;
         GetDegreeData(&degree_metrics);
         double deg_min = degree_metrics[0];
@@ -59,13 +60,13 @@ namespace mqlib {
 
         // Compute percentage of edges that have positive weight
         struct timeval ppos_start;
-        gettimeofday(&ppos_start, 0);
+        gettimeofday(&ppos_start, nullptr);
         double percent_pos = GetPercentPos();
         double ppos_time = GetTime(ppos_start);
 
         // Metrics for weights of graph
         struct timeval weight_start;
-        gettimeofday(&weight_start, 0);
+        gettimeofday(&weight_start, nullptr);
         std::vector<double> weights;
         GetWeightData(&weights);
         double weight_min = weights[0];
@@ -80,7 +81,7 @@ namespace mqlib {
 
         // First two eigenvalues of graph laplacian
         struct timeval ev_start;
-        gettimeofday(&ev_start, 0);
+        gettimeofday(&ev_start, nullptr);
         std::pair<double, double> lap_evs = GetLaplacianTopEVs();
         double norm_ev1 = lap_evs.first / avg_degree;
         double norm_ev2 = lap_evs.second / avg_degree;
@@ -92,23 +93,23 @@ namespace mqlib {
 
         // Approximation of chromatic number of the graph
         struct timeval chromatic_start;
-        gettimeofday(&chromatic_start, 0);
+        gettimeofday(&chromatic_start, nullptr);
         double chromatic = GetChromaticNumber();
         double chromatic_time = GetTime(chromatic_start);
 
         // Approximation of the diameter, radius, and eccentricity stats of graph
         struct timeval disconnected_start;
-        gettimeofday(&disconnected_start, 0);
+        gettimeofday(&disconnected_start, nullptr);
         double disconnected = Disconnected();
         double disconnected_time = GetTime(disconnected_start);
 
         struct timeval assortativity_start;
-        gettimeofday(&assortativity_start, 0);
+        gettimeofday(&assortativity_start, nullptr);
         double assortativity = DegreeAssortativity();
         double assortativity_time = GetTime(assortativity_start);
 
         struct timeval avg_neighbor_deg_start;
-        gettimeofday(&avg_neighbor_deg_start, 0);
+        gettimeofday(&avg_neighbor_deg_start, nullptr);
         std::vector<double> avg_neighbor_deg;
         AverageNeighborDegree(&avg_neighbor_deg);
         double avg_neighbor_deg_min = avg_neighbor_deg[0];
@@ -122,7 +123,7 @@ namespace mqlib {
         double avg_neighbor_deg_time = GetTime(avg_neighbor_deg_start);
 
         struct timeval avg_deg_conn_start;
-        gettimeofday(&avg_deg_conn_start, 0);
+        gettimeofday(&avg_deg_conn_start, nullptr);
         std::vector<double> avg_deg_conn;
         AverageDegreeConnectivity(&avg_deg_conn);
         double avg_deg_conn_min = avg_deg_conn[0];
@@ -136,7 +137,7 @@ namespace mqlib {
         double avg_deg_conn_time = GetTime(avg_deg_conn_start);
 
         struct timeval core_start;
-        gettimeofday(&core_start, 0);
+        gettimeofday(&core_start, nullptr);
         std::vector<double> cores_decomposition;
         CoresDecomposition(&cores_decomposition);
         double core_min = cores_decomposition[0];
@@ -150,7 +151,7 @@ namespace mqlib {
         double core_time = GetTime(core_start);
 
         struct timeval mis_start;
-        gettimeofday(&mis_start, 0);
+        gettimeofday(&mis_start, nullptr);
         double mis = MaximalIndependentSet();
         double mis_time = GetTime(mis_start);
 
@@ -232,8 +233,8 @@ namespace mqlib {
         for (int i = 0; i < n; ++i) {
             nodes.push_back(i);
         }
-        std::random_shuffle(nodes.begin(), nodes.end());
-        int num_try = std::min<int>(3 * ((int) log(n) + 1), n);
+        std::shuffle(nodes.begin(), nodes.end(), std::mt19937(std::random_device()()));
+        int num_try = std::min<int>(3 * (static_cast<int>(log(n)) + 1), n);
 
         // Compute the clustering coefficient for our selected nodes
         std::vector<double> coefs;  // Custering coefficient of nodes we selected
@@ -288,7 +289,7 @@ namespace mqlib {
              iter != mi_.get_all_edges_end(); iter++) {
             if (iter->second > 0.0) pos_count++;
         }
-        return ((double) pos_count) / mi_.get_edge_count();
+        return (static_cast<double>(pos_count)) / mi_.get_edge_count();
     }
 
 
@@ -301,8 +302,8 @@ namespace mqlib {
             max_abs = std::max<double>(max_abs, fabs(w));
             weights.push_back(w);
         }
-        for (auto iter = weights.begin(); iter != weights.end(); ++iter) {
-            *iter /= max_abs;
+        for (double & weight : weights) {
+            weight /= max_abs;
         }
         GetSummary(weights, output);
     }
@@ -321,8 +322,7 @@ namespace mqlib {
         double max_x = -std::numeric_limits<double>::max();
         double sum_x = 0.0;
         // Pass 1: Compute min, max, and mean of values
-        for (auto it = data.begin(); it != data.end(); it++) {
-            double d = *it;
+        for (double d : data) {
             if (d < min_x) min_x = d;
             if (d > max_x) max_x = d;
             sum_x += d;
@@ -347,12 +347,12 @@ namespace mqlib {
         // Compute second, third and fourth moments of values. While we could have done
         // this in a single iteration above, we'll use a second iteration here for
         // numerical stability.
-        double mean = sum_x / data.size();
+        double mean = sum_x / static_cast<double>(data.size());
         double sum_dev2 = 0.0;  // \sum_i (x_i-\bar x)^2
         double sum_dev3 = 0.0;  // \sum_i (x_i-\bar x)^3
         double sum_dev4 = 0.0;  // \sum_i (x_i-\bar x)^4
-        for (auto it = data.begin(); it != data.end(); ++it) {
-            double dev = *it - mean;
+        for (double it : data) {
+            double dev = it - mean;
             double dev2 = dev * dev;
             sum_dev2 += dev2;
             sum_dev3 += dev2 * dev;
@@ -360,10 +360,10 @@ namespace mqlib {
         }
 
         // Compute standard deviation, skewness, and excess kurtosis (plus 3)
-        double var = sum_dev2 / data.size();
+        double var = sum_dev2 / static_cast<double>(data.size());
         double stdev = sqrt(var);
-        double skewness = sum_dev3 / data.size() / (stdev * var);
-        double ex_kurtosis = sum_dev4 / data.size() / (var * var);
+        double skewness = sum_dev3 / static_cast<double>(data.size()) / (stdev * var);
+        double ex_kurtosis = sum_dev4 / static_cast<double>(data.size()) / (var * var);
 
         output->push_back(min_x);
         output->push_back(max_x);
@@ -377,7 +377,7 @@ namespace mqlib {
 
     double GraphMetrics::Normalize(std::vector<double> *x) {
         // Normalize a vector and return its (original) 2-norm
-        int n = x->size();
+        int n = static_cast<int>(x->size());
         double norm = 0.0;
         for (int i = 0; i < n; ++i) {
             norm += (*x)[i] * (*x)[i];
@@ -398,7 +398,7 @@ namespace mqlib {
         // eigenvalue (when orthog is NULL) or the second eigenvalue (when orthog is
         // a pointer to the normalized dominant eigenvector).
 
-        int n = x->size();
+        int n = static_cast<int>(x->size());
         std::vector<double> xp(n);
         double eigenvalue = 0.0;
         double last_eigenvalue = 0.0;
@@ -409,10 +409,10 @@ namespace mqlib {
         for (int iter = 0; iter < maxIter; iter++) {
             // Calculate next x' by iterating with graph laplacian and re-orthogonalizing
             xp = D;
-            for (auto iter = mi_.get_all_edges_begin(); iter != mi_.get_all_edges_end();
-                 ++iter) {
-                xp[iter->first.first] -= iter->second * (*x)[iter->first.second];
-                xp[iter->first.second] -= iter->second * (*x)[iter->first.first];
+            for (auto iter2 = mi_.get_all_edges_begin(); iter2 != mi_.get_all_edges_end();
+                 ++iter2) {
+                xp[iter2->first.first] -= iter2->second * (*x)[iter2->first.second];
+                xp[iter2->first.second] -= iter2->second * (*x)[iter2->first.first];
             }
             if (orthog) {
                 double dotProd = 0.0;
@@ -478,7 +478,7 @@ namespace mqlib {
         }
 
         // Compute first two eigenvalues
-        double e1 = GetEigenpair(D, &x1, NULL, 10, 1e-6);
+        double e1 = GetEigenpair(D, &x1, nullptr, 10, 1e-6);
         double e2 = GetEigenpair(D, &x2, &x1, 10, 1e-6);
         return std::pair<double, double>(e1, e2);
     }
@@ -500,7 +500,7 @@ namespace mqlib {
         // Descending order by degree
         std::vector<std::pair<int, int>> degs;
         for (int i = 0; i < n; i++) {
-            degs.push_back(std::pair<int, int>(-mi_.get_vertex_degree(i), i));
+            degs.emplace_back(-mi_.get_vertex_degree(i), i);
         }
         std::sort(degs.begin(), degs.end());
 
@@ -530,7 +530,7 @@ namespace mqlib {
             }
         }
 
-        return ((double) chromatic_num) / n;  // Return normalized chromatic num
+        return (static_cast<double>(chromatic_num)) / n;  // Return normalized chromatic num
     }
 
     bool GraphMetrics::Disconnected() {
@@ -544,7 +544,7 @@ namespace mqlib {
         std::vector<bool> added(n, false);  // Have we reached this node in DFS?
         std::vector<int> toVisit;
         toVisit.push_back(0);  // Start at node 0
-        while (toVisit.size() > 0) {
+        while (!toVisit.empty()) {
             int node = toVisit.back();
             toVisit.pop_back();
             added[node] = true;
@@ -602,12 +602,12 @@ namespace mqlib {
             y.push_back(degrees[i]);
             sum += degrees[i] + degrees[j];
         }
-        double mean = ((double) sum) / x.size();
+        double mean = (static_cast<double>(sum)) / static_cast<double>(x.size());
 
         // Pass 2: Compute correlation coefficient
         double sum_dxdx = 0.0;  // Sum of (x-mean)^2; equivalent to sum of (y-mean)^2
         double sum_dxdy = 0.0;  // Sum of (x-mean)(y-mean)
-        for (int i = 0; i < x.size(); ++i) {
+        for (uint64_t i = 0; i < x.size(); ++i) {
             double dx = x[i] - mean;
             double dy = y[i] - mean;
             sum_dxdx += dx * dx;
@@ -665,7 +665,7 @@ namespace mqlib {
         }
 
         // Return summary statistics for the distribution (constant 0 if no edges)
-        if (avg_neighbor_degree.size() == 0) {
+        if (avg_neighbor_degree.empty()) {
             avg_neighbor_degree.push_back(0.0);
         }
         GetSummary(avg_neighbor_degree, output);
@@ -715,7 +715,7 @@ namespace mqlib {
         }
 
         // Return summary statistics for the distribution (constant 0 if no edges)
-        if (avg_neighbor_degree.size() == 0) {
+        if (avg_neighbor_degree.empty()) {
             avg_neighbor_degree.push_back(0.0);
         }
         GetSummary(avg_neighbor_degree, output);
@@ -795,7 +795,7 @@ namespace mqlib {
         // degrees now stores the cores; normalize by n-1 and get statistics
         std::vector<double> norm_degrees;
         for (int i = 0; i < n; ++i) {
-            norm_degrees.push_back(((double) degrees[i]) / (n - 1));
+            norm_degrees.push_back((static_cast<double>(degrees[i])) / (n - 1));
         }
         GetSummary(norm_degrees, output);
     }
@@ -813,7 +813,7 @@ namespace mqlib {
         // Sort nodes by degree (increasing) so we add lowest-degree nodes first
         std::vector<std::pair<int, int> > nodes;
         for (int i = 0; i < n; ++i) {
-            nodes.push_back(std::pair<int, int>(mi_.get_vertex_degree(i), i));
+            nodes.emplace_back(mi_.get_vertex_degree(i), i);
         }
         std::sort(nodes.begin(), nodes.end());
 
@@ -833,7 +833,7 @@ namespace mqlib {
             }
         }
 
-        return ((double) misSize) / n;
+        return (static_cast<double>(misSize)) / n;
     }
 
 }
