@@ -14,18 +14,18 @@ namespace mqlib {
     QUBOInstance::QUBOInstance(const std::vector<Instance::InstanceTuple> &offDiag,
                                const std::vector<double> &mainDiag, int dimension) :
             lin_(mainDiag) {
-        if (mainDiag.size() != dimension) {
+        if (mainDiag.size() != static_cast<uint64_t>(dimension)) {
             std::cout << "Illegal dimension on main diagonal vector" << std::endl;
             exit(1);
         }
-        Instance::Load(dimension, offDiag, &nonzero_, &all_nonzero_, NULL, false);
+        Instance::Load(dimension, offDiag, &nonzero_, &all_nonzero_, nullptr, false);
     }
 
 
     QUBOInstance::QUBOInstance(const MaxCutInstance &mi) {
         // Initialize class data structures based on size of base graph
         for (int count = 0; count < mi.get_size(); ++count) {
-            nonzero_.push_back(std::vector<std::pair<int, double> >());
+            nonzero_.emplace_back();
             lin_.push_back(0.0);
         }
 
@@ -46,7 +46,7 @@ namespace mqlib {
             lin_[j] += w_ij;
             nonzero_[i].push_back(std::pair<int, double>(j, -1.0 * w_ij));
             nonzero_[j].push_back(std::pair<int, double>(i, -1.0 * w_ij));
-            all_nonzero_.push_back(std::pair<std::pair<int, int>, double>(std::pair<int, int>(i, j), -1.0 * w_ij));
+            all_nonzero_.emplace_back(std::pair<int, int>(i, j), -1.0 * w_ij);
         }
     }
 

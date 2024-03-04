@@ -12,7 +12,7 @@ namespace mqlib {
             mi_(mi),
             mc_(mc) {
         // Store a new best solution with objective 0
-        past_solutions_.push_back(MaxCutSimpleSolution(mi, this, -1));
+        past_solutions_.emplace_back(mi, this, -1);
         past_solution_values_.push_back(0.0);
         past_solution_times_.push_back(Runtime());
     }
@@ -63,9 +63,9 @@ namespace mqlib {
             past_solution_times_.push_back(runtime);
             past_solution_values_.push_back(best_);
             if (validation_) {
-                past_solutions_.push_back(MaxCutSimpleSolution(mi_, this,
+                past_solutions_.emplace_back(mi_, this,
                                                                solution.get_assignments(),
-                                                               solution.get_weight()));
+                                                               solution.get_weight());
             } else {
                 past_solutions_[0] = MaxCutSimpleSolution(mi_, this,
                                                           solution.get_assignments(),
@@ -88,7 +88,7 @@ namespace mqlib {
 
         // Go through stored solutions, recalculate their solution values, and
         // thus confirm our results are accurate
-        for (int i = 0; i < past_solution_values_.size(); i++) {
+        for (uint64_t i = 0; i < past_solution_values_.size(); i++) {
             // Recalculate...
             past_solutions_[i].PopulateFromAssignments();
             double trueVal = past_solutions_[i].get_weight();

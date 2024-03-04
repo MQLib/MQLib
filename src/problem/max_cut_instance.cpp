@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <iostream>
+#include <random>
 #include <string>
 #include <unordered_set>
 #include <vector>
@@ -11,13 +12,13 @@ namespace mqlib {
 
 // Load instance from file
     MaxCutInstance::MaxCutInstance(const std::string &filename) {
-        Instance::Load(filename, &edges_, &all_edges_, NULL, false);
+        Instance::Load(filename, &edges_, &all_edges_, nullptr, false);
     }
 
 // Load instance from edge list and dimension
     MaxCutInstance::MaxCutInstance(const std::vector<Instance::InstanceTuple> &edgeList,
                                    int dimension) {
-        Instance::Load(dimension, edgeList, &edges_, &all_edges_, NULL, false);
+        Instance::Load(dimension, edgeList, &edges_, &all_edges_, nullptr, false);
     }
 
 // Convert QUBOInstance to MaxCutInstance
@@ -25,7 +26,7 @@ namespace mqlib {
         // Initialize class data structures based on size of qi and linear values
         std::vector<double> masterNodeWeights(qi.get_lin());  // Weights to added node
         for (int count = 0; count < qi.get_size() + 1; ++count) {
-            edges_.push_back(std::vector<std::pair<int, double> >());
+            edges_.emplace_back();
         }
 
         // Process all non-zero entries of qi
@@ -43,8 +44,8 @@ namespace mqlib {
                                                                masterNodeWeights[count]));
                 edges_[master].push_back(std::pair<int, double>(count,
                                                                 masterNodeWeights[count]));
-                all_edges_.push_back(std::pair<std::pair<int, int>, double>(std::pair<int, int>(count, master),
-                                                                            masterNodeWeights[count]));
+                all_edges_.emplace_back(std::pair<int, int>(count, master),
+                                                                            masterNodeWeights[count]);
             }
         }
     }
@@ -55,13 +56,13 @@ namespace mqlib {
         (*masterNodeWeights)[j] += q_ij;
         edges_[i].push_back(std::pair<int, double>(j, -1.0 * q_ij));
         edges_[j].push_back(std::pair<int, double>(i, -1.0 * q_ij));
-        all_edges_.push_back(std::pair<std::pair<int, int>, double>(std::pair<int, int>(i, j), -1.0 * q_ij));
+        all_edges_.emplace_back(std::pair<int, int>(i, j), -1.0 * q_ij);
     }
 
 // Shuffling the edge sets
     void MaxCutInstance::GetShuffledEdges(std::vector<std::pair<std::pair<int, int>, double> > *ret) const {
         *ret = all_edges_;
-        random_shuffle(ret->begin(), ret->end());
+        shuffle(ret->begin(), ret->end(), std::mt19937(std::random_device()()));
     }
 
     bool SortCompare(const std::pair<std::pair<int, int>, double> &i,
@@ -89,15 +90,15 @@ namespace mqlib {
     bool MaxCutInstance::CheckGraph() const {
         int n = get_size();
         std::unordered_set<int> edges;  // Hash edge (i, j), i < j, as n*i+j
-        for (auto iter = all_edges_.begin(); iter != all_edges_.end(); ++iter) {
-            int i = std::min<int>(iter->first.first, iter->first.second);
-            int j = std::max<int>(iter->first.first, iter->first.second);
+        for (const auto & all_edge : all_edges_) {
+            int i = std::min<int>(all_edge.first.first, all_edge.first.second);
+            int j = std::max<int>(all_edge.first.first, all_edge.first.second);
             std::pair<std::unordered_set<int>::iterator, bool> result =
                     edges.insert(i * n + j);
             if (!result.second) {
                 // Element was already in set
-                std::cout << "Repeated edge: " << iter->first.first << " -> " <<
-                          iter->first.second << std::endl;
+                std::cout << "Repeated edge: " << all_edge.first.first << " -> " <<
+                          all_edge.first.second << std::endl;
                 return false;
             }
         }
@@ -108,9 +109,9 @@ namespace mqlib {
         // Number of nodes and edges
         std::cout << edges_.size() << " " << all_edges_.size() << std::endl;
         std::cout.precision(15);
-        for (auto iter = all_edges_.begin(); iter != all_edges_.end(); ++iter) {
-            std::cout << iter->first.first + 1 << " " << iter->first.second + 1 << " " <<
-                      iter->second << std::endl;
+        for (const auto & all_edge : all_edges_) {
+            std::cout << all_edge.first.first + 1 << " " << all_edge.first.second + 1 << " " <<
+                      all_edge.second << std::endl;
         }
     }
 

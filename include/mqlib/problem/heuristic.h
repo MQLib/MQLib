@@ -15,7 +15,7 @@ namespace mqlib {
         Heuristic(double runtime_limit, bool validation);
 
         // Compute the runtime from start until now
-        double Runtime();
+        double Runtime() const;
 
         // Getters
         double get_best() const { return best_; }

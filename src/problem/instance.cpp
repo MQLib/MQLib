@@ -57,18 +57,18 @@ namespace mqlib {
             }
         }
 
-        for (auto iter = provided.begin(); iter != provided.end(); ++iter) {
-            if (iter->first.first < 1 || iter->first.first > dimension) {
+        for (const auto & iter : provided) {
+            if (iter.first.first < 1 || iter.first.first > dimension) {
                 std::cout << "Illegal first node in tuple (nodes are 1-indexed): " <<
-                          iter->first.first << std::endl;
+                          iter.first.first << std::endl;
                 exit(1);
             }
-            if (iter->first.second < 1 || iter->first.second > dimension) {
+            if (iter.first.second < 1 || iter.first.second > dimension) {
                 std::cout << "Illegal second node in tuple (nodes are 1-indexed): " <<
-                          iter->first.second << std::endl;
+                          iter.first.second << std::endl;
                 exit(1);
             }
-            AddLink(iter->first.first - 1, iter->first.second - 1, iter->second, links, all,
+            AddLink(iter.first.first - 1, iter.first.second - 1, iter.second, links, all,
                     selfLinks, selfLinkAsError);
         }
     }
