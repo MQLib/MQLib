@@ -34,7 +34,7 @@ namespace mqlib {
         std::istringstream is(line);
         _offset = std::vector<int>(std::istream_iterator<int>(is),
                                    std::istream_iterator<int>());
-        if (_offset.size() != _ntree) {
+        if (_offset.size() != static_cast<uint64_t>(_ntree)) {
             std::cout << "Wrong number of tree offsets in " << filename << std::endl;
             exit(1);
         }
@@ -52,15 +52,15 @@ namespace mqlib {
                 std::cout << "Illegal node line: " << line << std::endl;
                 exit(1);
             }
-            _left.push_back((short) left);
-            _right.push_back((short) right);
-            _var.push_back((short) var);
+            _left.push_back(static_cast<short>(left));
+            _right.push_back(static_cast<short>(right));
+            _var.push_back(static_cast<short>(var));
             _split.push_back(split);
         }
     }
 
     double RandomForest::Predict(const std::vector<double> &vars) {
-        if (vars.size() != _nvar) {
+        if (vars.size() != static_cast<uint64_t>(_nvar)) {
             std::cout << "Wrong number of variables in RandomForest::Predict" <<
                       std::endl;
             exit(1);
@@ -92,7 +92,7 @@ namespace mqlib {
         }
 
         // Final prediction is proportion of trees predicting positive
-        return ((double) positive) / _ntree;
+        return (static_cast<double>(positive)) / _ntree;
     }
 
 }
