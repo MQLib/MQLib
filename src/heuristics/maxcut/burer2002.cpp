@@ -198,10 +198,10 @@ Burer2002Solution::Burer2002Solution(const MaxCutInstance& mi,
   // index/angle pairs. Sort on angle.
   std::vector<std::pair<double, int> > angles;
   for (int ct=0; ct < N_; ++ct) {
-    (*theta)[ct] -= 2 * M_PI * floor((*theta)[ct] / (2*M_PI));
+    (*theta)[ct] -= 2 * 3.14159265358979323846 * floor((*theta)[ct] / (2*3.14159265358979323846));
     angles.push_back(std::pair<double, int>((*theta)[ct], ct));
   }
-  angles.push_back(std::pair<double, int>(2*M_PI, N_));
+  angles.push_back(std::pair<double, int>(2*3.14159265358979323846, N_));
   std::sort(angles.begin(), angles.end());
 
   // Determine initial set inclusion, and setup variables to be updated
@@ -212,7 +212,7 @@ Burer2002Solution::Burer2002Solution(const MaxCutInstance& mi,
   std::vector<std::pair<double, int> >::iterator first_it = angles.begin();
   std::vector<std::pair<double, int> >::iterator second_it =
     angles.begin();
-  while (second_it->first <= M_PI) {
+  while (second_it->first <= 3.14159265358979323846) {
     assignments_[second_it->second] = 1;  // The first set has angles in [0, pi]
     ++second_it;
   }
@@ -232,7 +232,7 @@ Burer2002Solution::Burer2002Solution(const MaxCutInstance& mi,
   while (1) {
     // Update the cut angle
     int update_index;
-    if (first_it->first <= second_it->first - M_PI) {
+    if (first_it->first <= second_it->first - 3.14159265358979323846) {
       update_index = first_it->second;  // We will exclude this guy.
       ++first_it;
     } else {
@@ -284,7 +284,7 @@ Burer2002::Burer2002(const MaxCutInstance& mi, double runtime_limit,
     // Generate random starting set of angles
     std::vector<double> theta(mi.get_size());
     for (int ct=0; ct < mi.get_size(); ++ct) {
-      theta[ct] = Random::RandDouble() * 2 * M_PI;
+      theta[ct] = Random::RandDouble() * 2 * 3.14159265358979323846;
     }
 
     // Algorithm 1 from Section 4
@@ -318,8 +318,8 @@ Burer2002::Burer2002(const MaxCutInstance& mi, double runtime_limit,
 
       // Perturb the angles associated with the current solution
       for (int ct=0; ct < mi.get_size(); ++ct) {
-	theta[ct] = M_PI / 2.0 * (1.0 - x.get_assignments()[ct]) +
-	  perturbation * (2 * M_PI * Random::RandDouble() - M_PI);
+	theta[ct] = 3.14159265358979323846 / 2.0 * (1.0 - x.get_assignments()[ct]) +
+	  perturbation * (2 * 3.14159265358979323846 * Random::RandDouble() - 3.14159265358979323846);
       }
     }
   }
