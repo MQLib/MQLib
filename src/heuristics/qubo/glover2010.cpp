@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <algorithm>
 #include <iostream>
+#include <limits>
 #include <vector>
 #include "heuristics/qubo/glover2010.h"
 #include "util/random.h"

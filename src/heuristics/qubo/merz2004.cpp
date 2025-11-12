@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <iostream>
+#include <limits>
 #include "heuristics/qubo/merz2004.h"
 #include "util/random.h"
 
